@@ -42,7 +42,7 @@ def register(user: user_schema.UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=user_schema.Token)
 def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    # OAuth2 form uses "username" field → we treat it as email
+
     user_selected = (
         db.query(user_model.User).filter(user_model.User.email == form.username).first()
     )

@@ -34,7 +34,7 @@ def create_item(
 def list_items(
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
-    # filters (optional)
+    # filters
     category: Optional[str] = Query(default=None),
     color: Optional[str] = Query(default=None),
     season: Optional[str] = Query(default=None),
@@ -45,10 +45,8 @@ def list_items(
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     # sorting
-    sort_by: str = Query(
-        default="created_at"
-    ),  # created_at, times_worn, name, category, color, season
-    order: str = Query(default="desc"),  # asc | desc
+    sort_by: str = Query(default="created_at"),
+    order: str = Query(default="desc"),
 ):
     closet_item = closet_items_models.ClosetItem
 
@@ -68,7 +66,7 @@ def list_items(
     if q:
         query = query.filter(closet_item.name.ilike(f"%{q}%"))
 
-    # allowlist sortable fields (prevents SQL injection / bad columns)
+    # allowlist sortable fields
     allowed_sort_fields = {
         "created_at": closet_item.created_at,
         "times_worn": closet_item.times_worn,

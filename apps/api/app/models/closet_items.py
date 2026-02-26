@@ -16,11 +16,8 @@ class ClosetItem(Base):
         index=True,
     )
 
-    # Scalable fields
-    name = Column(String, nullable=False)  # "Blue Denim Jacket"
-    category = Column(
-        String, nullable=False, index=True
-    )  # "jacket" | "shirt" | "hat" | "shoes"
+    name = Column(String, nullable=False)
+    category = Column(String, nullable=False, index=True)
     color = Column(String, nullable=True, index=True)
     season = Column(String, nullable=True, index=True, default="all")
     brand = Column(String, nullable=True)
