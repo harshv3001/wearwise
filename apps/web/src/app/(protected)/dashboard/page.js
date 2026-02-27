@@ -1,83 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { http } from "../../../lib/http";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { clearToken } from "../../../lib/auth";
+import { getApiErrorMessage } from "../../../lib/apiError";
+import { getClosetItemsApi } from "../../../features/closet/api/closetApi";
 
 export default function DashboardPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["closet-items"],
+    queryFn: getClosetItemsApi,
+  });
 
-  // Fetch items
-  const fetchClosetItems = async () => {
-    try {
-      const response = await http.get("/closet-items/");
-      setItems(response.data);
-    } catch (err) {
-      const message =
-        err?.response?.data?.detail ||
-        err?.message ||
-        "Failed to fetch closet items";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Logout
   const handleLogout = () => {
-    clearToken();          // remove token from sessionStorage
-    setItems([]);          // optional cleanup
-    router.replace("/login"); // redirect to login
+    clearToken();                  // remove token from session storage
+    queryClient.clear();           // clear cached private data
+    router.replace("/login");      // go to login
   };
-
-  useEffect(() => {
-    fetchClosetItems();
-  }, []);
 
   return (
-    <main style={{ padding: 24 }}>
-      <h1>Dashboard</h1>
+    <main className="p-6">
+      <div className="flex items-center justify-between">
+        <div>
+        <h1 className="text-xl font-semibold">Dashboard</h1>
+        </div>
+        <div>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="rounded-lg px-4 py-2 text-sm font-medium ring-1 ring-inset ring-zinc-300"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
 
-      <button
-        onClick={handleLogout}
-        style={{
-          marginBottom: 20,
-          padding: "8px 12px",
-          background: "black",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
-        Logout
-      </button>
+      <div className="mt-4">
+        {isLoading ? <p>Loading...</p> : null}
+        {error ? <p>{getApiErrorMessage(error, "Failed to load")}</p> : null}
 
-      {loading && <p>Loading items...</p>}
-
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-
-      {!loading && !error && (
-        <>
-          <h2>Your Closet Items</h2>
-
-          {items.length === 0 ? (
-            <p>No items found.</p>
-          ) : (
-            <ul>
-              {items.map((item) => (
-                <li key={item.id}>
-                  {item.name || item.title || JSON.stringify(item)}
-                </li>
-              ))}
-            </ul>
-          )}
-        </>
-      )}
+        {!isLoading && !error ? (
+          <ul className="mt-3 space-y-2">
+            {(data || []).map((item) => (
+              <li key={item.id} className="rounded-lg ring-1 ring-zinc-300 p-3">
+                {item.name || item.title || JSON.stringify(item)}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
     </main>
   );
 }
