@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import RegisterForm from "../../../features/auth/component/RegisterForm";
 import { registerApi, loginApi } from "../../../features/auth/api/authApi";
 import { setToken } from "../../../lib/auth";
-import { getApiErrorMessage } from "../../../lib";
+import { getApiErrorMessage } from "../../../lib/apiError";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -20,6 +20,7 @@ export default function RegisterPage() {
   });
 
   const handleRegister = async (payload) => {
+    console.log("Registering with", payload);
     try {
       // 1) register
       await registerMut.mutateAsync(payload);
