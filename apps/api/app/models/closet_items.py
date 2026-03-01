@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, Float, String, ForeignKey, DateTime, Date
-from sqlalchemy.orm import relationship
+from typing import Set
+from sqlalchemy.orm import relationship, Mapped
 from app.database import Base
 from sqlalchemy.sql.expression import text
 
