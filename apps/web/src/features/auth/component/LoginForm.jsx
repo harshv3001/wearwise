@@ -14,7 +14,9 @@ export default function LoginForm({ onSubmit, loading }) {
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
+    <>
+    <div className="grid items-center justify-center">
+    <form className="space-y-10" onSubmit={handleSubmit}>
       <Input
         label="Email"
         name="email"
@@ -40,5 +42,7 @@ export default function LoginForm({ onSubmit, loading }) {
         {loading ? "Signing in..." : "Sign in"}
       </Button>
     </form>
+    </div>
+    </>
   );
 }
