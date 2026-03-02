@@ -21,6 +21,59 @@ const GENDER_OPTIONS = [
   { label: "Other", value: "other" },
 ];
 
+const US_STATES = [
+  { label: "Alabama", value: "AL" },
+  { label: "Alaska", value: "AK" },
+  { label: "Arizona", value: "AZ" },
+  { label: "Arkansas", value: "AR" },
+  { label: "California", value: "CA" },
+  { label: "Colorado", value: "CO" },
+  { label: "Connecticut", value: "CT" },
+  { label: "Delaware", value: "DE" },
+  { label: "Florida", value: "FL" },
+  { label: "Georgia", value: "GA" },
+  { label: "Hawaii", value: "HI" },
+  { label: "Idaho", value: "ID" },
+  { label: "Illinois", value: "IL" },
+  { label: "Indiana", value: "IN" },
+  { label: "Iowa", value: "IA" },
+  { label: "Kansas", value: "KS" },
+  { label: "Kentucky", value: "KY" },
+  { label: "Louisiana", value: "LA" },
+  { label: "Maine", value: "ME" },
+  { label: "Maryland", value: "MD" },
+  { label: "Massachusetts", value: "MA" },
+  { label: "Michigan", value: "MI" },
+  { label: "Minnesota", value: "MN" },
+  { label: "Mississippi", value: "MS" },
+  { label: "Missouri", value: "MO" },
+  { label: "Montana", value: "MT" },
+  { label: "Nebraska", value: "NE" },
+  { label: "Nevada", value: "NV" },
+  { label: "New Hampshire", value: "NH" },
+  { label: "New Jersey", value: "NJ" },
+  { label: "New Mexico", value: "NM" },
+  { label: "New York", value: "NY" },
+  { label: "North Carolina", value: "NC" },
+  { label: "North Dakota", value: "ND" },
+  { label: "Ohio", value: "OH" },
+  { label: "Oklahoma", value: "OK" },
+  { label: "Oregon", value: "OR" },
+  { label: "Pennsylvania", value: "PA" },
+  { label: "Rhode Island", value: "RI" },
+  { label: "South Carolina", value: "SC" },
+  { label: "South Dakota", value: "SD" },
+  { label: "Tennessee", value: "TN" },
+  { label: "Texas", value: "TX" },
+  { label: "Utah", value: "UT" },
+  { label: "Vermont", value: "VT" },
+  { label: "Virginia", value: "VA" },
+  { label: "Washington", value: "WA" },
+  { label: "West Virginia", value: "WV" },
+  { label: "Wisconsin", value: "WI" },
+  { label: "Wyoming", value: "WY" },
+];
+
 export default function RegisterForm({ onSubmit, loading }) {
   const initialForm = {
     name: "",
@@ -39,7 +92,7 @@ export default function RegisterForm({ onSubmit, loading }) {
 
   const onChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value, ...(name === "country" && {state: ""}) }));
   };
 
   const toggleChip = (key, value) => {
@@ -60,8 +113,10 @@ export default function RegisterForm({ onSubmit, loading }) {
   };
 
   return (
+    <>
     <form className="space-y-4" onSubmit={handleSubmit}>
-      <Input
+      <div className="grid grid-cols-2 gap-4" >
+      <Input className="col-span-1"
         label="Name"
         name="name"
         value={form.name}
@@ -71,7 +126,7 @@ export default function RegisterForm({ onSubmit, loading }) {
         autoComplete="name"
       />
 
-      <Input
+      <Input className="col-span-1"
         label="Email"
         name="email"
         value={form.email}
@@ -81,7 +136,7 @@ export default function RegisterForm({ onSubmit, loading }) {
         autoComplete="email"
       />
 
-      <Input
+      <Input className="col-span-1"
         label="Password"
         name="password"
         type="password"
@@ -92,7 +147,8 @@ export default function RegisterForm({ onSubmit, loading }) {
         autoComplete="new-password"
       />
 
-      <Input
+
+      <Input   className="col-span-1"
         label="Age"
         name="age"
         value={form.age}
@@ -102,7 +158,9 @@ export default function RegisterForm({ onSubmit, loading }) {
         inputMode="numeric"
       />
 
-      <RadioGroup
+      </div>
+
+      <RadioGroup 
         label="Gender"
         name="gender"
         value={form.gender}
@@ -111,7 +169,9 @@ export default function RegisterForm({ onSubmit, loading }) {
         required
       />
 
-      <SelectInput
+      
+
+      <SelectInput 
         label="Country"
         name="country"
         value={form.country}
@@ -121,16 +181,30 @@ export default function RegisterForm({ onSubmit, loading }) {
         required
       />
 
+      {form.country === "USA" && (
+      <SelectInput
+        label="State"
+        name="state"
+        value={form.state}
+        onChange={onChange}
+        options={US_STATES}
+        placeholder="Select a state"
+        required
+      />
+      )}
+
+      {form.country === "India" && (
       <Input
         label="State"
         name="state"
         value={form.state}
         onChange={onChange}
-        placeholder="Pennsylvania"
+        placeholder="Enter your state"
         required
       />
+      )}
 
-      <Input
+      <Input 
         label="City"
         name="city"
         value={form.city}
@@ -157,7 +231,7 @@ export default function RegisterForm({ onSubmit, loading }) {
       </div>
 
       <div className="space-y-2">
-        <div className="text-sm font-medium">Preferred Colors</div>
+        <div className="text-sm font-medium">Preferred Colors<div>
         <div className="flex flex-wrap gap-2">
           {COLOR_OPTIONS.map((c) => (
             <Chip
@@ -177,5 +251,6 @@ export default function RegisterForm({ onSubmit, loading }) {
         {loading ? "Creating account..." : "Create account"}
       </Button>
     </form>
+    </>
   );
 }
