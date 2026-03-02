@@ -25,15 +25,15 @@ export default function LoginPage() {
   const handleSubmit = (values) => loginMut.mutate(values);
 
   return (
-    <main className="p-6 max-w-md">
+    <main className="p-6">
       <div className="mb-2 text-xl font-semibold">Sign in</div>
       <div className="mb-6 text-sm opacity-70">
         Continue to your wardrobe dashboard.
       </div>
 
-      <LoginForm loading={loginMut.isPending} onSubmit={handleSubmit} />
+      <LoginForm loading={loginMut.isPending} onSubmit={handleSubmit} className="flex items-center justify-center"  />
 
-      <div className="mt-5 text-sm opacity-70">
+      <div className="mt-5 text-sm opacity-70 flex items-center justify-center">
         Don&apos;t have an account?{" "}
         <Link href="/register" className="underline">
           Register
