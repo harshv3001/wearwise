@@ -231,7 +231,7 @@ export default function RegisterForm({ onSubmit, loading }) {
       </div>
 
       <div className="space-y-2">
-        <div className="text-sm font-medium">Preferred Colors<div>
+        <div className="text-sm font-medium">Preferred Colors</div>
         <div className="flex flex-wrap gap-2">
           {COLOR_OPTIONS.map((c) => (
             <Chip
