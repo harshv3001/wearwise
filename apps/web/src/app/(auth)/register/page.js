@@ -47,9 +47,10 @@ export default function RegisterPage() {
 
   const loading = registerMut.isPending || loginMut.isPending;
 
-  return (
+ return (
     <main className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-2xl p-6 ring-1 ring-inset ring-zinc-300">
+      <div className="hidden md:flex w-1/2 bg-gray-100"></div>
+      <div className="w-full md:w-1/2 max-w-md rounded-2xl p-8 ring-1 ring-inset ring-zinc-300">
         <h1 className="text-xl font-semibold">Create account</h1>
         <p className="mt-1 text-sm opacity-70">
           Set up your profile and preferences.
