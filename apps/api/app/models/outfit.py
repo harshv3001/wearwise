@@ -1,13 +1,10 @@
-from sqlalchemy import Column, Integer
-from sqlalchemy.orm import relationship, Mapped
-from typing import Set
-
-outfits_closet_items = Table(
-    "outfits_closet_items",
-    Base.metadata,
-    Column("outfit_id", ForeignKey("outfits.id"), primary_key=True),
-    Column("closet_item_id", ForeignKey("closet_items.id"), primary_key=True)
+from sqlalchemy import (
+    Column, Integer, String, DateTime, Boolean,
+    ForeignKey, text, UniqueConstraint
 )
+from sqlalchemy.orm import relationship
+from app.database import Base
+
 
 class Outfit(Base):
     __tablename__ = "outfits"
@@ -23,10 +20,51 @@ class Outfit(Base):
 
     name = Column(String, nullable=False)
 
-    created_at = Column(
-        DateTime(timezone=True), server_default=text("now()"), nullable=False
-    )
+    
+    occasion = Column(String, nullable=True, index=True)
+    season = Column(String, nullable=True, index=True)
+    is_favorite = Column(Boolean, nullable=False, server_default=text("false"))
+    notes = Column(String, nullable=True)
+
+    created_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=text("now()"))
 
     user = relationship("User")
-    closet_items: Mapped[Set["ClosetItem"]] = relationship(secondary=outfits_closet_items)
+
+ 
+    outfit_items = relationship(
+        "OutfitItem",
+        back_populates="outfit",
+        cascade="all, delete-orphan",
+        order_by="OutfitItem.position",
+    )
+
+class OutfitItem(Base):
+    __tablename__ = "outfit_items"
+
+    outfit_id = Column(
+        Integer,
+        ForeignKey("outfits.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+
+    closet_item_id = Column(
+        Integer,
+        ForeignKey("closet_items.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+
+   
+    position = Column(Integer, nullable=False, server_default=text("0"))
+
+   
+    note = Column(String, nullable=True)
+
+    outfit = relationship("Outfit", back_populates="outfit_items")
+    closet_item = relationship("ClosetItem")
+
+    __table_args__ = (
+        UniqueConstraint("outfit_id", "closet_item_id", name="uq_outfit_item"),
+    )
+
+
