@@ -1,0 +1,214 @@
+@import "../../../styles/variables.scss";
+
+.header {
+  background: var(--ww-color-primary);
+  border-bottom: 1px solid var(--ww-color-black);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+    padding: 0 16px;
+    max-width: 100%;
+  }
+
+  /* LEFT AREA (hamburger + logo) */
+  .left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* HAMBURGER (hidden on desktop) */
+  .hamburger {
+    display: none;
+    border: 0;
+    background: transparent;
+    color: var(--ww-text-primary);
+    padding: 6px;
+    border-radius: 10px;
+    cursor: pointer;
+
+    &:hover {
+      font-weight: 600;
+    }
+
+    .icon {
+      font-size: 30px;
+      line-height: 1;
+    }
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--ww-text-primary);
+
+    .logoMark {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+
+      .icon {
+        font-size: 35px;
+        line-height: 1;
+      }
+    }
+
+    .brandName {
+      font-weight: 700;
+      margin-top: 5px;
+      font-size: 25px;
+    }
+  }
+
+  /* DESKTOP NAV */
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    .navLink {
+      text-decoration: none;
+      color: var(--ww-text-primary);
+      padding: 6px 10px;
+      border-radius: 10px;
+      transition: background 120ms ease, color 120ms ease;
+
+      &:hover {
+        font-weight: 600;
+        color: var(--ww-text-primary);
+      }
+    }
+
+    .active {
+      font-weight: 600;
+      color: var(--ww-text-primary);
+    }
+  }
+
+  .userBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    color: var(--ww-text-primary);
+    cursor: pointer;
+    transition: background 120ms ease, border-color 120ms ease;
+
+    &:hover {
+      font-weight: 600;
+    }
+
+    .userText {
+      font-weight: 600;
+    }
+  }
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25); /* transparent backdrop */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+  z-index: 900;
+}
+
+.backdropOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100dvh;
+  width: 280px;
+  background: var(--ww-bg-page);
+  border-right: 1px solid var(--ww-border-primary);
+  transform: translateX(-100%);
+  transition: transform 180ms ease;
+  z-index: 1100; /* above header */
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerOpen {
+  transform: translateX(0%);
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px;
+  border-bottom: 1px solid var(--ww-color-black);
+}
+
+.drawerTitle {
+  font-weight: 700;
+  color: var(--ww-text-primary);
+}
+
+.drawerClose {
+  border: 0;
+  background: transparent;
+  padding: 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--ww-text-primary);
+
+  &:hover {
+    font-weight: 600;
+  }
+
+  .icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+}
+
+.drawerBody {
+  padding: 12px;
+
+  /* nav becomes vertical in drawer */
+  .nav {
+    display: grid;
+    gap: 10px;
+
+    .navLink {
+      padding: 10px 12px;
+      border-radius: 12px;
+
+      background: var(--ww-gray-light);
+
+      &:hover {
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    .hamburger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav {
+      display: none; /* hide desktop nav */
+    }
+  }
+}
