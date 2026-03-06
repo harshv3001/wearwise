@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../../../lib/apiError";
 import { getClosetItemsApi } from "../../../features/closet/api/closetApi";
+import Button from "../../components/ui/Button";
 
 export default function DashboardPage() {
   const { data, isLoading, error } = useQuery({
@@ -31,6 +32,19 @@ export default function DashboardPage() {
             ))}
           </ul>
         ) : null}
+      </div>
+      <div className="mt-6 flex flex-col gap-4 items-center justify-center">
+        <Button variant="primary" size="xxl" className="font-bold">
+          Report outfit
+        </Button>
+        <Button variant="secondary" size="xl">
+          Add new clothing item
+        </Button>
+        <Button variant="tertiary">Go to Closet</Button>
+        <Button variant="default">Default</Button>
+        <Button variant="custom" size="lg">
+          Custom
+        </Button>
       </div>
     </main>
   );

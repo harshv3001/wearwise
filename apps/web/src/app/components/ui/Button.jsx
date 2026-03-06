@@ -1,25 +1,35 @@
 "use client";
 
+import styles from "../../../styles/ui/Button.module.scss";
+
 export default function Button({
   children,
   type = "button",
+  variant = "default",
+  size = "md",
   disabled = false,
   onClick,
+  fullWidth = false,
   className = "",
   ...rest
 }) {
+  const buttonClassName = [
+    "inline-flex items-center justify-center whitespace-nowrap transition duration-200",
+    fullWidth ? "w-full" : "w-fit",
+    styles.button,
+    variant !== "custom" ? styles[variant] : "",
+    styles[size] || "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <button
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={[
-        "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium",
-        "ring-1 ring-inset ring-zinc-300",
-        "hover:opacity-90 active:opacity-80",
-        "disabled:opacity-60 disabled:cursor-not-allowed",
-        className,
-      ].join(" ")}
+      className={buttonClassName}
       {...rest}
     >
       {children}

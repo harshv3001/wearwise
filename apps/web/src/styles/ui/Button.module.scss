@@ -1,0 +1,76 @@
+@import "../variables.scss";
+
+.button {
+  min-height: 44px;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  border-radius: 0.5rem;
+  padding: 0 2rem;
+  color: var(--ww-text-primary);
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.default {
+  background-color: var(--ww-color-white);
+  border: 1px solid var(--ww-gray-medium);
+
+  &:hover {
+    background-color: var(--ww-gray-light);
+  }
+}
+
+.primary {
+  background-color: var(--ww-button-primary-bg);
+
+  &:hover {
+    background-color: var(--ww-button-primary-hover-bg);
+  }
+}
+
+.secondary {
+  background-color: var(--ww-button-secondary-bg);
+
+  &:hover {
+    background-color: var(--ww-button-secondary-hover-bg);
+  }
+}
+
+.tertiary {
+  background-color: var(--ww-button-tertiary-bg);
+
+  &:hover {
+    background-color: var(--ww-button-tertiary-hover-bg);
+  }
+}
+
+// Size Variants
+
+.sm {
+  padding: 0 18px;
+  min-width: 120px;
+}
+
+.md {
+  padding: 0 24px;
+  min-width: 160px;
+}
+
+.lg {
+  padding: 0 32px;
+  min-width: 220px;
+}
+
+.xl {
+  padding: 0 40px;
+  min-width: 300px;
+}
+
+.xxl {
+  padding: 0 48px;
+  min-width: 400px;
+}
