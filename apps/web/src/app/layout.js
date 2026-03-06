@@ -1,11 +1,12 @@
-import "./globals.css";
-import Providers from "./providers";
+import "../styles/globals.scss";
+
+import QueryProvider from "./providers";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );

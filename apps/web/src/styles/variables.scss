@@ -1,0 +1,42 @@
+:root {
+    /* Primary brand (navbar pink) */
+    --primaryColor: #ff978c;
+    --lightPrimaryColor: #ffac97;
+
+    /* Soft highlight / beige */
+    --lightPurpleColor: #faead0;
+    /* (keeping your name, but using WearWise beige) */
+
+    /* Text + borders */
+    --primaryTextColor: #38353b;
+    --primaryborderColor: #d9d9d9;
+
+    --secondaryTextColor: #a68a8e;
+    --secondaryborderColor: #e2dfdf;
+
+    /* Base neutrals */
+    --whiteColor: #ffffff;
+    --darkColor: #000000;
+
+    /* Backgrounds / muted */
+    --textContentMuted: #a68a8e;
+    /* same as secondaryText */
+    --lightgrayColor: #f5f5f5;
+    --mediumGrayColor: #d9d9d9;
+
+    /* CTA (yellow buttons) */
+    --secondaryHeaderColor: #fcdb90;
+    /* you used this before; fits CTA button in WearWise */
+
+    /* Status colors (kept from your old set; you can change later) */
+    --successColor: #169a36;
+    --darkGreenColor: #147e2f;
+    --darkGreyColor: #5f6368;
+    --orangeColor: #eba123;
+    --dangerColor: #d11e3c;
+    --darkRedColor: #af1b33;
+
+    /* Extra (WearWise page background) */
+    --pageBgColor: #fff5f2;
+    /* new var just for page background */
+}

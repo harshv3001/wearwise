@@ -1,0 +1,180 @@
+@import "tailwindcss";
+@import "./variables.scss";
+
+/* ---------------- Reset ---------------- */
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-size: 16px;
+    background: var(--pageBgColor);
+    color: var(--primaryTextColor);
+}
+
+/* ---------------- Text Utilities ---------------- */
+.text {
+    &-primary {
+        color: var(--primaryTextColor) !important;
+    }
+
+    &-secondary {
+        color: var(--secondaryTextColor) !important;
+    }
+
+    &-content-muted {
+        color: var(--textContentMuted) !important;
+    }
+
+    &-success {
+        color: var(--successColor) !important;
+    }
+
+    &-danger {
+        color: var(--dangerColor) !important;
+    }
+
+    &-warning {
+        color: var(--orangeColor) !important;
+    }
+
+    &-dark {
+        color: var(--darkColor) !important;
+    }
+
+    &-white {
+        color: var(--whiteColor) !important;
+    }
+}
+
+/* ---------------- Background Utilities ---------------- */
+.bg {
+    &-primary {
+        background: var(--primaryColor) !important;
+        /* Navbar */
+    }
+
+    &-secondary {
+        background: var(--secondaryHeaderColor) !important;
+        /* Yellow CTA */
+    }
+
+    &-light {
+        background: var(--lightPrimaryColor) !important;
+    }
+
+    &-highlight {
+        background: var(--lightPurpleColor) !important;
+        /* Beige section */
+    }
+
+    &-surface {
+        background: var(--whiteColor) !important;
+    }
+
+    &-lightgray {
+        background: var(--lightgrayColor) !important;
+    }
+}
+
+/* ---------------- Borders ---------------- */
+.border {
+    &-primary {
+        border: 1px solid var(--primaryborderColor) !important;
+    }
+
+    &-secondary {
+        border: 1px solid var(--secondaryborderColor) !important;
+    }
+
+    &-bottom-primary {
+        border-bottom: 2px solid var(--primaryborderColor) !important;
+    }
+
+    &-radius {
+        &-10 {
+            border-radius: 10px !important;
+        }
+
+        &-16 {
+            border-radius: 16px !important;
+        }
+    }
+}
+
+/* ---------------- Forms ---------------- */
+.form {
+    &-control {
+        border-radius: 10px;
+        min-height: 44px;
+        padding: 10px 12px;
+        border: 1px solid var(--primaryborderColor);
+        background: var(--whiteColor);
+        color: var(--primaryTextColor);
+        outline: none;
+
+        &::placeholder {
+            color: var(--textContentMuted);
+        }
+
+        &:focus {
+            border-color: var(--primaryColor);
+            box-shadow: 0 0 0 3px rgba(255, 151, 140, 0.25);
+        }
+    }
+}
+
+/* ---------------- Buttons ---------------- */
+.btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    opacity: 1;
+
+    &-primary {
+        background: var(--primaryColor);
+        color: var(--whiteColor);
+    }
+
+    &-secondary {
+        background: var(--secondaryHeaderColor);
+        color: var(--darkColor);
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+        opacity: 0.9;
+        box-shadow: none;
+    }
+
+    &:disabled {
+        background: var(--darkGreyColor) !important;
+        color: var(--whiteColor);
+        cursor: not-allowed;
+    }
+}
+
+/* ---------------- Scrollbar ---------------- */
+::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--primaryColor);
+}
+
+::-webkit-scrollbar-track {
+    background-color: #fafafa;
+}

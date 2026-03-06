@@ -28,6 +28,7 @@ yarn-error.log*
 __pycache__/
 *.py[cod]
 *.pyo
+*.pyc
 *.pyd
 *.sqlite3
 *.log
