@@ -15,34 +15,34 @@ export default function LoginForm({ onSubmit, loading }) {
 
   return (
     <>
-    <div className="grid items-center justify-center">
-    <form className="space-y-10" onSubmit={handleSubmit}>
-      <Input
-        label="Email"
-        name="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="you@email.com"
-        required
-        autoComplete="email"
-      />
+      <div className="w-full grid items-center mx-auto">
+        <form className="space-y-6 text-lg" onSubmit={handleSubmit}>
+          <Input
+            label="Email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@email.com"
+            required
+            autoComplete="email"
+          />
 
-      <Input
-        label="Password"
-        name="password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="••••••••"
-        required
-        autoComplete="current-password"
-      />
+          <Input
+            label="Password"
+            name="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            autoComplete="current-password"
+          />
 
-      <Button className="w-full" disabled={loading} type="submit">
-        {loading ? "Signing in..." : "Sign in"}
-      </Button>
-    </form>
-    </div>
+          <Button className="w-full" disabled={loading} type="submit">
+            {loading ? "Signing in..." : "Sign in"}
+          </Button>
+        </form>
+      </div>
     </>
   );
 }
