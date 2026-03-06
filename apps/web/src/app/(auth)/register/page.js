@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import AuthLayout from "../AuthLayout";
 import { useMutation } from "@tanstack/react-query";
 import RegisterForm from "../../../features/auth/component/RegisterForm";
 import { registerApi, loginApi } from "../../../features/auth/api/authApi";
@@ -47,10 +48,9 @@ export default function RegisterPage() {
 
   const loading = registerMut.isPending || loginMut.isPending;
 
- return (
-    <main className="min-h-screen flex items-center justify-center px-4">
-      <div className="hidden md:flex w-1/2 bg-gray-100"></div>
-      <div className="w-full md:w-1/2 max-w-md rounded-2xl p-8 ring-1 ring-inset ring-zinc-300">
+  return (
+    <AuthLayout>
+      <div className="max-w-md rounded-2xl ring-1 ring-inset ring-zinc-300">
         <h1 className="text-xl font-semibold">Create account</h1>
         <p className="mt-1 text-sm opacity-70">
           Set up your profile and preferences.
@@ -67,6 +67,6 @@ export default function RegisterPage() {
           </Link>
         </p>
       </div>
-    </main>
+    </AuthLayout>
   );
 }
