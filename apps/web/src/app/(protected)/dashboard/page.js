@@ -1,40 +1,20 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { clearToken } from "../../../lib/auth";
+import { useQuery } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../../../lib/apiError";
 import { getClosetItemsApi } from "../../../features/closet/api/closetApi";
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
   const { data, isLoading, error } = useQuery({
     queryKey: ["closet-items"],
     queryFn: getClosetItemsApi,
   });
-
-  const handleLogout = () => {
-    clearToken(); // remove token from session storage
-    queryClient.clear(); // clear cached private data
-    router.replace("/login"); // go to login
-  };
 
   return (
     <main className="p-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">Dashboard</h1>
-        </div>
-        <div>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="rounded-lg px-4 py-2 text-sm font-medium ring-1 ring-inset ring-zinc-300"
-          >
-            Logout
-          </button>
         </div>
       </div>
 

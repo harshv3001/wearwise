@@ -52,7 +52,7 @@ export default function Header() {
 
           <div className="flex items-center gap-4">
             <HeaderNav />
-            <HeaderUser />
+            <HeaderUser href="/profile" />
           </div>
         </div>
       </header>
