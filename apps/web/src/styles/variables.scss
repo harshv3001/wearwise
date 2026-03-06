@@ -1,42 +1,61 @@
 :root {
-    /* Primary brand (navbar pink) */
-    --primaryColor: #ff978c;
-    --lightPrimaryColor: #ffac97;
+  /* ===============================
+     Brand Colors
+  =============================== */
 
-    /* Soft highlight / beige */
-    --lightPurpleColor: #faead0;
-    /* (keeping your name, but using WearWise beige) */
+  --ww-color-primary: #ff978c;
+  --ww-color-primary-light: #ffac97;
 
-    /* Text + borders */
-    --primaryTextColor: #38353b;
-    --primaryborderColor: #d9d9d9;
+  /* Soft highlight / beige */
+  --ww-color-beige: #faead0;
 
-    --secondaryTextColor: #a68a8e;
-    --secondaryborderColor: #e2dfdf;
+  /* ===============================
+     Text
+  =============================== */
 
-    /* Base neutrals */
-    --whiteColor: #ffffff;
-    --darkColor: #000000;
+  --ww-text-primary: #38353b;
+  --ww-text-secondary: #a68a8e;
+  --ww-text-muted: #a68a8e;
 
-    /* Backgrounds / muted */
-    --textContentMuted: #a68a8e;
-    /* same as secondaryText */
-    --lightgrayColor: #f5f5f5;
-    --mediumGrayColor: #d9d9d9;
+  /* ===============================
+     Borders
+  =============================== */
 
-    /* CTA (yellow buttons) */
-    --secondaryHeaderColor: #fcdb90;
-    /* you used this before; fits CTA button in WearWise */
+  --ww-border-primary: #d9d9d9;
+  --ww-border-secondary: #e2dfdf;
 
-    /* Status colors (kept from your old set; you can change later) */
-    --successColor: #169a36;
-    --darkGreenColor: #147e2f;
-    --darkGreyColor: #5f6368;
-    --orangeColor: #eba123;
-    --dangerColor: #d11e3c;
-    --darkRedColor: #af1b33;
+  /* ===============================
+     Neutral Colors
+  =============================== */
 
-    /* Extra (WearWise page background) */
-    --pageBgColor: #fff5f2;
-    /* new var just for page background */
+  --ww-color-white: #ffffff;
+  --ww-color-black: #000000;
+
+  --ww-gray-light: #f5f5f5;
+  --ww-gray-medium: #d9d9d9;
+  --ww-gray-dark: #5f6368;
+
+  /* ===============================
+     CTA / Accent
+  =============================== */
+
+  --ww-color-accent: #fcdb90;
+
+  /* ===============================
+     Status
+  =============================== */
+
+  --ww-success: #169a36;
+  --ww-success-dark: #147e2f;
+
+  --ww-warning: #eba123;
+
+  --ww-danger: #d11e3c;
+  --ww-danger-dark: #af1b33;
+
+  /* ===============================
+     Backgrounds
+  =============================== */
+
+  --ww-bg-page: #fff5f2;
 }

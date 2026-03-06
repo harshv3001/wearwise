@@ -16,16 +16,16 @@ export default function DashboardPage() {
   });
 
   const handleLogout = () => {
-    clearToken();                  // remove token from session storage
-    queryClient.clear();           // clear cached private data
-    router.replace("/login");      // go to login
+    clearToken(); // remove token from session storage
+    queryClient.clear(); // clear cached private data
+    router.replace("/login"); // go to login
   };
 
   return (
     <main className="p-6">
       <div className="flex items-center justify-between">
         <div>
-        <h1 className="text-xl font-semibold">Dashboard</h1>
+          <h1 className="text-xl font-semibold">Dashboard</h1>
         </div>
         <div>
           <button
