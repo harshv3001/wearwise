@@ -33,7 +33,13 @@ export default function LoginPage() {
           Continue to your wardrobe dashboard.
         </div>
 
-        <div className="w-full mt-6">loading={loginMut.isPending}</div>
+        <div className="w-full mt-6">
+          <LoginForm
+            loading={loginMut.isPending}
+            onSubmit={handleSubmit}
+            className="w-full"
+          />
+        </div>
 
         <div className="mt-8 text-sm opacity-70 flex items-center justify-center">
           Don&apos;t have an account?{" "}
