@@ -1,22 +1,50 @@
 "use client";
 
+import YesNoSwitch from "../../../app/components/ui/YesNoSwitch";
 import styles from "./ReportOutfitModal.module.scss";
+import { useEffect } from "react";
+
+function FormRow({ label, children }) {
+  return (
+    <div className={"w-[220px] flex items-center gap-4"}>
+      <label className={styles.sectionLabel}>{label}</label>
+      {children}
+    </div>
+  );
+}
 
 export default function ReportOutfitStepDate({
   selectedDate,
   setSelectedDate,
+  today,
+  setToday,
 }) {
+  useEffect(() => {
+    if (today) {
+      const todayDate = new Date().toISOString().split("T")[0];
+      setSelectedDate(todayDate);
+    }
+  }, [today]);
+
   return (
-    <div className="mx-auto flex max-w-[240px] flex-col gap-6">
-      <div>
-        <label className={styles.sectionLabel}>Date</label>
-        <input
-          type="date"
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-          className={styles.input}
+    <div className="flex flex-col items-center gap-6">
+      <FormRow label="Today?">
+        <YesNoSwitch
+          checked={today}
+          onChange={(e) => setToday(e.target.checked)}
         />
-      </div>
+      </FormRow>
+
+      {!today && (
+        <FormRow label="Date:">
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className={styles.input}
+          />
+        </FormRow>
+      )}
     </div>
   );
 }

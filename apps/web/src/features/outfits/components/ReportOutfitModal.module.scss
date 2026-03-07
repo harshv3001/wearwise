@@ -37,25 +37,6 @@
 .content {
   margin-top: 28px;
   margin-bottom: 28px;
-  min-height: 320px;
-}
-
-.navButton {
-  min-width: 78px;
-  height: 30px;
-  padding: 0 18px;
-  border: none;
-  border-radius: 8px;
-  background: #c8c8c8;
-  font-size: 13px;
-  line-height: 18px;
-  color: #ffffff;
-  cursor: pointer;
-}
-
-.navButton:disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
 }
 
 .submitButton {
@@ -69,6 +50,15 @@
   line-height: 18px;
   color: #ffffff;
   cursor: pointer;
+  transition: opacity 160ms ease, transform 160ms ease;
+
+  &:hover {
+    opacity: 0.92;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .sectionLabel {
@@ -89,10 +79,16 @@
   font-size: 14px;
   line-height: 20px;
   color: #1f1f1f;
-}
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 
-.input::placeholder {
-  color: #b8b8b8;
+  &::placeholder {
+    color: #b8b8b8;
+  }
+
+  &:focus {
+    border-color: #bcbcbc;
+  }
 }
 
 .optionButton {
@@ -107,6 +103,16 @@
   color: #333333;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: background 160ms ease, transform 160ms ease,
+    border-color 160ms ease;
+
+  &:hover {
+    background: #ececec;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .optionButtonActive {
@@ -144,6 +150,18 @@
 .outfitItemCard {
   width: 86px;
   cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  transition: transform 160ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .outfitItemBox {

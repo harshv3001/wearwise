@@ -10,18 +10,21 @@ import { outfitOptionsData } from "../../../lib/static-data";
 import Button from "../../../app/components/ui/Button";
 
 const initialFormData = {
-  firstName: "",
-  country: "",
-  lastName: "",
-  city: "",
+  name: "",
+  occasion: "",
+  season: "",
+  notes: "",
+  isFavorite: false,
 };
 
 export default function ReportOutfitModal({ open, onClose }) {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
+  const [today, setToday] = useState(true);
   const [selectedSource, setSelectedSource] = useState("closet");
   const [selectedOutfitId, setSelectedOutfitId] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
+  const [errors, setErrors] = useState({ name: false });
 
   const isStepOneValid = !!selectedDate;
   const isStepTwoValid = !!selectedSource && !!selectedOutfitId;
@@ -36,6 +39,7 @@ export default function ReportOutfitModal({ open, onClose }) {
     return list.find((item) => item.id === selectedOutfitId) || null;
   }, [selectedSource, selectedOutfitId]);
 
+  console.log("formData:", formData);
   const handleClose = () => {
     setStep(1);
     setSelectedDate("");
@@ -60,16 +64,21 @@ export default function ReportOutfitModal({ open, onClose }) {
   };
 
   const handleSubmit = () => {
-    const payload = {
-      date: selectedDate,
-      source: selectedSource,
-      outfitId: selectedOutfitId,
-      outfit: selectedOutfit,
-      formData,
-    };
+    if (formData.name.trim() === "") {
+      setErrors({ name: true });
+      return;
+    } else {
+      const payload = {
+        date: selectedDate,
+        source: selectedSource,
+        outfitId: selectedOutfitId,
+        outfit: selectedOutfit,
+        formData,
+      };
 
-    console.log("Report outfit payload:", payload);
-    handleClose();
+      console.log("Report outfit payload:", payload);
+      handleClose();
+    }
   };
 
   const handleFormChange = (field, value) => {
@@ -104,6 +113,8 @@ export default function ReportOutfitModal({ open, onClose }) {
             <ReportOutfitStepDate
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
+              today={today}
+              setToday={setToday}
             />
           )}
 
@@ -121,6 +132,7 @@ export default function ReportOutfitModal({ open, onClose }) {
             <ReportOutfitStepDetails
               formData={formData}
               onChange={handleFormChange}
+              errors={errors}
             />
           )}
         </div>
@@ -128,12 +140,7 @@ export default function ReportOutfitModal({ open, onClose }) {
         <div className="flex items-center justify-between">
           <div>
             {step > 1 ? (
-              <Button
-                onClick={handlePrev}
-                // className={styles.navButton}
-                variant="tertiary"
-                size="sm"
-              >
+              <Button onClick={handlePrev} variant="tertiary" size="sm">
                 Prev
               </Button>
             ) : (
@@ -148,17 +155,11 @@ export default function ReportOutfitModal({ open, onClose }) {
                 disabled={isNextDisabled}
                 variant="tertiary"
                 size="sm"
-                // className={styles.navButton}
               >
                 Next
               </Button>
             ) : (
-              <Button
-                onClick={handleSubmit}
-                variant="primary"
-                size="sm"
-                // className={styles.submitButton}
-              >
+              <Button onClick={handleSubmit} variant="primary" size="sm">
                 Report Outfit
               </Button>
             )}

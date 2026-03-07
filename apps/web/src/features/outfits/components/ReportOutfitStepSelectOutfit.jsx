@@ -25,10 +25,7 @@ export default function ReportOutfitStepSelectOutfit({
         <Button
           type="button"
           onClick={() => setSelectedSource("closet")}
-          // className={`${styles.optionButton} ${
-          //   selectedSource === "closet" ? styles.optionButtonActive : ""
-          // }`}
-          variant="secondary"
+          variant="primary"
           size="lg"
         >
           From your closet
@@ -37,10 +34,7 @@ export default function ReportOutfitStepSelectOutfit({
         <Button
           type="button"
           onClick={() => setSelectedSource("saved")}
-          // className={`${styles.optionButton} ${
-          //   selectedSource === "saved" ? styles.optionButtonActive : ""
-          // }`}
-          variant="secondary"
+          variant="primary"
           size="lg"
         >
           From saved outfits
@@ -49,10 +43,7 @@ export default function ReportOutfitStepSelectOutfit({
         <Button
           type="button"
           onClick={() => setSelectedSource("ai")}
-          // className={`${styles.optionButton} ${
-          //   selectedSource === "ai" ? styles.optionButtonActive : ""
-          // }`}
-          variant="secondary"
+          variant="primary"
           size="lg"
         >
           AI generator outfits

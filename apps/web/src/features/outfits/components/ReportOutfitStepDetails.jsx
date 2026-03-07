@@ -1,56 +1,50 @@
 "use client";
 
-import styles from "./ReportOutfitModal.module.scss";
+import Input from "../../../app/components/ui/Input/Input";
+import SelectInput from "../../../app/components/ui/SelectInput/SelectInput";
 
-export default function ReportOutfitStepDetails({ formData, onChange }) {
+export default function ReportOutfitStepDetails({
+  formData,
+  onChange,
+  errors,
+}) {
   return (
     <div className="grid grid-cols-2 gap-x-16 gap-y-8">
-      <div>
-        <label className={styles.fieldLabel}>First Name*</label>
-        <input
-          type="text"
-          value={formData.firstName}
-          onChange={(e) => onChange("firstName", e.target.value)}
-          placeholder="Enter your first name"
-          className={styles.input}
-        />
-      </div>
-
-      <div>
-        <label className={styles.fieldLabel}>Country</label>
-        <select
-          value={formData.country}
-          onChange={(e) => onChange("country", e.target.value)}
-          className={styles.input}
-        >
-          <option value="">Select your country</option>
-          <option value="usa">USA</option>
-          <option value="india">India</option>
-          <option value="canada">Canada</option>
-        </select>
-      </div>
-
-      <div>
-        <label className={styles.fieldLabel}>Last Name*</label>
-        <input
-          type="text"
-          value={formData.lastName}
-          onChange={(e) => onChange("lastName", e.target.value)}
-          placeholder="Enter your last name"
-          className={styles.input}
-        />
-      </div>
-
-      <div>
-        <label className={styles.fieldLabel}>City</label>
-        <input
-          type="text"
-          value={formData.city}
-          onChange={(e) => onChange("city", e.target.value)}
-          placeholder="Enter your city"
-          className={styles.input}
-        />
-      </div>
+      <Input
+        type="text"
+        label="Outfit Name"
+        value={formData.name}
+        onChange={(e) => onChange("name", e.target.value)}
+        placeholder="Enter outfit name"
+        required={true}
+        error={errors.name}
+      />
+      <SelectInput
+        label="Season"
+        value={formData.season}
+        onChange={(e) => onChange("season", e.target.value)}
+        options={[
+          { value: "spring", label: "Spring" },
+          { value: "summer", label: "Summer" },
+          { value: "fall", label: "Fall" },
+          { value: "winter", label: "Winter" },
+        ]}
+        placeholder="Select season"
+      />
+      <Input
+        type="text"
+        label="Occasion"
+        value={formData.occasion}
+        onChange={(e) => onChange("occasion", e.target.value)}
+        placeholder="Enter occasion (e.g. casual, formal)"
+      />
+      <Input
+        type="textarea"
+        label="Notes"
+        value={formData.notes}
+        onChange={(e) => onChange("notes", e.target.value)}
+        placeholder="Additional notes about the outfit"
+      />
     </div>
   );
 }
