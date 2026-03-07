@@ -2,29 +2,20 @@
 
 import styles from "./Header.module.scss";
 import HeaderNav from "./HeaderNav";
+import Backdrop from "../ui/Backdrop/Backdrop";
 
 export default function MobileSidebar({ open, onClose }) {
   return (
     <>
-      <div
-        className={`${styles.backdrop} ${open ? styles.backdropOpen : ""}`}
-        onClick={onClose}
-        aria-hidden={!open}
-      />
+      <Backdrop open={open} onClick={onClose} />
 
-      <aside
-        className={`${styles.drawer} ${open ? styles.drawerOpen : ""}`}
-        aria-hidden={!open}
-        role="dialog"
-        aria-label="Navigation menu"
-      >
+      <aside className={`${styles.drawer} ${open ? styles.drawerOpen : ""}`}>
         <div className={styles.drawerHeader}>
           <div className={styles.drawerTitle}>Menu</div>
           <button
             type="button"
             className={styles.drawerClose}
             onClick={onClose}
-            aria-label="Close menu"
           >
             <span className={`material-symbols-outlined ${styles.icon}`}>
               close
