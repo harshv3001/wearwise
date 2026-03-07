@@ -1,0 +1,28 @@
+.CategorySummaryCard {
+  max-width: 350px;
+
+  .header {
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .row {
+    margin-bottom: 10px;
+  }
+
+  .name {
+    font-size: 18px;
+    line-height: 1.2;
+    color: var(--ww-text-primary);
+  }
+
+  .qty {
+    font-size: 18px;
+    line-height: 1.2;
+    color: var(--ww-text-primary);
+  }
+
+  .buttonWrap {
+    margin-top: 40px;
+  }
+}

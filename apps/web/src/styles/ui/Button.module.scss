@@ -1,5 +1,3 @@
-@import "../variables.scss";
-
 .button {
   min-height: 44px;
   border: none;
@@ -7,6 +5,7 @@
   border-radius: 0.5rem;
   padding: 0 2rem;
   color: var(--ww-text-primary);
+  cursor: pointer;
 
   &:disabled {
     opacity: 0.6;

@@ -3,7 +3,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../../../lib/apiError";
 import { getClosetItemsApi } from "../../../features/closet/api/closetApi";
+import { categorySummaryData } from "../../../lib/static-data";
 import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card/Card";
+import CategorySummaryCard from "../../../features/category-summary/component/CategorySummaryCard";
 
 export default function DashboardPage() {
   const { data, isLoading, error } = useQuery({
@@ -13,30 +16,17 @@ export default function DashboardPage() {
 
   return (
     <main className="p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">Dashboard</h1>
-        </div>
-      </div>
-
-      <div className="mt-4">
-        {isLoading ? <p>Loading...</p> : null}
-        {error ? <p>{getApiErrorMessage(error, "Failed to load")}</p> : null}
-
-        {!isLoading && !error ? (
-          <ul className="mt-3 space-y-2">
-            {(data || []).map((item) => (
-              <li key={item.id} className="rounded-lg ring-1 ring-zinc-300 p-3">
-                {item.name || item.title || JSON.stringify(item)}
-              </li>
-            ))}
-          </ul>
-        ) : null}
-      </div>
-      <div className="mt-6 flex flex-col gap-4 items-center justify-center">
+      <div className="m-2 flex flex-col gap-4 items-center justify-center">
         <Button variant="primary" size="xxl" className="font-bold">
           Report outfit
         </Button>
+      </div>
+      <section className="flex flex-wrap gap-4 justify-center">
+        <CategorySummaryCard items={categorySummaryData} />
+        <CategorySummaryCard items={categorySummaryData} />
+        <CategorySummaryCard items={categorySummaryData} />
+      </section>
+      <div className="m-2 flex flex-col gap-4 items-center justify-center">
         <Button variant="secondary" size="xl">
           Add new clothing item
         </Button>
