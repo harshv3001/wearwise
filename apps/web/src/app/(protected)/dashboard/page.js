@@ -9,12 +9,21 @@ import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card/Card";
 import CategorySummaryCard from "../../../features/category-summary/component/CategorySummaryCard";
 import ReportOutfitModal from "../../../features/outfits/components/ReportOutfitModal";
+import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
 
 export default function DashboardPage() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["closet-items"],
-    queryFn: getClosetItemsApi,
-  });
+  const [category, setCategory] = useState("");
+
+  const { data: closetItems, isLoading, error } = useClosetItemsQuery(category);
+
+  console.log(
+    "closetItems",
+    closetItems,
+    "isLoading",
+    isLoading,
+    "error",
+    error
+  );
 
   const [openReportModal, setOpenReportModal] = useState(false);
 

@@ -26,7 +26,7 @@ export default function ReportOutfitStepSelectOutfit({
           type="button"
           onClick={() => setSelectedSource("closet")}
           variant="primary"
-          size="lg"
+          size="md"
         >
           From your closet
         </Button>
@@ -35,7 +35,7 @@ export default function ReportOutfitStepSelectOutfit({
           type="button"
           onClick={() => setSelectedSource("saved")}
           variant="primary"
-          size="lg"
+          size="md"
         >
           From saved outfits
         </Button>
@@ -44,16 +44,16 @@ export default function ReportOutfitStepSelectOutfit({
           type="button"
           onClick={() => setSelectedSource("ai")}
           variant="primary"
-          size="lg"
+          size="md"
         >
           AI generator outfits
         </Button>
       </div>
 
-      <div className={styles.selectionBox}>
-        <div className="flex gap-8">
-          <div className={styles.previewCard}>
-            <div className={styles.previewImage} />
+      <div className={styles.outfitsContainer}>
+        <div className="flex gap-x-16">
+          <div className={styles.outfitPreviewCard}>
+            <div className={styles.outfitPreviewImage} />
           </div>
 
           <div className={styles.itemsWrap}>
@@ -82,23 +82,11 @@ export default function ReportOutfitStepSelectOutfit({
               <button type="button">{">"}</button>
             </div>
 
-            {selectedOutfit ? (
-              <ul className={styles.detailList}>
-                <li className={styles.detailText}>
-                  Occasion: {selectedOutfit.occasion}
-                </li>
-                <li className={styles.detailText}>
-                  Season: {selectedOutfit.season}
-                </li>
-                <li className={styles.detailText}>
-                  Last time wore: {selectedOutfit.lastWorn}
-                </li>
-              </ul>
-            ) : (
-              <div className="mt-6 text-sm text-gray-500">
-                Select one outfit to continue
-              </div>
-            )}
+            <ul className={styles.detailList}>
+              <li className={styles.detailText}>Occasion: Casual</li>
+              <li className={styles.detailText}>Season: fall</li>
+              <li className={styles.detailText}>Last time wore: 02/08/2026</li>
+            </ul>
           </div>
         </div>
       </div>
