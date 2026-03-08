@@ -48,6 +48,7 @@ export default function RegisterForm({ onSubmit, loading }) {
     fetchCountries();
   }, []);
 
+  /*
   useEffect(() => {
     async function fetchStates() {
       try {
@@ -79,6 +80,7 @@ export default function RegisterForm({ onSubmit, loading }) {
 
     fetchStates();
   }, []);
+  */
 
   const initialForm = {
     name: "",
@@ -190,26 +192,14 @@ export default function RegisterForm({ onSubmit, loading }) {
           required
         />
 
-        {form.country === "United States" ? (
-          <SelectInput
-            label="State"
-            name="state"
-            value={form.state}
-            onChange={onChange}
-            options={usStates}
-            placeholder="Select a state"
-            required
-          />
-        ) : (
-          <Input
-            label="State"
-            name="state"
-            value={form.state}
-            onChange={onChange}
-            placeholder="Enter your state/province"
-            required
-          />
-        )}
+        <Input
+          label="State"
+          name="state"
+          value={form.state}
+          onChange={onChange}
+          placeholder="Enter your state/province"
+          required
+        />
 
         <Input
           label="City"

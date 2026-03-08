@@ -27,7 +27,7 @@ export default function LoginPage() {
 
   return (
     <AuthLayout>
-      <div className="w-full md:w-1/2 flex flex-col items-center p-16">
+      <div className="w-full flex flex-col items-center p-16">
         <div className="mb-4 text-3xl font-semibold">Sign in</div>
         <div className="mb-4 text-sm opacity-70">
           Continue to your wardrobe dashboard.
