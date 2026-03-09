@@ -134,7 +134,7 @@ export default function RegisterForm({ onSubmit, loading }) {
             name="name"
             value={form.name}
             onChange={onChange}
-            placeholder="Your name"
+            placeholder="Enter your name"
             required
             autoComplete="name"
           />
@@ -158,7 +158,7 @@ export default function RegisterForm({ onSubmit, loading }) {
               type={showPassword ? "text" : "password"}
               value={form.password}
               onChange={onChange}
-              placeholder="••••••••"
+              placeholder="Enter your password"
               required
               autoComplete="new-password"
             />
@@ -192,7 +192,7 @@ export default function RegisterForm({ onSubmit, loading }) {
                 onChange(e); // only update if value is >= 0
               }
             }}
-            placeholder="26"
+            placeholder="Enter your age"
             required
             inputMode="numeric"
           />
