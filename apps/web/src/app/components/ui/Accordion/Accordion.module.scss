@@ -1,0 +1,24 @@
+div.accordion_container {
+  display: block;
+  /* background-color: yellow; */
+  width: fit-content;
+  margin-bottom: 24px;
+  .header {
+    display: flex;
+
+    background-color: red;
+    height: 42px;
+    height: fit-content;
+  }
+  .main {
+    /* background-color: green; */
+    overflow: hidden;
+    height: 0px;
+    width: fit-content;
+    transition: height 0.2s ease-in-out;
+    &_open {
+      /* background-color: blue; */
+      height: 200px;
+    }
+  }
+}

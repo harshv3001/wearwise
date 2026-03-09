@@ -10,7 +10,12 @@ import './CarouselCardVisibility.scss';
 // PROPS should have a data member with an array of closetitems. e.g. {
 //      data: [ {ClosetItem}, {ClosetItem} ]
 // }
-export default function Carousel({ closetItems, categoryName, removalCallback, parentSetSelectedCallback }) {
+export default function Carousel({ 
+    closetItems, 
+    categoryName, 
+    removalCallback, parentSetSelectedCallback, 
+    disableRemoval, hideTitle
+}) {
     const TRY_DISPLAY_FIVE = false;
     const [selectedSnap, setSelectedSnap] = useState(0)
 
@@ -50,18 +55,24 @@ export default function Carousel({ closetItems, categoryName, removalCallback, p
         return innerClassName;
     };
 
-    
     return (
         <div className="carousel">
 
             <div className={styles.carousel_header}>
-                <h4>{categoryName}</h4>
-                
-                <button onClick={remove}>
-                    <span className="material-symbols-outlined" aria-hidden="true">
-                        remove
-                    </span>
-                </button>
+                {
+                    !hideTitle ? (
+                        <h4>{categoryName}</h4>
+                    ) : (<></>)
+                }
+                {
+                    !disableRemoval ? (
+                        <button onClick={remove}>
+                            <span className="material-symbols-outlined" aria-hidden="true">
+                                remove
+                            </span>
+                        </button>
+                    ) : (<></>)
+                }
             </div>
 
             <div className={styles.embla__viewport} ref={emblaRef}>
