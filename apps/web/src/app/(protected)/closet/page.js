@@ -1,66 +1,73 @@
 "use client";
-
-import { useCreateClosetItemMutation } from "@/features/closet/hooks/useCreateClosetItemMutation";
-import { useUpdateClosetItemMutation } from "@/features/closet/hooks/useUpdateClosetItemMutation";
+import { useEffect, useState } from 'react';
+import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
+import Carousel from "../../../features/carousel/component/Carousel.jsx";
 import Button from "../../components/ui/Button";
+import Accordion from "../../components/ui/Accordion/Accordion.jsx";
 
 export default function ClosetPage() {
-  const createClosetItemMutation = useCreateClosetItemMutation();
-  const updateClosetItemMutation = useUpdateClosetItemMutation();
+    const [categories, setCategories] = useState({});
+    const { data: allClosetItems } = useClosetItemsQuery();
 
-  const handleCreate = async () => {
-    try {
-      const result = await createClosetItemMutation.mutateAsync({
-        name: "stylish jacket",
-        category: "jacket",
-        color: "white",
-        season: "summer",
-        brand: "nike",
-        price: 50,
-        notes: "best jacket",
-        store: "nike store",
-        date_acquired: "2026-03-07",
-      });
+    useEffect(() => {
+        let ignore = false;
+        if (allClosetItems) {
+            const closetData = {};
+            allClosetItems.forEach(ci => {
+                if (!closetData.hasOwnProperty(ci.category)) {
+                    closetData[ci.category] = [ci];
+                } else {
+                    closetData[ci.category].push(ci);
+                }
+            });
+            setCategories(closetData);
+        }
+            
+        return () => { ignore = true; }
+    }, [allClosetItems]);
 
-      console.log("created:", result);
-    } catch (error) {
-      console.error("create failed:", error);
-    }
-  };
 
-  const handleUpdate = async (id) => {
-    try {
-      const result = await updateClosetItemMutation.mutateAsync({
-        itemId: id,
-        payload: {
-          name: "my t-shirt changed",
-          category: "t-shirt",
-          color: "yellow",
-          season: "all",
-          brand: "nike",
-          price: 150,
-          notes: "notes",
-          store: "nike",
-          date_acquired: "2026-02-27",
-          times_worn: 0,
-        },
-      });
 
-      console.log("updated result", result);
-    } catch (error) {
-      console.log("updated failed", error);
-    }
-  };
+    // currently not needed for this page
+    // const parentSetSelectedCallback = closetItemId => {console.log(closetItemId)}
+    // const removeCategory = categoryName => {
+    //     const newObj = {};
+    //     for (let key in categories) {
+    //         if (key != categoryName) {
+    //             newObj[key] = categories[key];
+    //         }
+    //     }
+    //     setCategories(newObj);
+    // };
+
+    // closing an accordion does not trigger unloading data from this app's state; should not trigger re-rendering in this app
   return (
     <main className="px-2">
       <h1>My Closet</h1>
-      <div className="flex gap-6">
-        <Button onClick={handleCreate} variant="secondary">
-          Create an outfit
-        </Button>
-        <Button onClick={() => handleUpdate(1)} variant="secondary">
-          Update an outfit (id:1)
-        </Button>
+      <div className="xl:flex lg:col-3 md:col-1 break-after-column lg:w-[90vw] w-fit mt-0 m-auto gap-x-4">
+      {
+          allClosetItems ? (
+            Object.keys(categories).map((categoryName, i) => {
+                
+                const props = { 
+                  categoryName,
+                  closetItems: categories[categoryName],
+                  parentSetSelectedCallback: () => {},
+                  removalCallback: () => {}
+                };
+
+                return (
+                    <Accordion title={categoryName} startOpened={i == 0} key={i}>
+                      <Carousel disableRemoval hideTitle
+                        key={i} 
+                        {...props}
+                      />
+                    </Accordion>
+                );
+
+            })
+          ) : (<></>)
+      }
       </div>
     </main>
   );
