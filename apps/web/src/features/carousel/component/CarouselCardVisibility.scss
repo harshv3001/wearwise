@@ -1,22 +1,40 @@
 .carousel {
+  margin: 12px;
   width: 380px;
   box-sizing: border-box;
+
+  button {
+    border-radius: 50%;
+    transition: background-color 0.15s ease-in color 0.2s ease-in;
+    color: #888282;
+    span {
+      position: relative;
+      top: 2px;
+    }
+    &:hover {
+      background-color: #EEE0F0;
+      color: #333030;
+      cursor: pointer;
+    }
+  } 
 }
 
 .carousel div.is-in-view {
   opacity: 25%;
+  z-index: 1;
 
   & > a.view-left {
-    transform: perspective(500px) translate3d(50%,0,-60px);
+    transform: perspective(500px) translate3d(60%,0,-60px);
   }
 
   & > a.view-right {
-    transform: perspective(500px) translate3d(-50%,0,-60px);
+    transform: perspective(500px) translate3d(-60%,0,-60px);
   }
 }
 
 .carousel div.is-snapped {
   opacity: 100%;
+  z-index: 2;
 
   & > a {
     transform: translate3d(0,0,0);

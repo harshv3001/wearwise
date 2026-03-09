@@ -1,4 +1,4 @@
-$slide-size: 60%;
+$slide-size: 50%;
 $slide-spacing: 10px;
 
 
@@ -9,18 +9,15 @@ $slide-spacing: 10px;
   h4 {
     font-weight: bold;
   }
+
   button {
-    height: 19px;
-    width: 19px;
-    border-radius: 9px;
-    transition: background-color 0.1s ease-in;
-    &:hover {
-      background-color: #EEE0F0;
-    }
+    height: 24px;
+    width: 24px;
+
     span {
       font-size: 15px;
     }
-  } 
+  }
 }
 
 .embla__viewport {
@@ -57,6 +54,21 @@ $slide-spacing: 10px;
 
     span {
       user-select: none;
+    }
+  }
+}
+
+.button_container {
+  button {
+    height: 24px;
+    width: 24px;
+
+    &:first-child {
+      margin-right: 6px;
+    }
+
+    span {
+      font-size: 20px;
     }
   }
 }

@@ -12,16 +12,29 @@ export default function OutfitGeneratorPage() {
   const {data: closetItems } = useClosetItemsQuery("hats");
     // have async data be populated to an Object where key is the category name?
 
-  const removalCallback = (categoryName) => { setCategories(categories.filter(a => a != categoryName)); }
+  const removeCategory = categoryName => { setCategories(categories.filter(a => a != categoryName)); };
+  const parentSetSelectedCallback = selectedClosetItemId => { console.log(selectedClosetItemId); }
 
-    return (
+
+  return (
     <main style={{ padding: 24 }}>
       <h1>Make an Outfit</h1>
       <p>Also protected ✅</p>
       { closetItems ? (
           categories.map((categoryName, i) => {
+            
+            const props = {
+              closetItems, 
+              parentSetSelectedCallback,
+              categoryName,
+              removalCallback: () => { removeCategory(categoryName); }
+            };
+
             return (
-              <Carousel key={i} data={closetItems} categoryName={categoryName} removalCallback={() => removalCallback(categoryName)}/>
+              <Carousel 
+                key={i} 
+                {...props}
+              />
             );
           }) 
         ) : (<></>)
