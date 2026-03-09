@@ -6,7 +6,7 @@ export default function AuthCard({ children, className = "" }) {
   const bodyClassName = [styles.content];
   const cardClassName = ["flex flex-col", styles.card, className].join(" ");
   return (
-    <div className="flex w-full md:w-1/2 items-center justify-center">
+    <div className="flex w-full md:w-1/2 min-h-screen items-center justify-center">
       <section className={cardClassName}>
         <div className={bodyClassName}>{children}</div>
       </section>

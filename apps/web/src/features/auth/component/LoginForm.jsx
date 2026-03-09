@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Input from "../../../app/components/ui/Input";
+import Input from "../../../app/components/ui/Input/Input";
 import Button from "../../../app/components/ui/Button";
 
 export default function LoginForm({ onSubmit, loading }) {

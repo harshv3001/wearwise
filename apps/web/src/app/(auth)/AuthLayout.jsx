@@ -2,9 +2,14 @@ import AuthCard from "../components/ui/AuthCard/AuthCard";
 
 export default function AuthLayout({ children }) {
   return (
-    <main className="min-h-screen flex px-4">
-      <div className="hidden md:flex w-1/2 bg-[var(--ww-gray-medium)] items-center justify-center p-6">
-        <img src="closet.svg" alt="Closet illustration" className="w-64" />
+    <main className="min-h-screen flex px-4 bg-[var(--ww-gray-medium)]">
+      <div className="hidden md:flex w-1/2 bg-[var(--ww-gray-medium)]">
+        <div className="text-2xl font-bold">WearWise</div>
+        <img
+          src="closet.svg"
+          alt="Closet illustration"
+          className="w-64 items-center justify-center p-6"
+        />
       </div>
 
       <AuthCard>{children}</AuthCard>

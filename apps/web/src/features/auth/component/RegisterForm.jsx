@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Input from "../../../app/components/ui/Input";
+import Input from "../../../app/components/ui/Input/Input";
 import Button from "../../../app/components/ui/Button";
-import Chip from "../../../app/components/ui/Chip";
+import Chip from "@mui/material/Chip"; //"../../../app/components/ui/Chip";
 import SelectInput from "../../../app/components/ui/SelectInput";
 import RadioGroup from "../../../app/components/ui/RadioGroup";
 
@@ -18,7 +18,8 @@ const GENDER_OPTIONS = [
 
 export default function RegisterForm({ onSubmit, loading }) {
   const [countryOptions, setCountryOptions] = useState([]);
-  const [usStates, setUsStates] = useState([]);
+  //const [usStates, setUsStates] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     async function fetchCountries() {
@@ -126,7 +127,7 @@ export default function RegisterForm({ onSubmit, loading }) {
   return (
     <>
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2">
           <Input
             className="col-span-1"
             label="Name"
@@ -149,24 +150,48 @@ export default function RegisterForm({ onSubmit, loading }) {
             autoComplete="email"
           />
 
-          <Input
-            className="col-span-1"
-            label="Password"
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={onChange}
-            placeholder="••••••••"
-            required
-            autoComplete="new-password"
-          />
+          <div className="relative">
+            <Input
+              className="col-span-1 pr-10"
+              label="Password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={form.password}
+              onChange={onChange}
+              placeholder="••••••••"
+              required
+              autoComplete="new-password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute !bg-white right-2 top-[68%] -translate-y-[60%] p-1 rounded"
+            >
+              <img
+                src={
+                  showPassword
+                    ? "eye-password-hide.svg"
+                    : "eye-password-show.svg"
+                }
+                alt="hide/show password"
+                className="w-5"
+              />
+            </button>
+          </div>
 
           <Input
             className="col-span-1"
             label="Age"
             name="age"
+            type="number"
+            min="0"
             value={form.age}
-            onChange={onChange}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (Number(value) >= 0 || value === "") {
+                onChange(e); // only update if value is >= 0
+              }
+            }}
             placeholder="26"
             required
             inputMode="numeric"
@@ -217,8 +242,10 @@ export default function RegisterForm({ onSubmit, loading }) {
               <Chip
                 key={s}
                 label={s}
-                selected={form.pref_styles.includes(s)}
                 onClick={() => toggleChip("pref_styles", s)}
+                variant={form.pref_styles.includes(s) ? "filled" : "outlined"}
+                color={form.pref_styles.includes(s) ? "primary" : "default"}
+                clickable
               />
             ))}
           </div>
@@ -235,8 +262,10 @@ export default function RegisterForm({ onSubmit, loading }) {
               <Chip
                 key={c}
                 label={c}
-                selected={form.pref_colors.includes(c)}
                 onClick={() => toggleChip("pref_colors", c)}
+                variant={form.pref_colors.includes(c) ? "filled" : "outlined"}
+                color={form.pref_colors.includes(c) ? "primary" : "default"}
+                clickable
               />
             ))}
           </div>
@@ -245,10 +274,11 @@ export default function RegisterForm({ onSubmit, loading }) {
             {form.pref_colors.length ? form.pref_colors.join(", ") : "none"}
           </div>
         </div>
-
-        <Button className="w-full" disabled={loading} type="submit">
-          {loading ? "Creating account..." : "Create account"}
-        </Button>
+        <div className="pt-4 mt-4">
+          <Button className="w-full" disabled={loading} type="submit">
+            {loading ? "Creating account..." : "Create account"}
+          </Button>
+        </div>
       </form>
     </>
   );
