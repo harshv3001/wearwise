@@ -1,0 +1,26 @@
+.carousel {
+  width: 380px;
+  box-sizing: border-box;
+}
+
+.carousel div.is-in-view {
+  opacity: 25%;
+
+  & > a.view-left {
+    transform: perspective(500px) translate3d(50%,0,-60px);
+  }
+
+  & > a.view-right {
+    transform: perspective(500px) translate3d(-50%,0,-60px);
+  }
+}
+
+.carousel div.is-snapped {
+  opacity: 100%;
+
+  & > a {
+    transform: translate3d(0,0,0);
+    z-index: 2;
+  }
+}
+
