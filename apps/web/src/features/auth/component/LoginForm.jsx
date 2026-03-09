@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Input from "../../../app/components/ui/Input";
+import Input from "../../../app/components/ui/Input/Input";
 import Button from "../../../app/components/ui/Button";
 
 export default function LoginForm({ onSubmit, loading }) {
@@ -33,7 +33,7 @@ export default function LoginForm({ onSubmit, loading }) {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
+            placeholder="Enter your password"
             required
             autoComplete="current-password"
           />
