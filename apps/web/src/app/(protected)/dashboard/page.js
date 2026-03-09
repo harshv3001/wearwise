@@ -1,12 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { getApiErrorMessage } from "../../../lib/apiError";
-import { getClosetItemsApi } from "../../../features/closet/api/closetApi";
 import { categorySummaryData } from "../../../lib/static-data";
 import Button from "../../components/ui/Button";
-import Card from "../../components/ui/Card/Card";
 import CategorySummaryCard from "../../../features/category-summary/component/CategorySummaryCard";
 import ReportOutfitModal from "../../../features/outfits/components/ReportOutfitModal";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
@@ -15,15 +11,6 @@ export default function DashboardPage() {
   const [category, setCategory] = useState("");
 
   const { data: closetItems, isLoading, error } = useClosetItemsQuery(category);
-
-  console.log(
-    "closetItems",
-    closetItems,
-    "isLoading",
-    isLoading,
-    "error",
-    error
-  );
 
   const [openReportModal, setOpenReportModal] = useState(false);
 
@@ -54,7 +41,6 @@ export default function DashboardPage() {
           Custom
         </Button>
       </div>
-
       <ReportOutfitModal
         open={openReportModal}
         onClose={() => setOpenReportModal(false)}

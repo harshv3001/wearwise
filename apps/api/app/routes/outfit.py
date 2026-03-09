@@ -150,18 +150,25 @@ def list_outfits(
 
        
         rows = (
-            db.query(outfit_models.OutfitItem.outfit_id, outfit_models.OutfitItem.closet_item_id)
+            db.query(outfit_models.OutfitItem.outfit_id, outfit_models.OutfitItem.closet_item_id, outfit_models.OutfitItem.position)
             .filter(outfit_models.OutfitItem.outfit_id.in_(outfit_ids))
             .order_by(outfit_models.OutfitItem.outfit_id.asc(), outfit_models.OutfitItem.position.asc())
             .all()
         )
-        for oid, cid in rows:
-            previews_by_outfit[oid].append(cid)
+        for row in rows:
+            previews_by_outfit[row.outfit_id].append(
+                {
+                    "closet_item_id": row.closet_item_id,
+                    "position": row.position,
+                    # "note": row.note,
+                    "outfit_id": row.outfit_id,
+                }
+            )
 
     items = []
     for outfit in outfits:
         items.append(
-            {
+        {
                 "id": outfit.id,
                 "name": outfit.name,
                 "occasion": outfit.occasion,
@@ -170,7 +177,7 @@ def list_outfits(
                 "created_at": outfit.created_at,
                 "updated_at": outfit.updated_at,
                 "item_count": counts_by_outfit.get(outfit.id, 0),
-                "preview_item_ids": previews_by_outfit.get(outfit.id, []),
+                "preview_items": previews_by_outfit.get(outfit.id, []),
             }
         )
 

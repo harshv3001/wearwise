@@ -7,7 +7,8 @@
 }
 
 .modalLarge {
-  max-width: 920px;
+  max-width: 1000px;
+  height: 800px;
 }
 
 .container {
@@ -121,98 +122,176 @@
 }
 
 .outfitsContainer {
-  // width: 100%;
-  min-height: 270px;
+  height: 530px;
   padding: 20px;
   border: 1px solid var(--ww-color-black);
   background: var(--ww-color-white);
   margin: 0 60px;
-}
+  overflow-y: auto;
+  overflow-x: hidden;
 
-.outfitPreviewCard {
-  width: 120px;
-  height: 160px;
-  padding: 10px;
-  border: 1px solid #dcdcdc;
-  background: #f8f8f8;
-}
+  .outfitRow {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
 
-.outfitPreviewImage {
-  width: 100%;
-  height: 100%;
-  border-radius: 6px;
-  background: #e3e3e3;
-}
+    &.selectedOutfit {
+      border: 2px solid var(--ww-color-accent);
+    }
 
-.itemsWrap {
-  flex: 1;
-  border: 2px solid var(--ww-gray-dark);
-  background: var(--ww-color-white);
-  padding: 20px;
-}
+    @media screen and (max-width: 769px) {
+      flex-direction: column;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+    }
 
-.outfitItemCard {
-  width: 86px;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  padding: 0;
-  transition: transform 160ms ease;
+    .outfitPreviewCard {
+      width: 190px;
+      height: 304px;
+      padding: 10px;
+      border: 1px solid #dcdcdc;
+      background: #f8f8f8;
+      flex-shrink: 0;
+      transition: transform 180ms ease;
 
-  &:hover {
-    transform: translateY(-2px);
+      &:hover {
+        transform: scale(1.04);
+      }
+
+      .outfitPreviewImage {
+        width: 100%;
+        height: 100%;
+        border-radius: 6px;
+        background: #e3e3e3;
+      }
+    }
+
+    .outfitPreviewDetails {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--ww-gray-dark);
+      background: var(--ww-color-white);
+      padding: 10px;
+
+      &.selectedOutfit {
+        border: 1px solid var(--ww-color-accent);
+      }
+
+      .itemsCarouselRow {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+
+        .carouselArrow {
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          padding: 32px 4px 0;
+          color: #2b4666;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+
+          &:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+          }
+        }
+
+        .embla {
+          flex: 1;
+          min-width: 0;
+
+          .emblaViewport {
+            overflow: hidden;
+            width: 100%;
+            padding: 10px 0;
+          }
+
+          .emblaContainer {
+            display: flex;
+            align-items: flex-start;
+            margin-left: -6px;
+            margin-right: -6px;
+            padding: 0 3px;
+          }
+
+          .emblaSlide {
+            flex: 0 0 25%;
+            min-width: 0;
+            padding: 0 6px;
+
+            @media (max-width: 900px) {
+              flex: 0 0 33.3333%;
+            }
+
+            @media (max-width: 640px) {
+              flex: 0 0 50%;
+            }
+          }
+        }
+
+        .outfitItemCard {
+          width: 100%;
+          background: transparent;
+          border: none;
+          padding: 0;
+          transition: transform 180ms ease;
+
+          &:hover {
+            transform: scale(1.04);
+          }
+
+          &:active {
+            transform: scale(0.98);
+          }
+
+          .outfitItemBox {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border: 1px solid #aaaaaa;
+            background: #d9d9d9;
+          }
+
+          .outfitItemName {
+            margin-top: 8px;
+            text-align: center;
+            font-size: 13px;
+            line-height: 16px;
+            color: var(--ww-text-secondary);
+            word-break: break-word;
+            font-weight: 500;
+          }
+
+          .outfitItemSub {
+            margin-top: 2px;
+            text-align: center;
+            font-size: 10px;
+            line-height: 14px;
+            text-transform: capitalize;
+            color: #666666;
+          }
+        }
+      }
+
+      .detailList {
+        margin-top: 14px;
+        padding-left: 18px;
+        list-style: disc;
+
+        .detailText {
+          font-size: 14px;
+          line-height: 22px;
+          color: #1f1f1f;
+
+          span {
+            color: var(--ww-text-tertiary);
+            font-weight: 500;
+          }
+        }
+      }
+    }
   }
-
-  &:active {
-    transform: scale(0.98);
-  }
-}
-
-.outfitItemBox {
-  width: 100%;
-  height: 64px;
-  border: 1px solid #aaaaaa;
-  background: #d9d9d9;
-}
-
-.outfitItemName {
-  margin-top: 8px;
-  text-align: center;
-  font-size: 12px;
-  line-height: 16px;
-  color: #1f1f1f;
-}
-
-.outfitItemSub {
-  margin-top: 2px;
-  text-align: center;
-  font-size: 10px;
-  line-height: 14px;
-  color: #666666;
-}
-
-.selectedCard {
-  outline: 2px solid #888888;
-  outline-offset: 4px;
-  border-radius: 4px;
-}
-
-.detailList {
-  margin-top: 14px;
-  padding-left: 18px;
-  list-style: disc;
-}
-
-.detailText {
-  font-size: 14px;
-  line-height: 22px;
-  color: #1f1f1f;
-}
-
-.fieldLabel {
-  margin-bottom: 8px;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
-  color: #1f1f1f;
 }
