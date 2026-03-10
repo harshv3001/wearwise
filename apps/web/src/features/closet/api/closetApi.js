@@ -29,5 +29,14 @@ export async function updateClosetItemApi(itemId, payload) {
   return response.data;
 }
 
+export async function uploadImageApi(itemId, formData) {
+  const response = await http.post(`/closet-items/${itemId}/image`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+}
+
 // #TODO: delete APIs for closet items
 // deleteClosetItemApi(id)

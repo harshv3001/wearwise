@@ -121,6 +121,7 @@ def create_outfit(
                 closet_item_id=it.closet_item_id,
                 position=it.position,
                 note=it.note,
+            
             )
         )
 
@@ -177,10 +178,19 @@ def list_outfits(
             db.query(
                 outfit_models.OutfitItem.outfit_id,
                 outfit_models.OutfitItem.closet_item_id,
-                outfit_models.OutfitItem.position
+                outfit_models.OutfitItem.position,
+                outfit_models.OutfitItem.note,
+                closet_items_models.ClosetItem.image_path,
+            )
+            .join(
+                closet_items_models.ClosetItem,
+                closet_items_models.ClosetItem.id == outfit_models.OutfitItem.closet_item_id,
             )
             .filter(outfit_models.OutfitItem.outfit_id.in_(outfit_ids))
-            .order_by(outfit_models.OutfitItem.outfit_id.asc(), outfit_models.OutfitItem.position.asc())
+            .order_by(
+                outfit_models.OutfitItem.outfit_id.asc(),
+                outfit_models.OutfitItem.position.asc(),
+            )
             .all()
         )
         for row in rows:
@@ -189,7 +199,10 @@ def list_outfits(
                     "closet_item_id": row.closet_item_id,
                     "position": row.position,
                     "outfit_id": row.outfit_id,
+                    "note": row.note,
+                    "image_url": build_image_url(row.image_path),
                 }
+ 
             )
 
     items = []

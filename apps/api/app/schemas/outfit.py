@@ -16,6 +16,8 @@ class OutfitItemCreate(OutfitItemBase):
 
 class OutfitItemOut(OutfitItemBase):
     outfit_id: int
+    image_url: Optional[str] = None
+
 
     class Config:
         from_attributes = True

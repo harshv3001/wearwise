@@ -56,7 +56,6 @@ class OutfitItem(Base):
 
     position = Column(Integer, nullable=False, server_default=text("0"))
     note = Column(String, nullable=True)
-
     outfit = relationship("Outfit", back_populates="outfit_items")
     closet_item = relationship("ClosetItem")
 

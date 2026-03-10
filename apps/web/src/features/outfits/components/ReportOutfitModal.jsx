@@ -32,8 +32,6 @@ export default function ReportOutfitModal({ open, onClose }) {
   const createOutfitMutation = useCreateOutfitMutation();
   const updateOutfitMutation = useUpdateOutfitMutation();
   const createReportMutation = useCreateReportMutation();
-  // const { data: singleOutfit } = useSingleOutfitQuery(2);
-  // console.log({ singleOutfit });
   const { data: outfits, isLoading, error } = useOutfitsQuery();
 
   const { data: closetItems } = useClosetItemsQuery("");

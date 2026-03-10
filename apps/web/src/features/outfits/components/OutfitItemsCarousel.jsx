@@ -69,7 +69,11 @@ export default function OutfitItemsCarousel({ items = [] }) {
                 <div className={styles.outfitItemCard}>
                   {/* <div className={styles.outfitItemBox} /> */}
                   <img
-                    src="brown-fall-jacket.jpg"
+                    src={
+                      item?.image_url
+                        ? `${process.env.NEXT_PUBLIC_API_URL}${item?.image_url}`
+                        : "brown-fall-jacket.jpg"
+                    }
                     alt={`item-image-${item?.id}`}
                     className={styles.outfitItemBox}
                   />

@@ -22,6 +22,7 @@ export default function ReportOutfitStepSelectOutfit({
       name: outfit?.name,
       occasion: outfit?.occasion,
       season: outfit?.season,
+      image_url: outfit?.image_url,
       items: closetItems
         .filter((closetItem) =>
           outfit?.preview_items.find(
@@ -32,6 +33,7 @@ export default function ReportOutfitStepSelectOutfit({
           id: closetItem?.id,
           name: closetItem?.name,
           category: closetItem?.category,
+          image_url: closetItem?.image_url,
         })),
     }));
   }, [outfits, closetItems]);
@@ -65,7 +67,11 @@ export default function ReportOutfitStepSelectOutfit({
           >
             <div className={styles.outfitPreviewCard}>
               <img
-                src="winter-outfit.png"
+                src={
+                  outfit?.image_url
+                    ? `${process.env.NEXT_PUBLIC_API_URL}${outfit.image_url}`
+                    : "winter-outfit.png"
+                }
                 alt={`outfit image-${outfitIndex}-${outfit?.id}}`}
                 className={styles.outfitPreviewImage}
               />

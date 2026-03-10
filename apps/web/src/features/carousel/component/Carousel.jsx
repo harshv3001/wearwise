@@ -100,12 +100,19 @@ export default function Carousel({
             className={determineSlideInnerClassName(index)}
             href={`/closet/${closetItem?.id}`}
           >
-            {closetItem?.image ? (
-              <span>{closetItem?.name}</span>
-            ) : (
+            {!closetItem?.image_url ? (
               <>
                 <img
                   src="brown-fall-jacket.jpg"
+                  className={styles.outfitItemBox}
+                  alt={closetItem?.name}
+                />
+                <span>{closetItem?.name}</span>
+              </>
+            ) : (
+              <>
+                <img
+                  src={`${process.env.NEXT_PUBLIC_API_URL}${closetItem?.image_url}`}
                   className={styles.outfitItemBox}
                   alt={closetItem?.name}
                 />
