@@ -1,0 +1,84 @@
+.modalBase {
+  transition: max-width 220ms ease, width 220ms ease, padding 220ms ease;
+}
+
+.modalSmall {
+  max-width: 360px;
+}
+
+.modalLarge {
+  max-width: 1000px;
+  height: 800px;
+}
+
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 700px;
+}
+
+.content {
+  padding: 1rem;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.title {
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.closetItemCard {
+  width: 100px;
+  height: 100px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  transition: transform 180ms ease;
+
+  &:hover {
+    transform: scale(1.04);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .closetItemBox {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 1px solid #aaaaaa;
+    background: #d9d9d9;
+  }
+}
+
+.outfitPreviewCard {
+  width: 220px;
+  height: 560px;
+  padding: 10px;
+  border: 1px solid #dcdcdc;
+  background: #f8f8f8;
+  flex-shrink: 0;
+  transition: transform 180ms ease;
+
+  &:hover {
+    transform: scale(1.04);
+  }
+
+  .outfitPreviewImage {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    background: #e3e3e3;
+    object-fit: cover;
+  }
+}
