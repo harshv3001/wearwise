@@ -3,12 +3,37 @@ div.accordion_container {
   /* background-color: yellow; */
   width: fit-content;
   margin-bottom: 24px;
+  
   .header {
     display: flex;
-
-    background-color: red;
+    justify-content: space-between;
+    padding: 4px 6px 4px 8px;
+    background-color: #ffc9c4;
     height: 42px;
     height: fit-content;
+
+    h5 { cursor: default; }
+    
+    button {
+      height: 26px;
+      width: 28px;
+      text-align: center;
+      border-radius: 50%;
+      color: #565f5f;
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
+      &:hover {
+        cursor: pointer;
+        color: black;
+        background-color: #ffe3e0;
+      }
+      
+      span {
+        position: relative;
+        top: 1px;
+        left: 1px;
+      }
+    }
   }
   .main {
     /* background-color: green; */

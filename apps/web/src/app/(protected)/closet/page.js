@@ -43,7 +43,7 @@ export default function ClosetPage() {
     // closing an accordion does not trigger unloading data from this app's state; should not trigger re-rendering in this app
   return (
     <main className="px-2">
-      <h1>My Closet</h1>
+      <h1 className="mt-8 mb-14 m-auto w-fit text-[32px]">My Closet</h1>
       <div className="xl:flex lg:col-3 md:col-1 break-after-column lg:w-[90vw] w-fit mt-0 m-auto gap-x-4">
       {
           allClosetItems ? (

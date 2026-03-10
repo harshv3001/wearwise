@@ -8,7 +8,7 @@ export default function Accordion({ title, startOpened, children }) {
     return (
         <div className={`${styles.accordion_container}`}>
             <div className={styles.header}>
-                <h5>{title}</h5>
+                <h5 onClick={toggleOpened}>{title}</h5>
                 
                 <button onClick={toggleOpened}>
                 <span className="material-symbols-outlined" aria-hidden="true">
