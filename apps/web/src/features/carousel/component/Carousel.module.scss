@@ -1,6 +1,10 @@
 $slide-size: 50%;
 $slide-spacing: 10px;
 
+.static_container {
+  display: flex;
+  gap: 10px;
+}
 
 .carousel_header {
   display: flex;
@@ -38,7 +42,8 @@ $slide-spacing: 10px;
   min-width: 0;
   padding: 0 6px;
   opacity: 12%;
-  transition: opacity 0.2s ease-in;
+  transition: opacity 0.4s ease-in;
+
   padding-left: $slide-spacing;
   z-index: -1;
 
@@ -51,7 +56,7 @@ $slide-spacing: 10px;
     flex-direction: column;
     justify-content: center;
     z-index: 1;
-    transition: transform 0.2s ease-in;
+    transition: transform 0.4s ease-in;
 
     span {
       user-select: none;
@@ -61,15 +66,22 @@ $slide-spacing: 10px;
 
 .button_container {
   button {
-    height: 24px;
-    width: 24px;
+    height: 30px;
+    width: 30px;
 
     &:first-child {
       margin-right: 6px;
     }
 
     span {
-      font-size: 20px;
+      font-size: 30px;
     }
   }
+}
+
+.outfitItemBox {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 1px solid #aaaaaa;
+  background: #d9d9d9;
 }

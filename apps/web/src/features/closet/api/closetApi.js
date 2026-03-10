@@ -14,6 +14,11 @@ export async function getClosetItemsApi(category = "") {
   return response.data;
 }
 
+export async function getClosetItemByIdApi(itemId) {
+  const response = await http.get(`/closet-items/${itemId}`);
+  return response.data;
+}
+
 export async function createClosetItemApi(payload) {
   const response = await http.post("/closet-items/", payload);
   return response.data;

@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
 import Carousel from "../../../features/carousel/component/Carousel.jsx";
-import Button from "../../components/ui/Button";
 import Accordion from "../../components/ui/Accordion/Accordion.jsx";
 
 export default function ClosetPage() {
@@ -10,61 +9,60 @@ export default function ClosetPage() {
   const { data: allClosetItems } = useClosetItemsQuery();
 
   useEffect(() => {
-    let ignore = false;
-    if (allClosetItems) {
-      const closetData = {};
-      allClosetItems.forEach((ci) => {
-        if (!closetData.hasOwnProperty(ci.category)) {
-          closetData[ci.category] = [ci];
-        } else {
-          closetData[ci.category].push(ci);
-        }
-      });
-      setCategories(closetData);
-    }
+    if (!allClosetItems) return;
 
-    return () => {
-      ignore = true;
-    };
+    const closetData = {};
+    allClosetItems.forEach((ci) => {
+      if (!closetData[ci.category]) {
+        closetData[ci.category] = [ci];
+      } else {
+        closetData[ci.category].push(ci);
+      }
+    });
+
+    setCategories(closetData);
   }, [allClosetItems]);
 
-  // currently not needed for this page
-  // const parentSetSelectedCallback = closetItemId => {console.log(closetItemId)}
-  // const removeCategory = categoryName => {
-  //     const newObj = {};
-  //     for (let key in categories) {
-  //         if (key != categoryName) {
-  //             newObj[key] = categories[key];
-  //         }
-  //     }
-  //     setCategories(newObj);
-  // };
+  const categoryNames = Object.keys(categories);
 
-  // closing an accordion does not trigger unloading data from this app's state; should not trigger re-rendering in this app
-  console.log("categories", categories);
+  const columnCount = 2;
+  const midpoint = Math.ceil(categoryNames.length / columnCount);
+
+  const leftColumn = categoryNames.slice(0, midpoint);
+  const rightColumn = categoryNames.slice(midpoint);
+
+  const columns = [leftColumn, rightColumn];
+
   return (
     <main className="px-2">
-      <h1 className="mt-8 mb-14 m-auto w-fit text-[32px]">My Closet</h1>
-      <div className="xl:flex lg:col-3 md:col-1 break-after-column lg:w-[90vw] w-fit mt-0 m-auto gap-x-4">
-        {allClosetItems ? (
-          Object.keys(categories).map((categoryName, i) => {
-            const props = {
-              categoryName,
-              closetItems: categories[categoryName],
-              parentSetSelectedCallback: () => {},
-              removalCallback: () => {},
-            };
+      <div className="text-[32px] text-center mb-8">My Closet</div>
 
-            return (
-              <Accordion title={categoryName} startOpened={i == 0} key={i}>
-                <Carousel disableRemoval hideTitle key={i} {...props} />
-              </Accordion>
-            );
-          })
-        ) : (
-          <></>
-        )}
-      </div>
+      {allClosetItems ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-[90vw] mx-auto">
+          {columns.map((column, columnIndex) => (
+            <div key={columnIndex} className="flex flex-col gap-6">
+              {column.map((categoryName, i) => {
+                const props = {
+                  categoryName,
+                  closetItems: categories[categoryName],
+                  parentSetSelectedCallback: () => {},
+                  removalCallback: () => {},
+                };
+
+                return (
+                  <Accordion
+                    key={categoryName}
+                    title={categoryName}
+                    startOpened={columnIndex === 0 && i === 0}
+                  >
+                    <Carousel disableRemoval hideTitle {...props} />
+                  </Accordion>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      ) : null}
     </main>
   );
 }

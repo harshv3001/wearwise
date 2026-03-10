@@ -1,9 +1,9 @@
 div.accordion_container {
   display: block;
   /* background-color: yellow; */
-  width: fit-content;
-  margin-bottom: 24px;
-  
+  // width: fit-content;
+  // margin-bottom: 24px;
+
   .header {
     display: flex;
     justify-content: space-between;
@@ -11,9 +11,12 @@ div.accordion_container {
     background-color: #ffc9c4;
     height: 42px;
     height: fit-content;
+    text-transform: capitalize;
 
-    h5 { cursor: default; }
-    
+    h5 {
+      cursor: default;
+    }
+
     button {
       height: 26px;
       width: 28px;
@@ -27,7 +30,7 @@ div.accordion_container {
         color: black;
         background-color: #ffe3e0;
       }
-      
+
       span {
         position: relative;
         top: 1px;
@@ -44,6 +47,7 @@ div.accordion_container {
     &_open {
       /* background-color: blue; */
       height: 200px;
+      margin: 20px auto;
     }
   }
 }
