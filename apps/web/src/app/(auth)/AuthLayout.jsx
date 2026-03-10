@@ -4,7 +4,7 @@ import HeaderLogo from "../components/Header/HeaderLogo";
 export default function AuthLayout({ children }) {
   return (
     <main className="min-h-screen flex px-4 bg-[var(--ww-gray-medium)]">
-      <div className="hidden md:flex w-1/2 bg-[var(--ww-gray-medium)] flex-col justify-start">
+      <div className="hidden md:flex w-1/2 bg-[var(--ww-gray-medium)]">
         <HeaderLogo />
 
         <img
