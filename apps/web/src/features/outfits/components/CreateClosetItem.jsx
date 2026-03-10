@@ -6,13 +6,7 @@ import SelectInput from "../../../app/components/ui/SelectInput/SelectInput";
 import Modal from "../../../app/components/ui/Modal/Modal";
 import styles from "./CreateClosetItem.module.scss";
 
-export default function CreateClosetItem({
-  formData,
-  onChange,
-  errors,
-  open,
-  onClose,
-}) {
+export default function CreateClosetItem({ open, onClose }) {
   const createItemMutation = useCreateItemMutation();
   const updateItemMutation = useUpdateItemMutation();
 
@@ -28,6 +22,13 @@ export default function CreateClosetItem({
     dateAcquired: "2026-03-09",
   });
   const [errors, setErrors] = useState({});
+
+  const onChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
