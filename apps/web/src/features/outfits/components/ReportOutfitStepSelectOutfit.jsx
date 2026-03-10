@@ -5,6 +5,8 @@ import styles from "./ReportOutfitModal.module.scss";
 import Button from "../../../app/components/ui/Button";
 import OutfitItemsCarousel from "./OutfitItemsCarousel";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { ClassNames } from "@emotion/react";
 
 export default function ReportOutfitStepSelectOutfit({
@@ -33,6 +35,9 @@ export default function ReportOutfitStepSelectOutfit({
         })),
     }));
   }, [outfits, closetItems]);
+  const handleViewOutfitDetails = () => {
+    // Implement navigation to outfit details page or open a modal with outfit details
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -95,9 +100,18 @@ export default function ReportOutfitStepSelectOutfit({
                   >
                     Select this outfit
                   </Button>
-                  <Button type="button" variant="tertiary">
+                  {/* <Button
+                    type="button"
+                    variant="tertiary"
+                    onClick={handleViewOutfitDetails}
+                  >
                     View details
-                  </Button>
+                  </Button> */}
+                  <Link href={`/outfit-details/${outfit.id}`} target="_blank">
+                    <Button type="button" variant="primary" size="md">
+                      View details
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>

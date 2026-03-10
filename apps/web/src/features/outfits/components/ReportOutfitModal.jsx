@@ -12,6 +12,7 @@ import { useUpdateOutfitMutation } from "../hooks/useUpdateOutfitMutation";
 import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
 import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
 import { useClosetItemsQuery } from "../../closet/hooks/useClosetItemsQuery";
+import { useSingleOutfitQuery } from "../hooks/useOutfitsQuery";
 
 const initialFormData = {
   name: "",
@@ -28,11 +29,11 @@ export default function ReportOutfitModal({ open, onClose }) {
   const [selectedOutfitId, setSelectedOutfitId] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
   // const [errors, setErrors] = useState({ name: false });
-
   const createOutfitMutation = useCreateOutfitMutation();
   const updateOutfitMutation = useUpdateOutfitMutation();
   const createReportMutation = useCreateReportMutation();
-
+  // const { data: singleOutfit } = useSingleOutfitQuery(2);
+  // console.log({ singleOutfit });
   const { data: outfits, isLoading, error } = useOutfitsQuery();
 
   const { data: closetItems } = useClosetItemsQuery("");
