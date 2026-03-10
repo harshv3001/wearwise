@@ -3,9 +3,13 @@ import { useEffect, useState } from "react";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
 import Carousel from "../../../features/carousel/component/Carousel.jsx";
 import Accordion from "../../components/ui/Accordion/Accordion.jsx";
+import Button from "../../components/ui/Button.jsx";
+import CreateClosetItem from "../../../features/closet/component/CreateClosetItem.jsx";
 
 export default function ClosetPage() {
   const [categories, setCategories] = useState({});
+  const [openItemModal, setOpenItemModal] = useState(false);
+
   const { data: allClosetItems } = useClosetItemsQuery();
 
   useEffect(() => {
@@ -34,8 +38,18 @@ export default function ClosetPage() {
   const columns = [leftColumn, rightColumn];
 
   return (
-    <main className="px-2">
-      <div className="text-[32px] text-center mb-8">My Closet</div>
+    <main className="p-2">
+      <div className="flex flex-col mb-8 items-center justify-center">
+        <div className="text-[32px] text-center mb-8">My Closet</div>
+        <Button
+          variant="secondary"
+          size="lg"
+          className="ml-auto"
+          onClick={() => setOpenItemModal(true)}
+        >
+          Add Items
+        </Button>
+      </div>
 
       {allClosetItems ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-[90vw] mx-auto">
@@ -65,6 +79,10 @@ export default function ClosetPage() {
       ) : (
         <></>
       )}
+      <CreateClosetItem
+        open={openItemModal}
+        onClose={() => setOpenItemModal(false)}
+      />
     </main>
   );
 }

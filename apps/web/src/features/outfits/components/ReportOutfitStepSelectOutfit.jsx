@@ -45,7 +45,7 @@ export default function ReportOutfitStepSelectOutfit({
         <div>
           <span className="font-bold">Date selected:</span> {selectedDate}
         </div>
-        <Link href="/closet">
+        <Link href="/outfit-generator">
           <Button type="button" variant="primary" size="md">
             Generate outfit from your closet
           </Button>

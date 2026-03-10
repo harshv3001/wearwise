@@ -19,14 +19,16 @@ export default function DashboardPage() {
   return (
     <main className="p-6">
       <div className="m-2 flex flex-col gap-4 items-center justify-center">
-        <Button
-          variant="primary"
-          size="xxl"
-          className="font-bold"
-          onClick={() => setOpenReportModal(true)}
-        >
-          Report outfit
-        </Button>
+        <div className="border-1 border-black-100 rounded-lg p-4 w-full text-center mb-4">
+          <Button
+            variant="primary"
+            size="xxl"
+            className="font-bold"
+            onClick={() => setOpenReportModal(true)}
+          >
+            Report outfit
+          </Button>
+        </div>
       </div>
       <section className="flex flex-wrap gap-4 justify-center">
         <CategorySummaryCard items={categorySummaryData} />
@@ -38,13 +40,9 @@ export default function DashboardPage() {
           variant="secondary"
           size="xl"
           onClick={() => setOpenItemModal(true)}
+          className="mt-4 me-auto"
         >
           Add new clothing item
-        </Button>
-        <Button variant="tertiary">Go to Closet</Button>
-        <Button variant="default">Default</Button>
-        <Button variant="custom" size="lg">
-          Custom
         </Button>
       </div>
       <ReportOutfitModal
