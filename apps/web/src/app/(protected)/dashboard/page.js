@@ -5,7 +5,7 @@ import { categorySummaryData } from "../../../lib/static-data";
 import Button from "../../components/ui/Button";
 import CategorySummaryCard from "../../../features/category-summary/component/CategorySummaryCard";
 import ReportOutfitModal from "../../../features/outfits/components/ReportOutfitModal";
-import CreateClosetItem from "../../../features/outfits/components/CreateClosetItem.jsx";
+import CreateClosetItem from "../../../features/closet/component/CreateClosetItem.jsx";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
 
 export default function DashboardPage() {

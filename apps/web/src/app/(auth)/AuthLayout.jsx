@@ -1,5 +1,5 @@
 import AuthCard from "../components/ui/AuthCard/AuthCard";
-import HeaderLogo from "../components/Header/HeaderLogo";
+import HeaderLogo from "../components/header/HeaderLogo";
 
 export default function AuthLayout({ children }) {
   return (
