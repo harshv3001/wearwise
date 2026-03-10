@@ -1,6 +1,7 @@
 from typing import Optional, List
 from pydantic import BaseModel, Field
 from datetime import datetime
+from .closet_items import ClosetItemOut
 
 
 class OutfitItemBase(BaseModel):
@@ -60,7 +61,7 @@ class OutfitListItem(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
     item_count: int
-    items: List[OutfitItemOut] = Field(default_factory=list)
+    preview_items: List[OutfitItemOut] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
@@ -71,3 +72,21 @@ class OutfitListResponse(BaseModel):
     limit: int
     offset: int
     total: int
+
+
+class OutfitItemDetailOut(OutfitItemBase):
+    outfit_id: int
+    closet_item: ClosetItemOut
+
+    class Config:
+        from_attributes = True
+
+
+class OutfitDetailOut(OutfitBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    items: List[OutfitItemDetailOut] = Field(default_factory=list)
+
+    class Config:
+        from_attributes = True

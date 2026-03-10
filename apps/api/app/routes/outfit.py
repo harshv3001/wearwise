@@ -1,13 +1,21 @@
 from typing import Optional, List
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 
 from app.database import get_db
 from app.oauth2 import get_current_user  # adjust path if different
 from app.models import user as user_models, outfit as outfit_models, closet_items as closet_items_models
-from app.schemas.outfit import OutfitCreate, OutfitOut, OutfitUpdate, OutfitItemCreate, OutfitItemOut
+from app.schemas.outfit import (
+    OutfitCreate,
+    OutfitOut,
+    OutfitUpdate,
+    OutfitItemCreate,
+    OutfitItemOut,
+    OutfitListResponse,
+    OutfitDetailOut,
+)
 
 router = APIRouter(prefix="/outfits", tags=["Outfits"])
 
@@ -104,7 +112,7 @@ def create_outfit(
     )
 
 
-@router.get("/", response_model=dict)
+@router.get("/", response_model=OutfitListResponse)
 def list_outfits(
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
@@ -184,24 +192,23 @@ def list_outfits(
     return {"items": items, "limit": limit, "offset": offset, "total": total}
 
 
-@router.get("/{outfit_id}", response_model=OutfitOut)
+@router.get("/{outfit_id}", response_model=OutfitDetailOut)
 def get_outfit(
     outfit_id: int,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
 ):
-
     outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
 
-    # Load items ordered
     outfit_items = (
         db.query(outfit_models.OutfitItem)
+        .options(joinedload(outfit_models.OutfitItem.closet_item))
         .filter(outfit_models.OutfitItem.outfit_id == outfit.id)
         .order_by(outfit_models.OutfitItem.position.asc())
         .all()
     )
 
-    return OutfitOut(
+    return OutfitDetailOut(
         id=outfit.id,
         name=outfit.name,
         occasion=outfit.occasion,
@@ -212,7 +219,6 @@ def get_outfit(
         updated_at=outfit.updated_at,
         items=outfit_items,
     )
-
 
 @router.patch("/{outfit_id}", response_model=OutfitOut)
 def update_outfit(
