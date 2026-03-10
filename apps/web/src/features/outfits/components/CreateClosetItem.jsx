@@ -37,8 +37,7 @@ export default function CreateClosetItem({
 
     try {
       console.log("Submitting outfit:", formData);
-
-      if (onSubmit) onSubmit(formData);
+      await createItemMutation.mutateAsync(formData);
       onClose();
     } catch (error) {
       console.error("Failed to create outfit:", error);
