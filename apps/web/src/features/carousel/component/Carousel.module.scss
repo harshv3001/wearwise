@@ -51,8 +51,8 @@ $slide-spacing: 10px;
     box-sizing: border-box;
     background-color: pink;
     text-align: center;
-    height: 140px;
-    display: block flex;
+    min-height: 140px;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     z-index: 1;
@@ -64,7 +64,6 @@ $slide-spacing: 10px;
   }
 }
 
-// Blank placeholder — transparent, just holds space so layout is identical
 .blankSlide {
   box-sizing: border-box;
   height: 140px;
@@ -87,7 +86,6 @@ $slide-spacing: 10px;
       font-size: 30px;
     }
 
-    // Hide disabled buttons (when blank is adjacent)
     &:disabled {
       opacity: 0;
       pointer-events: none;
@@ -101,4 +99,5 @@ $slide-spacing: 10px;
   aspect-ratio: 1 / 1;
   border: 1px solid #aaaaaa;
   background: #d9d9d9;
+  max-height: 130px;
 }
