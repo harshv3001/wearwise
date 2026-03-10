@@ -1,7 +1,3 @@
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
-
 from pathlib import Path
 from uuid import uuid4
 import shutil
@@ -11,16 +7,6 @@ from fastapi import HTTPException, UploadFile, status
 
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
-
-
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
-
-
 
 
 def save_upload_file(upload_file: UploadFile, upload_dir: Path) -> str:

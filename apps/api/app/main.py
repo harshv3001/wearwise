@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from .database import Base, engine
 from .routes import auth, closet_items, outfit, wear
@@ -10,6 +13,14 @@ from . import models
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="WearWise API")
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+UPLOADS_DIR = BASE_DIR / "uploads"
+UPLOADS_DIR.mkdir(exist_ok=True)
+(UPLOADS_DIR / "closet_items").mkdir(exist_ok=True)
+(UPLOADS_DIR / "outfits").mkdir(exist_ok=True)
+
+app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,

@@ -44,6 +44,7 @@ class OutfitUpdate(BaseModel):
 
 class OutfitOut(OutfitBase):
     id: int
+    image_url: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
     items: List[OutfitItemOut] = Field(default_factory=list)
@@ -58,6 +59,7 @@ class OutfitListItem(BaseModel):
     occasion: Optional[str] = None
     season: Optional[str] = None
     is_favorite: bool
+    image_url: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
     item_count: int
@@ -84,6 +86,7 @@ class OutfitItemDetailOut(OutfitItemBase):
 
 class OutfitDetailOut(OutfitBase):
     id: int
+    image_url: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
     items: List[OutfitItemDetailOut] = Field(default_factory=list)
