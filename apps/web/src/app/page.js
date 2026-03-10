@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Button from "./components/ui/Button";
 
 export default function HomePage() {
   return (
@@ -7,17 +8,16 @@ export default function HomePage() {
       style={{ padding: 24 }}
     >
       <h1 className="text-5xl font-bold">WearWise</h1>
-      <p>Public Home Page</p>
 
       <div
         className="gap-6 mb-12"
         style={{ display: "flex", gap: 12, marginTop: 16 }}
       >
-        <Link href="/login" className="hover:underline">
-          Login
+        <Link href="/login" passHref>
+          <Button variant="secondary">Login</Button>
         </Link>
-        <Link href="/register" className=" hover:underline">
-          Register
+        <Link href="/register" passHref>
+          <Button variant="secondary">Register</Button>
         </Link>
       </div>
 
