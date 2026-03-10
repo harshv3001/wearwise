@@ -49,9 +49,7 @@ export default function CreateClosetItem({ open, onClose }) {
       return;
     } else {
       try {
-        console.log("Submitting outfit:", formData);
         const result = await createItemMutation.mutateAsync(formData);
-        console.log("Created outfit:", result);
         alert("Closet item created successfully!");
         handleClose();
       } catch (error) {

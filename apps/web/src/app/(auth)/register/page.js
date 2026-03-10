@@ -21,7 +21,6 @@ export default function RegisterPage() {
   });
 
   const handleRegister = async (payload) => {
-    console.log("Registering with", payload);
     try {
       // 1) register
       await registerMut.mutateAsync(payload);

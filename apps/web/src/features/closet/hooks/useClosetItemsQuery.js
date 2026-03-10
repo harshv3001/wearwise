@@ -12,7 +12,6 @@ export function useClosetItemsQuery(category = "") {
 }
 
 export function useClosetSingleItemQuery(itemId) {
-  console.log("api called with itemId: ", itemId);
   return useQuery({
     queryKey: ["closet-items", itemId],
     queryFn: () => getClosetItemByIdApi(itemId),

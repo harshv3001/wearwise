@@ -9,7 +9,6 @@ const OutfitDetailsPage = () => {
   const params = useParams();
   const selectedOutfitId = params.id;
   const { data: singleOutfit } = useSingleOutfitQuery(selectedOutfitId);
-  console.log({ singleOutfit });
   return (
     <main style={{ padding: 24 }}>
       <h1>Outfit Details</h1>

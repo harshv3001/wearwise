@@ -62,7 +62,9 @@ export default function ClosetPage() {
             </div>
           ))}
         </div>
-      ) : null}
+      ) : (
+        <></>
+      )}
     </main>
   );
 }

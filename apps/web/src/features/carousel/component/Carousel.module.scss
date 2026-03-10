@@ -64,6 +64,16 @@ $slide-spacing: 10px;
   }
 }
 
+// Blank placeholder — transparent, just holds space so layout is identical
+.blankSlide {
+  box-sizing: border-box;
+  height: 140px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  pointer-events: none;
+}
+
 .button_container {
   button {
     height: 30px;
@@ -75,6 +85,13 @@ $slide-spacing: 10px;
 
     span {
       font-size: 30px;
+    }
+
+    // Hide disabled buttons (when blank is adjacent)
+    &:disabled {
+      opacity: 0;
+      pointer-events: none;
+      cursor: default;
     }
   }
 }

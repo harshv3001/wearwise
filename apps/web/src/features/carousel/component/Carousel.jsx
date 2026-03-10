@@ -6,6 +6,16 @@ import Link from "next/link";
 import styles from "./Carousel.module.scss";
 import "./CarouselCardVisibility.scss";
 
+const BLANK_ITEM = { id: "__blank__", name: "", image: null, isBlank: true };
+
+function padItems(closetItems) {
+  if (closetItems.length === 0) return closetItems;
+  if (closetItems.length === 1) return [BLANK_ITEM, closetItems[0], BLANK_ITEM];
+  if (closetItems.length === 2)
+    return [closetItems[0], closetItems[1], BLANK_ITEM];
+  return closetItems;
+}
+
 export default function Carousel({
   closetItems = [],
   categoryName,
@@ -14,31 +24,35 @@ export default function Carousel({
   disableRemoval,
   hideTitle,
 }) {
-  const isStaticView = closetItems.length < 3;
-  const [selectedSnap, setSelectedSnap] = useState(0);
+  const paddedItems = padItems(closetItems);
+  const isSingleItem = closetItems.length === 1;
+
+  const startIndex = isSingleItem ? 1 : 0;
+  const [selectedSnap, setSelectedSnap] = useState(startIndex);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true,
       align: "center",
+      startIndex,
     },
     [ClassNames()]
   );
 
   const onSelect = useCallback(() => {
-    if (!emblaApi || !closetItems.length) return;
+    if (!emblaApi || !paddedItems.length) return;
 
     const snap = emblaApi.selectedScrollSnap();
     setSelectedSnap(snap);
 
-    const selectedItem = closetItems[snap];
-    if (selectedItem) {
+    const selectedItem = paddedItems[snap];
+    if (selectedItem && !selectedItem.isBlank) {
       parentSetSelectedCallback(selectedItem.id);
     }
-  }, [emblaApi, closetItems, parentSetSelectedCallback]);
+  }, [emblaApi, paddedItems, parentSetSelectedCallback]);
 
   useEffect(() => {
-    if (!emblaApi || isStaticView) return;
+    if (!emblaApi) return;
 
     onSelect();
     emblaApi.on("select", onSelect);
@@ -46,63 +60,67 @@ export default function Carousel({
     return () => {
       emblaApi.off("select", onSelect);
     };
-  }, [emblaApi, onSelect, isStaticView]);
+  }, [emblaApi, onSelect]);
+
+  const prevIndex =
+    selectedSnap === 0 ? paddedItems.length - 1 : selectedSnap - 1;
+  const nextIndex =
+    selectedSnap === paddedItems.length - 1 ? 0 : selectedSnap + 1;
+  const isPrevBlank = paddedItems[prevIndex]?.isBlank ?? false;
+  const isNextBlank = paddedItems[nextIndex]?.isBlank ?? false;
 
   const determineSlideInnerClassName = useCallback(
     (index) => {
       let className = "carousel-slide-inner";
 
-      if (closetItems.length < 3) {
-        return className;
-      }
+      if (paddedItems.length < 3) return className;
 
-      const prevIndex =
-        selectedSnap === 0 ? closetItems.length - 1 : selectedSnap - 1;
-
-      const nextIndex =
-        selectedSnap === closetItems.length - 1 ? 0 : selectedSnap + 1;
-
-      if (index === prevIndex) {
-        className += " view-left";
-      } else if (index === nextIndex) {
-        className += " view-right";
-      }
+      if (index === prevIndex) className += " view-left";
+      else if (index === nextIndex) className += " view-right";
 
       return className;
     },
-    [selectedSnap, closetItems.length]
+    [paddedItems.length, prevIndex, nextIndex]
   );
 
   const renderSlides = () =>
-    closetItems.map((closetItem, index) => (
+    paddedItems.map((closetItem, index) => (
       <div
-        className={`${styles.embla__slide} ${isStaticView ? "is-snapped" : ""}`}
-        key={closetItem?.id}
+        className={`${styles.embla__slide}`}
+        key={`${closetItem?.id}-${index}`}
       >
-        <Link
-          className={determineSlideInnerClassName(index)}
-          href={`/closet/${closetItem?.id}`}
-        >
-          {closetItem?.image ? (
-            <span>{closetItem?.name}</span>
-          ) : (
-            <>
-              <img
-                src="brown-fall-jacket.jpg"
-                className={styles.outfitItemBox}
-                alt={closetItem?.name}
-              />
-              <div className="font-bold">{closetItem?.name}</div>
-            </>
-          )}
-        </Link>
+        {closetItem.isBlank ? (
+          <div
+            className={`${determineSlideInnerClassName(index)} ${
+              styles.blankSlide
+            }`}
+          />
+        ) : (
+          <Link
+            className={determineSlideInnerClassName(index)}
+            href={`/closet/${closetItem?.id}`}
+          >
+            {closetItem?.image ? (
+              <span>{closetItem?.name}</span>
+            ) : (
+              <>
+                <img
+                  src="brown-fall-jacket.jpg"
+                  className={styles.outfitItemBox}
+                  alt={closetItem?.name}
+                />
+                <div className="font-bold">{closetItem?.name}</div>
+              </>
+            )}
+          </Link>
+        )}
       </div>
     ));
 
   return (
     <div className="carousel">
       <div className={styles.carousel_header}>
-        {!hideTitle ? <h4>{categoryName}</h4> : null}
+        {!hideTitle ? <h4 className="capitalize">{categoryName}</h4> : null}
 
         {!disableRemoval ? (
           <button onClick={removalCallback} type="button">
@@ -113,33 +131,33 @@ export default function Carousel({
         ) : null}
       </div>
 
-      {isStaticView ? (
-        <div className={styles.static_container}>{renderSlides()}</div>
-      ) : (
-        <>
-          <div className={styles.embla__viewport} ref={emblaRef}>
-            <div className={styles.embla__container}>{renderSlides()}</div>
-          </div>
+      <div className={styles.embla__viewport} ref={emblaRef}>
+        <div className={styles.embla__container}>{renderSlides()}</div>
+      </div>
 
-          <div className={styles.button_container}>
-            <button type="button" onClick={() => emblaApi?.scrollPrev()}>
-              <span className="material-symbols-outlined" aria-hidden="true">
-                chevron_left
-              </span>
-            </button>
+      <div className={styles.button_container}>
+        <button
+          type="button"
+          onClick={() => emblaApi?.scrollPrev()}
+          disabled={isPrevBlank}
+          aria-disabled={isPrevBlank}
+        >
+          <span className="material-symbols-outlined" aria-hidden="true">
+            chevron_left
+          </span>
+        </button>
 
-            <button
-              type="button"
-              onClick={() => emblaApi?.scrollNext()}
-              className=""
-            >
-              <span className="material-symbols-outlined" aria-hidden="true">
-                chevron_right
-              </span>
-            </button>
-          </div>
-        </>
-      )}
+        <button
+          type="button"
+          onClick={() => emblaApi?.scrollNext()}
+          disabled={isNextBlank}
+          aria-disabled={isNextBlank}
+        >
+          <span className="material-symbols-outlined" aria-hidden="true">
+            chevron_right
+          </span>
+        </button>
+      </div>
     </div>
   );
 }
