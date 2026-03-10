@@ -102,11 +102,6 @@ export default function Carousel({
           >
             {!closetItem?.image_url ? (
               <>
-                <img
-                  src="brown-fall-jacket.jpg"
-                  className={styles.outfitItemBox}
-                  alt={closetItem?.name}
-                />
                 <span>{closetItem?.name}</span>
               </>
             ) : (
@@ -127,7 +122,7 @@ export default function Carousel({
   return (
     <div className="carousel">
       <div className={styles.carousel_header}>
-        {!hideTitle ? <h4 className="capitalize">{categoryName}</h4> : null}
+        {!hideTitle ? <h4>{categoryName}</h4> : null}
 
         {!disableRemoval ? (
           <button onClick={removalCallback} type="button">

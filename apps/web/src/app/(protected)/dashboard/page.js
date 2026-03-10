@@ -32,8 +32,8 @@ export default function DashboardPage() {
       </div>
       <section className="flex flex-wrap gap-4 justify-center">
         <CategorySummaryCard items={categorySummaryData} />
-        <CategorySummaryCard items={categorySummaryData} />
-        <CategorySummaryCard items={categorySummaryData} />
+        {/* <CategorySummaryCard items={categorySummaryData} />
+        <CategorySummaryCard items={categorySummaryData} /> */}
       </section>
       <div className="m-2 flex flex-col gap-4 items-center justify-center">
         <Button

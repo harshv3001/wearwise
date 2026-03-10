@@ -5,8 +5,9 @@ import Input from "../../../app/components/ui/Input/Input";
 import SelectInput from "../../../app/components/ui/SelectInput/SelectInput";
 import Modal from "../../../app/components/ui/Modal/Modal";
 import styles from "./CreateClosetItem.module.scss";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useCreateClosetItemMutation } from "../hooks/useCreateClosetItemMutation";
+import { useUploadItemImageMutation } from "../hooks/useUploadItemImageMutations";
 
 const initialFormData = {
   name: "",
@@ -22,10 +23,15 @@ const initialFormData = {
 
 export default function CreateClosetItem({ open, onClose }) {
   const createItemMutation = useCreateClosetItemMutation();
+  const { mutateAsync: uploadImage, isPending: isUploadingImage } =
+    useUploadItemImageMutation();
+
+  const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
-  const [isImageUploaded, setIsImageUploaded] = useState(false);
+  const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
 
   const onChange = (field, value) => {
     setFormData((prev) => ({
@@ -34,34 +40,55 @@ export default function CreateClosetItem({ open, onClose }) {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    setFile(selectedFile);
+    setPreviewUrl(URL.createObjectURL(selectedFile));
+  };
+
   const handleSubmit = async () => {
-    if (!formData.name.trim() && !formData.category.trim()) {
-      setErrors({
-        name: "Name is required",
-        category: "Category is required",
-      });
+    let newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+
+    if (!formData.category.trim()) {
+      newErrors = { ...newErrors, category: "Category is required" };
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
-    } else if (!formData.category.trim()) {
-      setErrors({ category: "Category is required" });
-      return;
-    } else if (!formData.name.trim()) {
-      setErrors({ name: "Name is required" });
-      return;
-    } else {
-      try {
-        const result = await createItemMutation.mutateAsync(formData);
-        alert("Closet item created successfully!");
-        handleClose();
-      } catch (error) {
-        console.error("Failed to create outfit:", error);
+    }
+
+    try {
+      const createdItem = await createItemMutation.mutateAsync(formData);
+
+      if (file) {
+        const imageFormData = new FormData();
+        imageFormData.append("file", file);
+
+        await uploadImage({
+          itemId: createdItem.id,
+          formData: imageFormData,
+        });
       }
+
+      alert("Closet item created successfully!");
+      handleClose();
+    } catch (error) {
+      console.error("Failed to create closet item:", error);
     }
   };
 
   const handleClose = () => {
-    setIsImageUploaded(false);
     setFormData(initialFormData);
     setErrors({});
+    setFile(null);
+    setPreviewUrl("");
     onClose();
   };
 
@@ -157,23 +184,35 @@ export default function CreateClosetItem({ open, onClose }) {
             onChange={(e) => onChange("dateAcquired", e.target.value)}
             placeholder="Enter date acquired"
           />
+
           <div className="col-span-1 my-auto">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+
             <Button
               type="button"
               variant="tertiary"
               size="lg"
               className="mt-4 w-full"
-              onClick={() => setIsImageUploaded((prev) => !prev)}
+              onClick={() => fileInputRef.current?.click()}
             >
-              <span className="font-bold">Upload Image</span>
+              <span className="font-bold">
+                {file ? "Change Image" : "Upload Image"}
+              </span>
             </Button>
           </div>
         </div>
+
         <div className="flex flex-col items-center gap-4 mt-8">
-          {isImageUploaded && (
+          {previewUrl && (
             <div className={styles.closetItemCard}>
               <img
-                src="brown-fall-jacket.jpg"
+                src={previewUrl}
                 alt="closet item preview"
                 className={styles.closetItemBox}
               />
@@ -186,8 +225,11 @@ export default function CreateClosetItem({ open, onClose }) {
               variant="primary"
               size="lg"
               onClick={handleSubmit}
+              disabled={createItemMutation.isPending || isUploadingImage}
             >
-              Add to Closet
+              {createItemMutation.isPending || isUploadingImage
+                ? "Saving..."
+                : "Add to Closet"}
             </Button>
           </div>
         </div>
