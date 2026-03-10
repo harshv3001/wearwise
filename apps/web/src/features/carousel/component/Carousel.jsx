@@ -120,24 +120,23 @@ export default function Carousel({
     ));
 
   return (
-    <>
-      <div className="carousel">
-        <div className={styles.carousel_header}>
-          {!hideTitle ? <h4>{categoryName}</h4> : null}
+    <div className="carousel">
+      <div className={styles.carousel_header}>
+        {!hideTitle ? <h4>{categoryName}</h4> : null}
 
-          {!disableRemoval ? (
-            <button onClick={removalCallback} type="button">
-              <span className="material-symbols-outlined" aria-hidden="true">
-                remove
-              </span>
-            </button>
-          ) : null}
-        </div>
-
-        <div className={styles.embla__viewport} ref={emblaRef}>
-          <div className={styles.embla__container}>{renderSlides()}</div>
-        </div>
+        {!disableRemoval ? (
+          <button onClick={removalCallback} type="button">
+            <span className="material-symbols-outlined" aria-hidden="true">
+              remove
+            </span>
+          </button>
+        ) : null}
       </div>
+
+      <div className={styles.embla__viewport} ref={emblaRef}>
+        <div className={styles.embla__container}>{renderSlides()}</div>
+      </div>
+
       <div className={styles.button_container}>
         <button
           type="button"
@@ -161,6 +160,6 @@ export default function Carousel({
           </span>
         </button>
       </div>
-    </>
+    </div>
   );
 }
