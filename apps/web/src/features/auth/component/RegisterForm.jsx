@@ -20,6 +20,16 @@ export default function RegisterForm({ onSubmit, loading }) {
   const [countryOptions, setCountryOptions] = useState([]);
   //const [usStates, setUsStates] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+    age: "",
+    gender: "",
+    country: "",
+    state: "",
+    city: "",
+  });
 
   useEffect(() => {
     async function fetchCountries() {
@@ -105,6 +115,10 @@ export default function RegisterForm({ onSubmit, loading }) {
       [name]: value,
       ...(name === "country" && { state: "" }),
     }));
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   };
 
   const toggleChip = (key, value) => {
@@ -116,8 +130,64 @@ export default function RegisterForm({ onSubmit, loading }) {
     });
   };
 
+  const validate = () => {
+    const newErrors = {
+      name: "",
+      email: "",
+      password: "",
+      age: "",
+      gender: "",
+      country: "",
+      state: "",
+      city: "",
+    };
+
+    if (!form.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+
+    if (!form.email) {
+      newErrors.email = "Email is required";
+    } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
+      newErrors.email = "Email is invalid";
+    }
+
+    if (!form.password) {
+      newErrors.password = "Password is required";
+    } else if (form.password.length < 5) {
+      newErrors.password = "Password must be at least 5 characters";
+    }
+
+    if (!form.age) {
+      newErrors.age = "Age is required";
+    } else if (Number(form.age) <= 0) {
+      newErrors.age = "Age must be greater than 0";
+    }
+
+    if (!form.gender) {
+      newErrors.gender = "Gender is required";
+    }
+
+    if (!form.country) {
+      newErrors.country = "Country is required";
+    }
+
+    if (!form.state) {
+      newErrors.state = "State is required";
+    }
+
+    if (!form.city) {
+      newErrors.city = "City is required";
+    }
+
+    setErrors(newErrors);
+
+    return !Object.values(newErrors).some((e) => e !== "");
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validate()) return;
     onSubmit({
       ...form,
       age: Number(form.age || 0),
@@ -137,6 +207,7 @@ export default function RegisterForm({ onSubmit, loading }) {
             placeholder="Enter your name"
             required
             autoComplete="name"
+            error={errors.name}
           />
 
           <Input
@@ -148,11 +219,12 @@ export default function RegisterForm({ onSubmit, loading }) {
             placeholder="you@email.com"
             required
             autoComplete="email"
+            error={errors.email}
           />
 
           <div className="relative">
             <Input
-              className="col-span-1 pr-10"
+              className="col-span-1 "
               label="Password"
               name="password"
               type={showPassword ? "text" : "password"}
@@ -161,6 +233,7 @@ export default function RegisterForm({ onSubmit, loading }) {
               placeholder="Enter your password"
               required
               autoComplete="new-password"
+              error={errors.password}
             />
             <button
               type="button"
@@ -195,6 +268,7 @@ export default function RegisterForm({ onSubmit, loading }) {
             placeholder="Enter your age"
             required
             inputMode="numeric"
+            error={errors.age}
           />
         </div>
 
@@ -205,6 +279,7 @@ export default function RegisterForm({ onSubmit, loading }) {
           onChange={onChange}
           options={GENDER_OPTIONS}
           required
+          error={errors.gender}
         />
 
         <SelectInput
@@ -215,6 +290,7 @@ export default function RegisterForm({ onSubmit, loading }) {
           options={countryOptions}
           placeholder="Select country"
           required
+          error={errors.country}
         />
 
         <Input
@@ -224,6 +300,7 @@ export default function RegisterForm({ onSubmit, loading }) {
           onChange={onChange}
           placeholder="Enter your state/province"
           required
+          error={errors.state}
         />
 
         <Input
@@ -231,8 +308,9 @@ export default function RegisterForm({ onSubmit, loading }) {
           name="city"
           value={form.city}
           onChange={onChange}
-          placeholder="Philadelphia"
+          placeholder="Enter your city"
           required
+          error={errors.city}
         />
 
         <div className="space-y-2">
@@ -240,6 +318,7 @@ export default function RegisterForm({ onSubmit, loading }) {
           <div className="flex flex-wrap gap-2">
             {STYLE_OPTIONS.map((s) => (
               <Chip
+                className="p-6"
                 key={s}
                 label={s}
                 onClick={() => toggleChip("pref_styles", s)}
@@ -260,6 +339,7 @@ export default function RegisterForm({ onSubmit, loading }) {
           <div className="flex flex-wrap gap-2">
             {COLOR_OPTIONS.map((c) => (
               <Chip
+                className="p-6"
                 key={c}
                 label={c}
                 onClick={() => toggleChip("pref_colors", c)}
@@ -275,7 +355,12 @@ export default function RegisterForm({ onSubmit, loading }) {
           </div>
         </div>
         <div className="pt-4 mt-4">
-          <Button className="w-full" disabled={loading} type="submit">
+          <Button
+            className="w-full"
+            variant="secondary"
+            disabled={loading}
+            type="submit"
+          >
             {loading ? "Creating account..." : "Create account"}
           </Button>
         </div>

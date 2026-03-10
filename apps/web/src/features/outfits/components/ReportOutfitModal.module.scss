@@ -40,28 +40,6 @@
   margin-bottom: 28px;
 }
 
-.submitButton {
-  min-width: 120px;
-  height: 34px;
-  padding: 0 18px;
-  border: none;
-  border-radius: 8px;
-  background: var(--ww-color-primary);
-  font-size: 13px;
-  line-height: 18px;
-  color: #ffffff;
-  cursor: pointer;
-  transition: opacity 160ms ease, transform 160ms ease;
-
-  &:hover {
-    opacity: 0.92;
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-}
-
 .sectionLabel {
   margin-bottom: 8px;
   font-size: 14px;

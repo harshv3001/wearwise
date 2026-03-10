@@ -5,6 +5,7 @@ import { categorySummaryData } from "../../../lib/static-data";
 import Button from "../../components/ui/Button";
 import CategorySummaryCard from "../../../features/category-summary/component/CategorySummaryCard";
 import ReportOutfitModal from "../../../features/outfits/components/ReportOutfitModal";
+import CreateClosetItem from "../../../features/closet/component/CreateClosetItem.jsx";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
 
 export default function DashboardPage() {
@@ -13,6 +14,7 @@ export default function DashboardPage() {
   const { data: closetItems, isLoading, error } = useClosetItemsQuery(category);
 
   const [openReportModal, setOpenReportModal] = useState(false);
+  const [openItemModal, setOpenItemModal] = useState(false);
 
   return (
     <main className="p-6">
@@ -32,7 +34,11 @@ export default function DashboardPage() {
         <CategorySummaryCard items={categorySummaryData} />
       </section>
       <div className="m-2 flex flex-col gap-4 items-center justify-center">
-        <Button variant="secondary" size="xl">
+        <Button
+          variant="secondary"
+          size="xl"
+          onClick={() => setOpenItemModal(true)}
+        >
           Add new clothing item
         </Button>
         <Button variant="tertiary">Go to Closet</Button>
@@ -44,6 +50,10 @@ export default function DashboardPage() {
       <ReportOutfitModal
         open={openReportModal}
         onClose={() => setOpenReportModal(false)}
+      />
+      <CreateClosetItem
+        open={openItemModal}
+        onClose={() => setOpenItemModal(false)}
       />
     </main>
   );

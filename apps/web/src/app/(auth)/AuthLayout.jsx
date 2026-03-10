@@ -1,10 +1,12 @@
 import AuthCard from "../components/ui/AuthCard/AuthCard";
+import HeaderLogo from "../components/header/HeaderLogo";
 
 export default function AuthLayout({ children }) {
   return (
     <main className="min-h-screen flex px-4 bg-[var(--ww-gray-medium)]">
       <div className="hidden md:flex w-1/2 bg-[var(--ww-gray-medium)]">
-        <div className="text-2xl font-bold">WearWise</div>
+        <HeaderLogo className="font-bold mt-[5px] text-[25px]" />
+
         <img
           src="closet.svg"
           alt="Closet illustration"
