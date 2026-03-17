@@ -49,7 +49,7 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout>
-      <div className="max-w-md rounded-2xl ring-1 ring-inset ring-zinc-300">
+      <div>
         <h1 className="text-3xl font-semibold">Create account</h1>
         <p className="mt-1 text-sm opacity-70">
           Set up your profile and preferences.
