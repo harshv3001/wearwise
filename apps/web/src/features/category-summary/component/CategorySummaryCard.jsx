@@ -3,6 +3,7 @@
 import Card from "../../../app/components/ui/Card/Card";
 import Button from "../../../app/components/ui/Button";
 import styles from "./CategorySummaryCard.module.scss";
+import Link from "next/link";
 
 export default function CategorySummaryCard({ items = [] }) {
   const midpoint = Math.ceil(items.length / 2);
@@ -37,7 +38,9 @@ export default function CategorySummaryCard({ items = [] }) {
       </div>
 
       <div className={`flex justify-center ${styles.buttonWrap}`}>
-        <Button variant="tertiary">Go to Closet</Button>
+        <Link href="/closet">
+          <Button variant="tertiary">Go to Closet</Button>
+        </Link>
       </div>
     </Card>
   );

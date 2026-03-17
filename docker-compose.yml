@@ -49,6 +49,16 @@ services:
     volumes:
       - ./apps/web:/app
       - web_node_modules:/app/node_modules
+    # develop:
+    #   watch:
+    #     - action: sync
+    #       path: ./web
+    #       target: /app/web
+    #       ignore:
+    #         - node_modules/
+    #     - action: sync+restart
+    #       path: ./proxy/nginx.conf
+    #       target: /etc/nginx/conf.d/default.conf
 
 volumes:
   pgdata:

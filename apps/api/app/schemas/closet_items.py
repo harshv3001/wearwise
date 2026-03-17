@@ -5,9 +5,7 @@ from datetime import datetime, date
 
 class ClosetItemBase(BaseModel):
     name: str = Field(min_length=1, max_length=100)
-
     category: str = Field(min_length=1, max_length=50)
-
     color: Optional[str] = Field(default=None, max_length=50)
     season: Optional[str] = Field(default=None, max_length=50)
     brand: Optional[str] = Field(default=None, max_length=80)
@@ -38,6 +36,7 @@ class ClosetItemOut(ClosetItemBase):
     id: int
     user_id: int
     times_worn: int
+    image_url: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 

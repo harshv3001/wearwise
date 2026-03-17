@@ -1,15 +1,28 @@
 from typing import Optional, List
+from pathlib import Path
+import os
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 
 from app.database import get_db
-from app.oauth2 import get_current_user  # adjust path if different
+from app.oauth2 import get_current_user
 from app.models import user as user_models, outfit as outfit_models, closet_items as closet_items_models
-from app.schemas.outfit import OutfitCreate, OutfitOut, OutfitUpdate, OutfitItemCreate, OutfitItemOut
+from app.schemas.outfit import (
+    OutfitCreate,
+    OutfitOut,
+    OutfitUpdate,
+    OutfitItemCreate,
+    OutfitListResponse,
+    OutfitDetailOut,
+)
+from app.utils import save_upload_file, build_image_url
 
 router = APIRouter(prefix="/outfits", tags=["Outfits"])
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+OUTFIT_UPLOAD_DIR = BASE_DIR / "uploads" / "outfits"
 
 
 def _validate_closet_items_belong_to_user(
@@ -17,12 +30,10 @@ def _validate_closet_items_belong_to_user(
     user_id: int,
     items: List[OutfitItemCreate],
 ) -> None:
-    
     if not items:
         return
 
     ids = [i.closet_item_id for i in items]
-
 
     if len(ids) != len(set(ids)):
         raise HTTPException(
@@ -59,7 +70,35 @@ def _get_outfit_or_404(db: Session, outfit_id: int, user_id: int) -> outfit_mode
     return outfit
 
 
-# -------- routes --------
+def _serialize_outfit(outfit: outfit_models.Outfit, items) -> OutfitOut:
+    return OutfitOut(
+        id=outfit.id,
+        name=outfit.name,
+        occasion=outfit.occasion,
+        season=outfit.season,
+        is_favorite=outfit.is_favorite,
+        notes=outfit.notes,
+        image_url=build_image_url(outfit.image_path),
+        created_at=outfit.created_at,
+        updated_at=outfit.updated_at,
+        items=items,
+    )
+
+
+def _serialize_outfit_detail(outfit: outfit_models.Outfit, items) -> OutfitDetailOut:
+    return OutfitDetailOut(
+        id=outfit.id,
+        name=outfit.name,
+        occasion=outfit.occasion,
+        season=outfit.season,
+        is_favorite=outfit.is_favorite,
+        notes=outfit.notes,
+        image_url=build_image_url(outfit.image_path),
+        created_at=outfit.created_at,
+        updated_at=outfit.updated_at,
+        items=items,
+    )
+
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=OutfitOut)
 def create_outfit(
@@ -73,9 +112,8 @@ def create_outfit(
         user_id=current_user.id, **payload.model_dump(exclude={"items"})
     )
     db.add(outfit)
-    db.flush()  
+    db.flush()
 
-    # create links
     for it in payload.items:
         db.add(
             outfit_models.OutfitItem(
@@ -83,28 +121,18 @@ def create_outfit(
                 closet_item_id=it.closet_item_id,
                 position=it.position,
                 note=it.note,
+            
             )
         )
 
     db.commit()
     db.refresh(outfit)
 
-    
-    outfit.outfit_items  
-    return OutfitOut(
-        id=outfit.id,
-        name=outfit.name,
-        occasion=outfit.occasion,
-        season=outfit.season,
-        is_favorite=outfit.is_favorite,
-        notes=outfit.notes,
-        created_at=outfit.created_at,
-        updated_at=outfit.updated_at,
-        items=outfit.outfit_items,
-    )
+    outfit.outfit_items
+    return _serialize_outfit(outfit, outfit.outfit_items)
 
 
-@router.get("/", response_model=dict)
+@router.get("/", response_model=OutfitListResponse)
 def list_outfits(
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
@@ -114,7 +142,6 @@ def list_outfits(
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
 ):
-   
     base_q = db.query(outfit_models.Outfit).filter(outfit_models.Outfit.user_id == current_user.id)
 
     if occasion:
@@ -138,7 +165,6 @@ def list_outfits(
     counts_by_outfit = {oid: 0 for oid in outfit_ids}
 
     if outfit_ids:
-       
         counts = (
             db.query(outfit_models.OutfitItem.outfit_id, func.count(outfit_models.OutfitItem.closet_item_id))
             .filter(outfit_models.OutfitItem.outfit_id.in_(outfit_ids))
@@ -148,15 +174,36 @@ def list_outfits(
         for oid, count in counts:
             counts_by_outfit[oid] = int(count)
 
-       
         rows = (
-            db.query(outfit_models.OutfitItem.outfit_id, outfit_models.OutfitItem.closet_item_id)
+            db.query(
+                outfit_models.OutfitItem.outfit_id,
+                outfit_models.OutfitItem.closet_item_id,
+                outfit_models.OutfitItem.position,
+                outfit_models.OutfitItem.note,
+                closet_items_models.ClosetItem.image_path,
+            )
+            .join(
+                closet_items_models.ClosetItem,
+                closet_items_models.ClosetItem.id == outfit_models.OutfitItem.closet_item_id,
+            )
             .filter(outfit_models.OutfitItem.outfit_id.in_(outfit_ids))
-            .order_by(outfit_models.OutfitItem.outfit_id.asc(), outfit_models.OutfitItem.position.asc())
+            .order_by(
+                outfit_models.OutfitItem.outfit_id.asc(),
+                outfit_models.OutfitItem.position.asc(),
+            )
             .all()
         )
-        for oid, cid in rows:
-            previews_by_outfit[oid].append(cid)
+        for row in rows:
+            previews_by_outfit[row.outfit_id].append(
+                {
+                    "closet_item_id": row.closet_item_id,
+                    "position": row.position,
+                    "outfit_id": row.outfit_id,
+                    "note": row.note,
+                    "image_url": build_image_url(row.image_path),
+                }
+ 
+            )
 
     items = []
     for outfit in outfits:
@@ -167,44 +214,34 @@ def list_outfits(
                 "occasion": outfit.occasion,
                 "season": outfit.season,
                 "is_favorite": outfit.is_favorite,
+                "image_url": build_image_url(outfit.image_path),
                 "created_at": outfit.created_at,
                 "updated_at": outfit.updated_at,
                 "item_count": counts_by_outfit.get(outfit.id, 0),
-                "preview_item_ids": previews_by_outfit.get(outfit.id, []),
+                "preview_items": previews_by_outfit.get(outfit.id, []),
             }
         )
 
     return {"items": items, "limit": limit, "offset": offset, "total": total}
 
 
-@router.get("/{outfit_id}", response_model=OutfitOut)
+@router.get("/{outfit_id}", response_model=OutfitDetailOut)
 def get_outfit(
     outfit_id: int,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
 ):
-
     outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
 
-    # Load items ordered
     outfit_items = (
         db.query(outfit_models.OutfitItem)
+        .options(joinedload(outfit_models.OutfitItem.closet_item))
         .filter(outfit_models.OutfitItem.outfit_id == outfit.id)
         .order_by(outfit_models.OutfitItem.position.asc())
         .all()
     )
 
-    return OutfitOut(
-        id=outfit.id,
-        name=outfit.name,
-        occasion=outfit.occasion,
-        season=outfit.season,
-        is_favorite=outfit.is_favorite,
-        notes=outfit.notes,
-        created_at=outfit.created_at,
-        updated_at=outfit.updated_at,
-        items=outfit_items,
-    )
+    return _serialize_outfit_detail(outfit, outfit_items)
 
 
 @router.patch("/{outfit_id}", response_model=OutfitOut)
@@ -214,10 +251,8 @@ def update_outfit(
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
 ):
-   
     outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
 
-    # update fields if provided
     if payload.name is not None:
         outfit.name = payload.name
     if payload.occasion is not None:
@@ -229,14 +264,13 @@ def update_outfit(
     if payload.notes is not None:
         outfit.notes = payload.notes
 
-    # replace items if explicitly provided
     if payload.items is not None:
         _validate_closet_items_belong_to_user(db, current_user.id, payload.items)
 
-        # delete old links
-        db.query(outfit_models.OutfitItem).filter(outfit_models.OutfitItem.outfit_id == outfit.id).delete()
+        db.query(outfit_models.OutfitItem).filter(
+            outfit_models.OutfitItem.outfit_id == outfit.id
+        ).delete()
 
-        # insert new links
         for it in payload.items:
             db.add(
                 outfit_models.OutfitItem(
@@ -257,17 +291,38 @@ def update_outfit(
         .all()
     )
 
-    return OutfitOut(
-        id=outfit.id,
-        name=outfit.name,
-        occasion=outfit.occasion,
-        season=outfit.season,
-        is_favorite=outfit.is_favorite,
-        notes=outfit.notes,
-        created_at=outfit.created_at,
-        updated_at=outfit.updated_at,
-        items=outfit_items,
+    return _serialize_outfit(outfit, outfit_items)
+
+
+@router.post("/{outfit_id}/image", response_model=OutfitDetailOut)
+def upload_outfit_image(
+    outfit_id: int,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: user_models.User = Depends(get_current_user),
+):
+    outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
+
+    filename = save_upload_file(file, OUTFIT_UPLOAD_DIR)
+
+    if outfit.image_path:
+        old_file_path = BASE_DIR / "uploads" / outfit.image_path
+        if old_file_path.exists():
+            os.remove(old_file_path)
+
+    outfit.image_path = f"outfits/{filename}"
+    db.commit()
+    db.refresh(outfit)
+
+    outfit_items = (
+        db.query(outfit_models.OutfitItem)
+        .options(joinedload(outfit_models.OutfitItem.closet_item))
+        .filter(outfit_models.OutfitItem.outfit_id == outfit.id)
+        .order_by(outfit_models.OutfitItem.position.asc())
+        .all()
     )
+
+    return _serialize_outfit_detail(outfit, outfit_items)
 
 
 @router.delete("/{outfit_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -277,6 +332,12 @@ def delete_outfit(
     current_user: user_models.User = Depends(get_current_user),
 ):
     outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
+
+    if outfit.image_path:
+        file_path = BASE_DIR / "uploads" / outfit.image_path
+        if file_path.exists():
+            os.remove(file_path)
+
     db.delete(outfit)
     db.commit()
     return

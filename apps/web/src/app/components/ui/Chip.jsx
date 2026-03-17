@@ -1,6 +1,6 @@
 "use client";
 
-export default function Chip({
+export default function BeforeChip({
   label,
   selected = false,
   disabled = false,

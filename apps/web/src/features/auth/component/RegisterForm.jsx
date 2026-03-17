@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Input from "../../../app/components/ui/Input";
+import Input from "../../../app/components/ui/Input/Input";
 import Button from "../../../app/components/ui/Button";
-import Chip from "../../../app/components/ui/Chip";
+import Chip from "@mui/material/Chip"; //"../../../app/components/ui/Chip";
 import SelectInput from "../../../app/components/ui/SelectInput";
 import RadioGroup from "../../../app/components/ui/RadioGroup";
 
@@ -18,7 +18,18 @@ const GENDER_OPTIONS = [
 
 export default function RegisterForm({ onSubmit, loading }) {
   const [countryOptions, setCountryOptions] = useState([]);
-  const [usStates, setUsStates] = useState([]);
+  //const [usStates, setUsStates] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+    age: "",
+    gender: "",
+    country: "",
+    state: "",
+    city: "",
+  });
 
   useEffect(() => {
     async function fetchCountries() {
@@ -48,6 +59,7 @@ export default function RegisterForm({ onSubmit, loading }) {
     fetchCountries();
   }, []);
 
+  /*
   useEffect(() => {
     async function fetchStates() {
       try {
@@ -79,6 +91,7 @@ export default function RegisterForm({ onSubmit, loading }) {
 
     fetchStates();
   }, []);
+  */
 
   const initialForm = {
     name: "",
@@ -102,6 +115,10 @@ export default function RegisterForm({ onSubmit, loading }) {
       [name]: value,
       ...(name === "country" && { state: "" }),
     }));
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   };
 
   const toggleChip = (key, value) => {
@@ -113,8 +130,64 @@ export default function RegisterForm({ onSubmit, loading }) {
     });
   };
 
+  const validate = () => {
+    const newErrors = {
+      name: "",
+      email: "",
+      password: "",
+      age: "",
+      gender: "",
+      country: "",
+      state: "",
+      city: "",
+    };
+
+    if (!form.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+
+    if (!form.email) {
+      newErrors.email = "Email is required";
+    } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
+      newErrors.email = "Email is invalid";
+    }
+
+    if (!form.password) {
+      newErrors.password = "Password is required";
+    } else if (form.password.length < 5) {
+      newErrors.password = "Password must be at least 5 characters";
+    }
+
+    if (!form.age) {
+      newErrors.age = "Age is required";
+    } else if (Number(form.age) <= 0) {
+      newErrors.age = "Age must be greater than 0";
+    }
+
+    if (!form.gender) {
+      newErrors.gender = "Gender is required";
+    }
+
+    if (!form.country) {
+      newErrors.country = "Country is required";
+    }
+
+    if (!form.state) {
+      newErrors.state = "State is required";
+    }
+
+    if (!form.city) {
+      newErrors.city = "City is required";
+    }
+
+    setErrors(newErrors);
+
+    return !Object.values(newErrors).some((e) => e !== "");
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validate()) return;
     onSubmit({
       ...form,
       age: Number(form.age || 0),
@@ -124,16 +197,17 @@ export default function RegisterForm({ onSubmit, loading }) {
   return (
     <>
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2">
           <Input
             className="col-span-1"
             label="Name"
             name="name"
             value={form.name}
             onChange={onChange}
-            placeholder="Your name"
+            placeholder="Enter your name"
             required
             autoComplete="name"
+            error={errors.name}
           />
 
           <Input
@@ -145,29 +219,56 @@ export default function RegisterForm({ onSubmit, loading }) {
             placeholder="you@email.com"
             required
             autoComplete="email"
+            error={errors.email}
           />
 
-          <Input
-            className="col-span-1"
-            label="Password"
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={onChange}
-            placeholder="••••••••"
-            required
-            autoComplete="new-password"
-          />
+          <div className="relative">
+            <Input
+              className="col-span-1 "
+              label="Password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={form.password}
+              onChange={onChange}
+              placeholder="Enter your password"
+              required
+              autoComplete="new-password"
+              error={errors.password}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute !bg-white right-2 top-[68%] -translate-y-[60%] p-1 rounded"
+            >
+              <img
+                src={
+                  showPassword
+                    ? "eye-password-hide.svg"
+                    : "eye-password-show.svg"
+                }
+                alt="hide/show password"
+                className="w-5"
+              />
+            </button>
+          </div>
 
           <Input
             className="col-span-1"
             label="Age"
             name="age"
+            type="number"
+            min="0"
             value={form.age}
-            onChange={onChange}
-            placeholder="26"
+            onChange={(e) => {
+              const value = e.target.value;
+              if (Number(value) >= 0 || value === "") {
+                onChange(e); // only update if value is >= 0
+              }
+            }}
+            placeholder="Enter your age"
             required
             inputMode="numeric"
+            error={errors.age}
           />
         </div>
 
@@ -178,6 +279,7 @@ export default function RegisterForm({ onSubmit, loading }) {
           onChange={onChange}
           options={GENDER_OPTIONS}
           required
+          error={errors.gender}
         />
 
         <SelectInput
@@ -188,36 +290,27 @@ export default function RegisterForm({ onSubmit, loading }) {
           options={countryOptions}
           placeholder="Select country"
           required
+          error={errors.country}
         />
 
-        {form.country === "United States" ? (
-          <SelectInput
-            label="State"
-            name="state"
-            value={form.state}
-            onChange={onChange}
-            options={usStates}
-            placeholder="Select a state"
-            required
-          />
-        ) : (
-          <Input
-            label="State"
-            name="state"
-            value={form.state}
-            onChange={onChange}
-            placeholder="Enter your state/province"
-            required
-          />
-        )}
+        <Input
+          label="State"
+          name="state"
+          value={form.state}
+          onChange={onChange}
+          placeholder="Enter your state/province"
+          required
+          error={errors.state}
+        />
 
         <Input
           label="City"
           name="city"
           value={form.city}
           onChange={onChange}
-          placeholder="Philadelphia"
+          placeholder="Enter your city"
           required
+          error={errors.city}
         />
 
         <div className="space-y-2">
@@ -225,10 +318,13 @@ export default function RegisterForm({ onSubmit, loading }) {
           <div className="flex flex-wrap gap-2">
             {STYLE_OPTIONS.map((s) => (
               <Chip
+                className="p-6"
                 key={s}
                 label={s}
-                selected={form.pref_styles.includes(s)}
                 onClick={() => toggleChip("pref_styles", s)}
+                variant={form.pref_styles.includes(s) ? "filled" : "outlined"}
+                color={form.pref_styles.includes(s) ? "primary" : "default"}
+                clickable
               />
             ))}
           </div>
@@ -243,10 +339,13 @@ export default function RegisterForm({ onSubmit, loading }) {
           <div className="flex flex-wrap gap-2">
             {COLOR_OPTIONS.map((c) => (
               <Chip
+                className="p-6"
                 key={c}
                 label={c}
-                selected={form.pref_colors.includes(c)}
                 onClick={() => toggleChip("pref_colors", c)}
+                variant={form.pref_colors.includes(c) ? "filled" : "outlined"}
+                color={form.pref_colors.includes(c) ? "primary" : "default"}
+                clickable
               />
             ))}
           </div>
@@ -255,10 +354,16 @@ export default function RegisterForm({ onSubmit, loading }) {
             {form.pref_colors.length ? form.pref_colors.join(", ") : "none"}
           </div>
         </div>
-
-        <Button className="w-full" disabled={loading} type="submit">
-          {loading ? "Creating account..." : "Create account"}
-        </Button>
+        <div className="pt-4 mt-4">
+          <Button
+            className="w-full"
+            variant="secondary"
+            disabled={loading}
+            type="submit"
+          >
+            {loading ? "Creating account..." : "Create account"}
+          </Button>
+        </div>
       </form>
     </>
   );

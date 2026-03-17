@@ -1,13 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+
 import Modal from "../../../app/components/ui/Modal/Modal";
 import styles from "./ReportOutfitModal.module.scss";
 import ReportOutfitStepDate from "./ReportOutfitStepDate";
 import ReportOutfitStepSelectOutfit from "./ReportOutfitStepSelectOutfit";
-import ReportOutfitStepDetails from "./ReportOutfitStepDetails";
-import { outfitOptionsData } from "../../../lib/static-data";
 import Button from "../../../app/components/ui/Button";
+import { useCreateOutfitMutation } from "../hooks/useCreateOutfitMutation";
+import { useUpdateOutfitMutation } from "../hooks/useUpdateOutfitMutation";
+import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
+import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
+import { useClosetItemsQuery } from "../../closet/hooks/useClosetItemsQuery";
+import { useSingleOutfitQuery } from "../hooks/useOutfitsQuery";
 
 const initialFormData = {
   name: "",
@@ -20,39 +25,32 @@ const initialFormData = {
 export default function ReportOutfitModal({ open, onClose }) {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
-  const [today, setToday] = useState(true);
-  const [selectedSource, setSelectedSource] = useState("closet");
+  // const [selectedSource, setSelectedSource] = useState("closet");
   const [selectedOutfitId, setSelectedOutfitId] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
-  const [errors, setErrors] = useState({ name: false });
+  // const [errors, setErrors] = useState({ name: false });
+  const createOutfitMutation = useCreateOutfitMutation();
+  const updateOutfitMutation = useUpdateOutfitMutation();
+  const createReportMutation = useCreateReportMutation();
+  const { data: outfits, isLoading, error } = useOutfitsQuery();
+
+  const { data: closetItems } = useClosetItemsQuery("");
 
   const isStepOneValid = !!selectedDate;
-  const isStepTwoValid = !!selectedSource && !!selectedOutfitId;
 
-  const isNextDisabled =
-    (step === 1 && !isStepOneValid) || (step === 2 && !isStepTwoValid);
+  step === 1 && !isStepOneValid;
 
   const modalClassName = step === 1 ? styles.modalSmall : styles.modalLarge;
 
-  const selectedOutfit = useMemo(() => {
-    const list = outfitOptionsData[selectedSource] || [];
-    return list.find((item) => item.id === selectedOutfitId) || null;
-  }, [selectedSource, selectedOutfitId]);
-
-  console.log("formData:", formData);
   const handleClose = () => {
     setStep(1);
-    setSelectedDate("");
-    setSelectedSource("closet");
+
     setSelectedOutfitId(null);
-    setFormData(initialFormData);
     onClose();
   };
 
   const handleNext = () => {
-    if (step === 1 && !isStepOneValid) return;
-    if (step === 2 && !isStepTwoValid) return;
-    if (step < 3) {
+    if (step < 2) {
       setStep((prev) => prev + 1);
     }
   };
@@ -63,30 +61,84 @@ export default function ReportOutfitModal({ open, onClose }) {
     }
   };
 
-  const handleSubmit = () => {
-    if (formData.name.trim() === "") {
-      setErrors({ name: true });
-      return;
-    } else {
-      const payload = {
-        date: selectedDate,
-        source: selectedSource,
-        outfitId: selectedOutfitId,
-        outfit: selectedOutfit,
-        formData,
+  // const handleUpdate = async (outfitId) => {
+  //   try {
+  //     const result = await updateOutfitMutation.mutateAsync({
+  //       outfitId,
+  //       payload: {
+  //         name: "Updated Summer Outfit",
+  //         notes: "Changed notes",
+  //       },
+  //     });
+
+  //     console.log("outfit updated:", result);
+  //   } catch (error) {
+  //     console.error("update outfit failed:", error);
+  //   }
+  // };
+
+  const handleSubmit = async () => {
+    // if (formData.name.trim() === "") {
+    //   setErrors({ name: true });
+    //   return;
+    // }
+
+    // try {
+    //   const result = await createOutfitMutation.mutateAsync({
+    //     name: "Casual Summer Look",
+    //     notes: "White tee with jeans",
+    //     occasion: "casual",
+    //     season: "summer",
+    //     is_favorite: false,
+    //     items: [
+    //       { closet_item_id: 1, position: 1, note: "top" },
+    //       { closet_item_id: 2, position: 2, note: "bottom" },
+    //     ],
+    //   });
+
+    //   console.log("outfit created:", result);
+    // } catch (error) {
+    //   console.error("create outfit failed:", error);
+    // }
+
+    if (selectedOutfitId) {
+      const selectedOutfit = outfits?.items?.find(
+        (outfitItem) => outfitItem?.id === selectedOutfitId
+      );
+
+      const updatedSelectedOutfit = {
+        ...selectedOutfit,
+        items: selectedOutfit?.preview_items,
       };
 
-      console.log("Report outfit payload:", payload);
-      handleClose();
+      try {
+        const payload = {
+          date_worn: selectedDate,
+          outfit: updatedSelectedOutfit,
+        };
+        console.log("payload", payload);
+
+        const result = await createReportMutation.mutateAsync(payload);
+        console.log("outfit reported:", result);
+
+        if (result.wear_log_id) {
+          alert("Outfit reported successfully!");
+          handleClose();
+        }
+      } catch (error) {
+        console.error("report outfit failed:", error);
+      }
+    } else {
+      alert("Please select an outfit to report");
     }
   };
 
-  const handleFormChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  // const handleFormChange = (field, value) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [field]: value,
+  //   }));
+  // };
 
   return (
     <Modal
@@ -103,9 +155,6 @@ export default function ReportOutfitModal({ open, onClose }) {
           <span
             className={`${styles.dot} ${step === 2 ? styles.dotActive : ""}`}
           />
-          <span
-            className={`${styles.dot} ${step === 3 ? styles.dotActive : ""}`}
-          />
         </div>
 
         <div className={styles.content}>
@@ -113,26 +162,16 @@ export default function ReportOutfitModal({ open, onClose }) {
             <ReportOutfitStepDate
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
-              today={today}
-              setToday={setToday}
             />
           )}
 
           {step === 2 && (
             <ReportOutfitStepSelectOutfit
-              selectedSource={selectedSource}
-              setSelectedSource={setSelectedSource}
               selectedOutfitId={selectedOutfitId}
               setSelectedOutfitId={setSelectedOutfitId}
-              outfitOptionsData={outfitOptionsData}
-            />
-          )}
-
-          {step === 3 && (
-            <ReportOutfitStepDetails
-              formData={formData}
-              onChange={handleFormChange}
-              errors={errors}
+              selectedDate={selectedDate}
+              closetItems={closetItems}
+              outfits={outfits}
             />
           )}
         </div>
@@ -140,7 +179,7 @@ export default function ReportOutfitModal({ open, onClose }) {
         <div className="flex items-center justify-between">
           <div>
             {step > 1 ? (
-              <Button onClick={handlePrev} variant="tertiary" size="sm">
+              <Button onClick={handlePrev} variant="secondary" size="sm">
                 Prev
               </Button>
             ) : (
@@ -149,19 +188,28 @@ export default function ReportOutfitModal({ open, onClose }) {
           </div>
 
           <div>
-            {step < 3 ? (
+            {step < 2 ? (
               <Button
                 onClick={handleNext}
-                disabled={isNextDisabled}
-                variant="tertiary"
+                // disabled={isNextDisabled}
+                variant="secondary"
                 size="sm"
               >
                 Next
               </Button>
             ) : (
-              <Button onClick={handleSubmit} variant="primary" size="sm">
-                Report Outfit
-              </Button>
+              <div className="flex gap-6">
+                <Button onClick={handleSubmit} variant="primary" size="sm">
+                  Report Outfit
+                </Button>
+                {/* <Button
+                  onClick={() => handleUpdate(1)}
+                  variant="primary"
+                  size="sm"
+                >
+                  Change Outfit
+                </Button> */}
+              </div>
             )}
           </div>
         </div>

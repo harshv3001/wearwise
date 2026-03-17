@@ -1,0 +1,53 @@
+div.accordion_container {
+  display: block;
+  /* background-color: yellow; */
+  // width: fit-content;
+  // margin-bottom: 24px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 6px 4px 8px;
+    background-color: #ffc9c4;
+    height: 42px;
+    height: fit-content;
+    // text-transform: capitalize;
+
+    h5 {
+      cursor: default;
+    }
+
+    button {
+      height: 26px;
+      width: 28px;
+      text-align: center;
+      border-radius: 50%;
+      color: #565f5f;
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
+      &:hover {
+        cursor: pointer;
+        color: black;
+        background-color: #ffe3e0;
+      }
+
+      span {
+        position: relative;
+        top: 1px;
+        left: 1px;
+      }
+    }
+  }
+  .main {
+    /* background-color: green; */
+    overflow: hidden;
+    height: 0px;
+    width: fit-content;
+    transition: height 0.2s ease-in-out;
+    &_open {
+      /* background-color: blue; */
+      height: 200px;
+      margin: 20px auto;
+    }
+  }
+}

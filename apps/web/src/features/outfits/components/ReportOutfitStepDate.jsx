@@ -2,7 +2,7 @@
 
 import YesNoSwitch from "../../../app/components/ui/YesNoSwitch";
 import styles from "./ReportOutfitModal.module.scss";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function FormRow({ label, children }) {
   return (
@@ -16,9 +16,9 @@ function FormRow({ label, children }) {
 export default function ReportOutfitStepDate({
   selectedDate,
   setSelectedDate,
-  today,
-  setToday,
 }) {
+  const [today, setToday] = useState(true);
+
   useEffect(() => {
     if (today) {
       const todayDate = new Date().toISOString().split("T")[0];

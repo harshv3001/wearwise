@@ -1,15 +1,20 @@
-import Card from "../components/ui/Card/Card";
+import AuthCard from "../components/ui/AuthCard/AuthCard";
+import HeaderLogo from "../components/header/HeaderLogo";
 
 export default function AuthLayout({ children }) {
   return (
-    <main className="min-h-screen flex px-4 p-6">
-      <div className="hidden md:flex w-1/2 bg-gray-100 items-center justify-center p-6">
-        <img src="closet.svg" alt="Closet illustration" className="w-64" />
+    <main className="min-h-screen flex  bg-[var(--ww-gray-medium)]">
+      <div className="hidden md:flex w-1/2 ps-4">
+        <HeaderLogo className="font-bold mt-[5px] text-[25px]" />
+
+        <img
+          src="closet.svg"
+          alt="Closet illustration"
+          className="w-64 items-center justify-center p-6"
+        />
       </div>
-      <div className="flex w-full md:w-1/2 items-center justify-center p-6">
-        <Card>{children}</Card>{" "}
-        {/* Please Create a AuthCard component to wrap the children..Do not use or edit this Card*/}
-      </div>
+
+      <AuthCard>{children}</AuthCard>
     </main>
   );
 }

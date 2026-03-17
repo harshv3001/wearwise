@@ -26,6 +26,8 @@ class ClosetItem(Base):
     notes = Column(String, nullable=True)
     store = Column(String, nullable=True)
 
+    image_path = Column(String, nullable=True)
+
     times_worn = Column(Integer, nullable=False, default=0)
     date_acquired = Column(Date, nullable=True)
 

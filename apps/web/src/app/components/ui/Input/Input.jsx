@@ -40,9 +40,7 @@ export default function Input({
       />
 
       {error ? (
-        <p className="text-xs text-red-500 m-2">{`Please Enter ${
-          label || `a valid ${label} value`
-        }`}</p>
+        <p className="text-xs text-red-500 m-2">{error}</p>
       ) : helperText ? (
         <p className="text-xs">{helperText}</p>
       ) : null}
