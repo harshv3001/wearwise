@@ -31,6 +31,7 @@ def _serialize_closet_item(item: closet_items_models.ClosetItem) -> ClosetItemOu
         price=item.price,
         notes=item.notes,
         store=item.store,
+        material=item.material,
         date_acquired=item.date_acquired,
         times_worn=item.times_worn,
         image_url=build_image_url(item.image_path),
@@ -63,6 +64,7 @@ def list_items(
     season: Optional[str] = Query(default=None),
     price: Optional[float] = Query(default=None, ge=0),
     store: Optional[str] = Query(default=None),
+    material: Optional[str] = Query(default=None),
     q: Optional[str] = Query(default=None, description="Search by name contains"),
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
@@ -83,6 +85,8 @@ def list_items(
         query = query.filter(closet_item.price == price)
     if store:
         query = query.filter(closet_item.store == store)
+    if material:
+        query = query.filter(closet_item.material == material)
     if q:
         query = query.filter(closet_item.name.ilike(f"%{q}%"))
 
@@ -94,6 +98,8 @@ def list_items(
         "color": closet_item.color,
         "season": closet_item.season,
         "price": closet_item.price,
+        "store": closet_item.store,
+        "material": closet_item.material,
     }
 
     sort_column = allowed_sort_fields.get(sort_by)

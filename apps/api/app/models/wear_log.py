@@ -31,7 +31,3 @@ class WearLog(Base):
 
     user = relationship("User")
     outfit = relationship("Outfit")
-
-    __table_args__ = (
-        UniqueConstraint("user_id", "outfit_id", "date_worn", name="uq_user_outfit_date"),
-    )

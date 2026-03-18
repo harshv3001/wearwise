@@ -12,6 +12,7 @@ class ClosetItemBase(BaseModel):
     price: Optional[float] = Field(default=None, ge=0)
     notes: Optional[str] = Field(default=None, max_length=500)
     store: Optional[str] = Field(default=None, max_length=100)
+    material: Optional[str] = Field(default=None, max_length=100)
     date_acquired: Optional[date] = None
 
 
@@ -28,6 +29,7 @@ class ClosetItemUpdate(BaseModel):
     price: Optional[float] = Field(default=None, ge=0)
     notes: Optional[str] = Field(default=None, max_length=500)
     store: Optional[str] = Field(default=None, max_length=100)
+    material: Optional[str] = Field(default=None, max_length=100)
     times_worn: Optional[int] = Field(default=None, ge=0)
     date_acquired: Optional[date] = None
 

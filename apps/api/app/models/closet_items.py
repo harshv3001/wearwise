@@ -25,6 +25,7 @@ class ClosetItem(Base):
     price = Column(Float, nullable=True)
     notes = Column(String, nullable=True)
     store = Column(String, nullable=True)
+    material = Column(String, nullable=True)
 
     image_path = Column(String, nullable=True)
 

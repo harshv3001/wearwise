@@ -58,7 +58,3 @@ class OutfitItem(Base):
     note = Column(String, nullable=True)
     outfit = relationship("Outfit", back_populates="outfit_items")
     closet_item = relationship("ClosetItem")
-
-    __table_args__ = (
-        UniqueConstraint("outfit_id", "closet_item_id", name="uq_outfit_item"),
-    )
