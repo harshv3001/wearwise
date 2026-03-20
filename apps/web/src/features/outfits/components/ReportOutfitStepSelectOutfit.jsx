@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { ClassNames } from "@emotion/react";
+import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 
 export default function ReportOutfitStepSelectOutfit({
   closetItems = [],
@@ -66,15 +67,13 @@ export default function ReportOutfitStepSelectOutfit({
             key={`outfit-${outfitIndex}-${outfit?.id}`}
           >
             <div className={styles.outfitPreviewCard}>
-              <img
-                src={
-                  outfit?.image_url
-                    ? `${process.env.NEXT_PUBLIC_API_URL}${outfit.image_url}`
-                    : "winter-outfit.png"
-                }
-                alt={`outfit image-${outfitIndex}-${outfit?.id}}`}
-                className={styles.outfitPreviewImage}
+              <ImageWithFallback
+                imageUrl={outfit?.image_url}
+                alt={outfit?.name}
+                fallbackText={outfit?.name}
+                imgClassName={styles.outfitPreviewImage}
               />
+              <div className="text-center">{outfit?.name}</div>
             </div>
 
             <div
@@ -106,13 +105,7 @@ export default function ReportOutfitStepSelectOutfit({
                   >
                     Select this outfit
                   </Button>
-                  {/* <Button
-                    type="button"
-                    variant="tertiary"
-                    onClick={handleViewOutfitDetails}
-                  >
-                    View details
-                  </Button> */}
+
                   <Link href={`/outfit-details/${outfit.id}`} target="_blank">
                     <Button type="button" variant="primary" size="md">
                       View details

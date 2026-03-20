@@ -1,6 +1,4 @@
 from typing import Optional, List
-from pathlib import Path
-import os
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File
 from sqlalchemy.orm import Session, joinedload
@@ -17,12 +15,9 @@ from app.schemas.outfit import (
     OutfitListResponse,
     OutfitDetailOut,
 )
-from app.utils import save_upload_file, build_image_url
+from app.utils import save_upload_file, build_image_url, delete_upload_file
 
 router = APIRouter(prefix="/outfits", tags=["Outfits"])
-
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-OUTFIT_UPLOAD_DIR = BASE_DIR / "uploads" / "outfits"
 
 
 def _validate_closet_items_belong_to_user(
@@ -121,7 +116,6 @@ def create_outfit(
                 closet_item_id=it.closet_item_id,
                 position=it.position,
                 note=it.note,
-            
             )
         )
 
@@ -166,7 +160,7 @@ def list_outfits(
 
     if outfit_ids:
         counts = (
-            db.query(outfit_models.OutfitItem.outfit_id, func.count(outfit_models.OutfitItem.closet_item_id))
+            db.query(outfit_models.OutfitItem.outfit_id, func.count(outfit_models.OutfitItem.closet_item_id)) # pylint: disable=not-callable
             .filter(outfit_models.OutfitItem.outfit_id.in_(outfit_ids))
             .group_by(outfit_models.OutfitItem.outfit_id)
             .all()
@@ -202,7 +196,6 @@ def list_outfits(
                     "note": row.note,
                     "image_url": build_image_url(row.image_path),
                 }
- 
             )
 
     items = []
@@ -303,14 +296,12 @@ def upload_outfit_image(
 ):
     outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
 
-    filename = save_upload_file(file, OUTFIT_UPLOAD_DIR)
+    new_image_key = save_upload_file(file, folder="outfits")
 
     if outfit.image_path:
-        old_file_path = BASE_DIR / "uploads" / outfit.image_path
-        if old_file_path.exists():
-            os.remove(old_file_path)
+        delete_upload_file(outfit.image_path)
 
-    outfit.image_path = f"outfits/{filename}"
+    outfit.image_path = new_image_key
     db.commit()
     db.refresh(outfit)
 
@@ -334,9 +325,7 @@ def delete_outfit(
     outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
 
     if outfit.image_path:
-        file_path = BASE_DIR / "uploads" / outfit.image_path
-        if file_path.exists():
-            os.remove(file_path)
+        delete_upload_file(outfit.image_path)
 
     db.delete(outfit)
     db.commit()

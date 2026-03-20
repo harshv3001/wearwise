@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import styles from "./Carousel.module.scss";
 import "./CarouselCardVisibility.scss";
+import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 
 const BLANK_ITEM = { id: "__blank__", name: "", image: null, isBlank: true };
 
@@ -100,20 +101,13 @@ export default function Carousel({
             className={determineSlideInnerClassName(index)}
             href={`/closet/${closetItem?.id}`}
           >
-            {!closetItem?.image_url ? (
-              <>
-                <span>{closetItem?.name}</span>
-              </>
-            ) : (
-              <>
-                <img
-                  src={`${process.env.NEXT_PUBLIC_API_URL}${closetItem?.image_url}`}
-                  className={styles.outfitItemBox}
-                  alt={closetItem?.name}
-                />
-                <div className="font-bold">{closetItem?.name}</div>
-              </>
-            )}
+            <ImageWithFallback
+              imageUrl={closetItem?.image_url}
+              alt={closetItem?.name}
+              fallbackText={closetItem?.name}
+              imgClassName={styles.outfitItemBox}
+            />
+            <div className="font-bold">{closetItem?.name}</div>
           </Link>
         )}
       </div>

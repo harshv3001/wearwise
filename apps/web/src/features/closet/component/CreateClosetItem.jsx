@@ -18,6 +18,7 @@ const initialFormData = {
   price: 0,
   notes: "",
   store: "",
+  material: "",
   dateAcquired: "2026-03-09",
 };
 
@@ -100,7 +101,7 @@ export default function CreateClosetItem({ open, onClose }) {
       className={`${styles.modalBase} ${styles.modalLarge}`}
     >
       <div className={styles.modalContainer}>
-        <div className="grid grid-cols-2 gap-x-16 gap-y-8">
+        <div className="grid grid-cols-2 gap-x-16 gap-y-3.5">
           <Input
             type="text"
             label="Name"
@@ -183,6 +184,14 @@ export default function CreateClosetItem({ open, onClose }) {
             value={formData.dateAcquired}
             onChange={(e) => onChange("dateAcquired", e.target.value)}
             placeholder="Enter date acquired"
+          />
+
+          <Input
+            type="text"
+            label="Material"
+            value={formData.material}
+            onChange={(e) => onChange("material", e.target.value)}
+            placeholder="Enter material (e.g., cotton, leather)"
           />
 
           <div className="col-span-1 my-auto">

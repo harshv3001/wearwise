@@ -116,10 +116,8 @@ export default function ReportOutfitModal({ open, onClose }) {
           date_worn: selectedDate,
           outfit: updatedSelectedOutfit,
         };
-        console.log("payload", payload);
 
         const result = await createReportMutation.mutateAsync(payload);
-        console.log("outfit reported:", result);
 
         if (result.wear_log_id) {
           alert("Outfit reported successfully!");
@@ -132,13 +130,6 @@ export default function ReportOutfitModal({ open, onClose }) {
       alert("Please select an outfit to report");
     }
   };
-
-  // const handleFormChange = (field, value) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     [field]: value,
-  //   }));
-  // };
 
   return (
     <Modal

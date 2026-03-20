@@ -1,7 +1,7 @@
+from app.schemas.closet_items import ClosetItemOut
 from typing import Optional, List
 from pydantic import BaseModel, Field
 from datetime import datetime
-from .closet_items import ClosetItemOut
 
 
 class OutfitItemBase(BaseModel):

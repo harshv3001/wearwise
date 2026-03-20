@@ -1,9 +1,6 @@
-from pathlib import Path
-import os
-
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File
 from sqlalchemy.orm import Session
-from typing import List, Optional
 from sqlalchemy import asc, desc
 
 from app.database import get_db
@@ -11,13 +8,9 @@ from app.schemas.closet_items import ClosetItemCreate, ClosetItemOut, ClosetItem
 from app.models import user as user_models
 from app.models import closet_items as closet_items_models
 from app.oauth2 import get_current_user
-from app.utils import save_upload_file, build_image_url
+from app.utils import save_upload_file, build_image_url, delete_upload_file
 
 router = APIRouter(prefix="/closet-items", tags=["Closet Items"])
-
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-CLOSET_ITEM_UPLOAD_DIR = BASE_DIR / "uploads" / "closet_items"
-
 
 def _serialize_closet_item(item: closet_items_models.ClosetItem) -> ClosetItemOut:
     return ClosetItemOut(
@@ -188,14 +181,12 @@ def upload_closet_item_image(
     if not item:
         raise HTTPException(status_code=404, detail="Closet item not found")
 
-    filename = save_upload_file(file, CLOSET_ITEM_UPLOAD_DIR)
+    new_image_key = save_upload_file(file, folder="closet_items")
 
     if item.image_path:
-        old_file_path = BASE_DIR / "uploads" / item.image_path
-        if old_file_path.exists():
-            os.remove(old_file_path)
+        delete_upload_file(item.image_path)
 
-    item.image_path = f"closet_items/{filename}"
+    item.image_path = new_image_key
     db.commit()
     db.refresh(item)
 
@@ -218,9 +209,7 @@ def delete_item(
         raise HTTPException(status_code=404, detail="Closet item not found")
 
     if item.image_path:
-        file_path = BASE_DIR / "uploads" / item.image_path
-        if file_path.exists():
-            os.remove(file_path)
+        delete_upload_file(item.image_path)
 
     qset.delete(synchronize_session=False)
     db.commit()

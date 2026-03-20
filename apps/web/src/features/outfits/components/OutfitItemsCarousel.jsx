@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import styles from "./ReportOutfitModal.module.scss";
+import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 
 export default function OutfitItemsCarousel({ items = [] }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -67,15 +68,11 @@ export default function OutfitItemsCarousel({ items = [] }) {
                 className={styles.emblaSlide}
               >
                 <div className={styles.outfitItemCard}>
-                  {/* <div className={styles.outfitItemBox} /> */}
-                  <img
-                    src={
-                      item?.image_url
-                        ? `${process.env.NEXT_PUBLIC_API_URL}${item?.image_url}`
-                        : "brown-fall-jacket.jpg"
-                    }
-                    alt={`item-image-${item?.id}`}
-                    className={styles.outfitItemBox}
+                  <ImageWithFallback
+                    imageUrl={item?.image_url}
+                    alt={item?.name}
+                    fallbackText={item?.name}
+                    imgClassName={styles.outfitItemBox}
                   />
                   <div className={styles.outfitItemName}>{item?.name}</div>
                   <div className={styles.outfitItemSub}>{item?.category}</div>
