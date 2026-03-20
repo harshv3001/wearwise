@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AuthLayout from "../AuthLayout";
 import { useMutation } from "@tanstack/react-query";
@@ -22,10 +21,8 @@ export default function RegisterPage() {
 
   const handleRegister = async (payload) => {
     try {
-      // 1) register
       await registerMut.mutateAsync(payload);
 
-      // 2) auto-login
       const data = await loginMut.mutateAsync({
         email: payload.email,
         password: payload.password,
@@ -49,23 +46,7 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout>
-      <div>
-        <h1 className="text-3xl font-semibold">Create account</h1>
-        <p className="mt-1 text-sm opacity-70">
-          Set up your profile and preferences.
-        </p>
-
-        <div className="mt-6">
-          <RegisterForm onSubmit={handleRegister} loading={loading} />
-        </div>
-
-        <p className="mt-5 text-sm opacity-70">
-          Already have an account?{" "}
-          <Link href="/login" className="underline">
-            Sign in
-          </Link>
-        </p>
-      </div>
+      <RegisterForm onSubmit={handleRegister} loading={loading} />
     </AuthLayout>
   );
 }

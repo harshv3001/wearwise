@@ -5,7 +5,7 @@ export default function AuthLayout({ children }) {
   return (
     <main className="min-h-screen flex  bg-[var(--ww-gray-medium)]">
       <div className="hidden md:flex w-1/2 ps-4">
-        <HeaderLogo className="font-bold mt-[5px] text-[25px]" />
+        <HeaderLogo />
 
         <img
           src="closet.svg"
