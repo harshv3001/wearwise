@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "./Header.module.scss";
-import HeaderLogo from "./HeaderLogo";
+import BrandLogo from "../ui/BrandLogo/BrandLogo";
 import HeaderNav from "./HeaderNav";
 import HeaderUser from "./HeaderUser";
 import MobileSidebar from "./MobileSidebar";
@@ -47,7 +47,7 @@ export default function Header() {
               </span>
             </button>
 
-            <HeaderLogo />
+            <BrandLogo />
           </div>
 
           <div className="flex items-center gap-4">

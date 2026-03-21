@@ -46,7 +46,9 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout>
-      <RegisterForm onSubmit={handleRegister} loading={loading} />
+      <div className="mx-auto w-full">
+        <RegisterForm onSubmit={handleRegister} loading={loading} />
+      </div>
     </AuthLayout>
   );
 }

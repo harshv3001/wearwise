@@ -3,12 +3,12 @@
 import styles from "./AuthCard.module.scss";
 
 export default function AuthCard({ children, className = "" }) {
-  const bodyClassName = [styles.content];
-  const cardClassName = ["flex flex-col", styles.card, className].join(" ");
+  const cardClassName = [styles.card, className].filter(Boolean).join(" ");
+
   return (
-    <div className="md:w-1/2 w-full">
+    <div className={styles.wrapper}>
       <section className={cardClassName}>
-        <div className={bodyClassName}>{children}</div>
+        <div className={styles.content}>{children}</div>
       </section>
     </div>
   );

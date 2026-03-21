@@ -1,0 +1,40 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ww-text-primary);
+
+  .logoMark {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+
+    .icon {
+      font-size: 35px;
+      line-height: 1;
+    }
+  }
+
+  .brandName {
+    font-weight: 700;
+    margin-top: 5px;
+    font-size: 25px;
+  }
+}
+
+.logoLarge {
+  .logoMark {
+    width: 40px;
+    height: 40px;
+
+    .icon {
+      font-size: 50px;
+    }
+  }
+
+  .brandName {
+    font-size: 40px;
+  }
+}

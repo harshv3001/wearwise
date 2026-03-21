@@ -1,3 +1,7 @@
+.field {
+  width: 100%;
+}
+
 .fieldLabel {
   margin-bottom: 8px;
   font-size: 14px;
@@ -6,25 +10,53 @@
   color: #1f1f1f;
 }
 
+.selectWrapper {
+  position: relative;
+}
+
 .input {
   width: 100%;
   height: 44px;
-  padding: 0 14px;
+  padding: 0 42px 0 14px;
   margin-top: 6px;
-  border: 1px solid #d7d7d7;
+  border: 1px solid var(--ww-color-white);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--ww-color-white);
   font-size: 14px;
   line-height: 20px;
   color: #1f1f1f;
   outline: none;
+  appearance: none;
   transition: border-color 160ms ease, box-shadow 160ms ease;
-
-  &::placeholder {
-    color: #b8b8b8;
-  }
 
   &:focus {
     border-color: #bcbcbc;
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.placeholder {
+  color: #b8b8b8;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-25%);
+  font-size: 20px;
+  line-height: 1;
+  color: #8a8a8a;
+  pointer-events: none;
+}
+
+.error {
+  margin: 8px 8px 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: #ef4444;
 }

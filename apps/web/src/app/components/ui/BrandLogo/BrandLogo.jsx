@@ -1,9 +1,15 @@
 import Link from "next/link";
-import styles from "./Header.module.scss";
+import styles from "./BrandLogo.module.scss";
 
-export default function HeaderLogo() {
+export default function BrandLogo({ size = "md" }) {
   return (
-    <Link href="/dashboard" className={styles.logo} aria-label="WearWise Home">
+    <Link
+      href="/dashboard"
+      className={[styles.logo, size === "large" ? styles.logoLarge : ""]
+        .filter(Boolean)
+        .join(" ")}
+      aria-label="WearWise Home"
+    >
       <span className={styles.logoMark} aria-hidden="true">
         <span className={`material-symbols-outlined ${styles.icon}`}>
           dresser

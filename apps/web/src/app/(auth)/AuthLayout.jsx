@@ -1,18 +1,22 @@
 import AuthCard from "../components/ui/AuthCard/AuthCard";
-import HeaderLogo from "../components/header/HeaderLogo";
+import BrandLogo from "../components/ui/BrandLogo/BrandLogo";
 
 export default function AuthLayout({ children }) {
   return (
-    <main className="min-h-screen flex  bg-[var(--ww-gray-medium)]">
-      <div className="hidden md:flex w-1/2 ps-4">
-        <HeaderLogo />
+    <main className="min-h-screen flex flex-col overflow-y-auto bg-[var(--ww-gray-medium)] md:flex-row md:overflow-hidden">
+      <section className="flex flex-col px-6 pt-6 md:w-1/2 md:px-10 md:pt-8">
+        <div className="flex items-center justify-start">
+          <BrandLogo size="large" />
+        </div>
 
-        <img
-          src="closet.svg"
-          alt="Closet illustration"
-          className="w-64 items-center justify-center p-6"
-        />
-      </div>
+        <div className="flex flex-1 items-center py-8 md:py-0 justify-center md:justify-start">
+          <img
+            src="closet.svg"
+            alt="Closet illustration"
+            className="w-full max-w-[340px] md:max-w-[450px]"
+          />
+        </div>
+      </section>
 
       <AuthCard>{children}</AuthCard>
     </main>

@@ -8,6 +8,7 @@ import LoginForm from "../../../features/auth/component/LoginForm";
 import { loginApi } from "../../../features/auth/api/authApi";
 import { setToken } from "../../../lib/auth";
 import { getApiErrorMessage } from "../../../lib/apiError";
+import Button from "@/app/components/ui/Button";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,25 +28,33 @@ export default function LoginPage() {
 
   return (
     <AuthLayout>
-      <div className="w-full flex flex-col items-center p-16">
-        <div className="mb-4 text-3xl font-semibold">Sign in</div>
-        <div className="mb-4 text-sm opacity-70">
-          Continue to your wardrobe dashboard.
+      <div className="mx-auto w-full max-w-[480px]">
+        <div className="mb-6 space-y-1 text-center md:text-left">
+          <h1 className="text-3xl font-semibold">Welcome Back!</h1>
+          <p className="text-sm">Sign in to your Smart Closet account</p>
         </div>
 
-        <div className="w-full mt-6">
-          <LoginForm
-            loading={loginMut.isPending}
-            onSubmit={handleSubmit}
-            className="w-full"
-          />
-        </div>
+        <LoginForm loading={loginMut.isPending} onSubmit={handleSubmit} />
 
-        <div className="mt-8 text-sm opacity-70 flex items-center justify-center">
+        <div className="mt-8 text-center text-sm">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="underline">
+          <Link href="/register" className="underline font-bold">
             Register
           </Link>
+        </div>
+
+        <div className="opacity-70 m-5 text-center">
+          ------------------- Or continue with --------------------
+        </div>
+        <div className="flex gap-x-16 justify-center">
+          <Button variant="secondary">
+            <span
+              className="material-symbols-outlined leading-none"
+              style={{ fontSize: "18px" }}
+            ></span>
+            <span>Facebook</span>
+          </Button>
+          <Button variant="secondary">Google</Button>
         </div>
       </div>
     </AuthLayout>

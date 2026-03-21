@@ -2,25 +2,92 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Chip from "@mui/material/Chip";
 import Input from "../../../app/components/ui/Input/Input";
 import Button from "../../../app/components/ui/Button";
-import SelectInput from "../../../app/components/ui/SelectInput";
+import SelectInput from "../../../app/components/ui/SelectInput/SelectInput";
 import RadioGroup from "../../../app/components/ui/RadioGroup/RadioGroup";
+import Chip from "../../../app/components/ui/Chip/Chip";
+import EyeToggleButton from "../../../app/components/ui/EyeToggleButton/EyeToggleButton";
 
-const STYLE_OPTIONS = ["casual", "sporty", "formal", "streetwear", "other"];
+const STYLE_OPTIONS = [
+  { label: "Casual", value: "casual" },
+  { label: "Sporty", value: "sporty" },
+  { label: "Formal", value: "formal" },
+  { label: "Streetwear", value: "streetwear" },
+  { label: "Other", value: "other" },
+];
 
 const COLOR_OPTIONS = [
-  "black",
-  "white",
-  "red",
-  "yellow",
-  "green",
-  "blue",
-  "pink",
-  "orange",
-  "brown",
-  "grey",
+  {
+    label: "Black",
+    value: "black",
+    selectedBg: "var(--ww-chip-black-bg)",
+    selectedText: "var(--ww-chip-black-text)",
+    selectedBorder: "var(--ww-chip-black-border)",
+  },
+  {
+    label: "White",
+    value: "white",
+    selectedBg: "var(--ww-chip-white-bg)",
+    selectedText: "var(--ww-chip-white-text)",
+    selectedBorder: "var(--ww-chip-white-border)",
+  },
+  {
+    label: "Red",
+    value: "red",
+    selectedBg: "var(--ww-chip-red-bg)",
+    selectedText: "var(--ww-chip-red-text)",
+    selectedBorder: "var(--ww-chip-red-border)",
+  },
+  {
+    label: "Yellow",
+    value: "yellow",
+    selectedBg: "var(--ww-chip-yellow-bg)",
+    selectedText: "var(--ww-chip-yellow-text)",
+    selectedBorder: "var(--ww-chip-yellow-border)",
+  },
+  {
+    label: "Green",
+    value: "green",
+    selectedBg: "var(--ww-chip-green-bg)",
+    selectedText: "var(--ww-chip-green-text)",
+    selectedBorder: "var(--ww-chip-green-border)",
+  },
+  {
+    label: "Blue",
+    value: "blue",
+    selectedBg: "var(--ww-chip-blue-bg)",
+    selectedText: "var(--ww-chip-blue-text)",
+    selectedBorder: "var(--ww-chip-blue-border)",
+  },
+  {
+    label: "Pink",
+    value: "pink",
+    selectedBg: "var(--ww-chip-pink-bg)",
+    selectedText: "var(--ww-chip-pink-text)",
+    selectedBorder: "var(--ww-chip-pink-border)",
+  },
+  {
+    label: "Orange",
+    value: "orange",
+    selectedBg: "var(--ww-chip-orange-bg)",
+    selectedText: "var(--ww-chip-orange-text)",
+    selectedBorder: "var(--ww-chip-orange-border)",
+  },
+  {
+    label: "Brown",
+    value: "brown",
+    selectedBg: "var(--ww-chip-brown-bg)",
+    selectedText: "var(--ww-chip-brown-text)",
+    selectedBorder: "var(--ww-chip-brown-border)",
+  },
+  {
+    label: "Grey",
+    value: "grey",
+    selectedBg: "var(--ww-chip-grey-bg)",
+    selectedText: "var(--ww-chip-grey-text)",
+    selectedBorder: "var(--ww-chip-grey-border)",
+  },
 ];
 
 const GENDER_OPTIONS = [
@@ -111,8 +178,7 @@ export default function RegisterForm({ onSubmit, loading }) {
   const toggleChip = (key, value) => {
     setForm((prev) => {
       const selections = prev[key] || [];
-      const exists = selections.includes(value);
-      const nextSelections = exists
+      const nextSelections = selections.includes(value)
         ? selections.filter((item) => item !== value)
         : [...selections, value];
 
@@ -208,17 +274,6 @@ export default function RegisterForm({ onSubmit, loading }) {
     ].some((key) => nextErrors[key]);
   };
 
-  const validateStepTwo = () => {
-    const nextErrors = getStepTwoErrors();
-
-    setErrors((prev) => ({
-      ...prev,
-      ...nextErrors,
-    }));
-
-    return !["country", "state", "city"].some((key) => nextErrors[key]);
-  };
-
   const validateAll = () => {
     const stepOneErrors = getStepOneErrors();
     const stepTwoErrors = getStepTwoErrors();
@@ -268,13 +323,27 @@ export default function RegisterForm({ onSubmit, loading }) {
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      <div className="space-y-1">
-        <p className="text-sm opacity-70">Step {step} of 2</p>
-        <h2 className="text-3xl font-semibold">
+    <form className="space-y-8" onSubmit={handleSubmit}>
+      <div className="flex items-start justify-between gap-4">
+        <p className="text-lg">Step {step} of 2</p>
+
+        <div className="flex items-center gap-3 pt-1">
+          {[1, 2].map((item) => (
+            <span
+              key={item}
+              className={[
+                "h-5 w-5 rounded-full border border-[var(--ww-gray-dark)]",
+                step === item ? "bg-[var(--ww-gray-dark)]" : "bg-transparent",
+              ].join(" ")}
+            />
+          ))}
+        </div>
+      </div>
+      <div>
+        <div className="text-3xl font-semibold">
           {step === 1 ? "Create Your Account" : "Personalize Your Closet"}
-        </h2>
-        <p className="text-sm opacity-70">
+        </div>
+        <p className="text-sm">
           {step === 1
             ? "Sign up to start personalizing your closet."
             : "Help us tailor outfit suggestions to your style and location."}
@@ -283,7 +352,7 @@ export default function RegisterForm({ onSubmit, loading }) {
 
       {step === 1 ? (
         <>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Input
               label="Name"
               name="name"
@@ -300,7 +369,7 @@ export default function RegisterForm({ onSubmit, loading }) {
               name="email"
               value={form.email}
               onChange={onChange}
-              placeholder="you@email.com"
+              placeholder="Enter your email"
               required
               autoComplete="email"
               error={errors.email}
@@ -318,21 +387,10 @@ export default function RegisterForm({ onSubmit, loading }) {
                 autoComplete="new-password"
                 error={errors.password}
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-2 top-[68%] -translate-y-[60%] rounded !bg-white p-1"
-              >
-                <img
-                  src={
-                    showPassword
-                      ? "eye-password-hide.svg"
-                      : "eye-password-show.svg"
-                  }
-                  alt="hide/show password"
-                  className="w-5"
-                />
-              </button>
+              <EyeToggleButton
+                isVisible={showPassword}
+                onClick={setShowPassword}
+              />
             </div>
 
             <div className="relative">
@@ -347,21 +405,11 @@ export default function RegisterForm({ onSubmit, loading }) {
                 autoComplete="new-password"
                 error={errors.confirmPassword}
               />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword((prev) => !prev)}
-                className="absolute right-2 top-[68%] -translate-y-[60%] rounded !bg-white p-1"
-              >
-                <img
-                  src={
-                    showConfirmPassword
-                      ? "eye-password-hide.svg"
-                      : "eye-password-show.svg"
-                  }
-                  alt="hide/show confirm password"
-                  className="w-5"
-                />
-              </button>
+
+              <EyeToggleButton
+                isVisible={showConfirmPassword}
+                onClick={setShowConfirmPassword}
+              />
             </div>
 
             <Input
@@ -397,7 +445,7 @@ export default function RegisterForm({ onSubmit, loading }) {
             ) : null}
           </div>
 
-          <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:justify-end">
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">
             <Button
               className="w-full sm:w-auto"
               variant="secondary"
@@ -405,20 +453,28 @@ export default function RegisterForm({ onSubmit, loading }) {
               onClick={handleNextStep}
               disabled={loading}
             >
-              Next Step
+              <span className="flex items-center gap-2">
+                <span>Next Step</span>
+                <span
+                  className="material-symbols-outlined leading-none"
+                  style={{ fontSize: "18px" }}
+                >
+                  arrow_forward
+                </span>
+              </span>
             </Button>
           </div>
         </>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <SelectInput
               label="Country"
               name="country"
               value={form.country}
               onChange={onChange}
               options={countryOptions}
-              placeholder="Select country"
+              placeholder="Select your country"
               required
               error={errors.country}
             />
@@ -428,13 +484,12 @@ export default function RegisterForm({ onSubmit, loading }) {
               name="state"
               value={form.state}
               onChange={onChange}
-              placeholder="Enter your state/province"
+              placeholder="Enter your state"
               required
               error={errors.state}
             />
 
             <Input
-              className="md:col-span-2"
               label="City"
               name="city"
               value={form.city}
@@ -443,51 +498,52 @@ export default function RegisterForm({ onSubmit, loading }) {
               required
               error={errors.city}
             />
+            <Button
+              variant="tertiary"
+              size="sm"
+              className="w-full lg:w-50 sm:h-max sm:mt-7"
+            >
+              <spna className="flex items-center gap-1">
+                <span className="material-symbols-outlined">location_on</span>
+                <span>Use my location</span>
+              </spna>
+            </Button>
           </div>
 
-          <div className="space-y-2">
-            <div className="text-sm font-medium">Preferred Styles</div>
-            <div className="flex flex-wrap gap-2">
+          <div className="space-y-3">
+            <div className="text-sm font-medium">Main Style Preference</div>
+            <div className="flex flex-wrap gap-3">
               {STYLE_OPTIONS.map((style) => (
                 <Chip
-                  className="p-6"
-                  key={style}
-                  label={style}
-                  onClick={() => toggleChip("pref_styles", style)}
-                  variant={
-                    form.pref_styles.includes(style) ? "filled" : "outlined"
-                  }
-                  color={
-                    form.pref_styles.includes(style) ? "primary" : "default"
-                  }
-                  clickable
+                  key={style.value}
+                  label={style.label}
+                  selected={form.pref_styles.includes(style.value)}
+                  selectedBg="var(--ww-gray-dark)"
+                  selectedBorder="var(--ww-gray-dark)"
+                  onClick={() => toggleChip("pref_styles", style.value)}
                 />
               ))}
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="text-sm font-medium">Preferred Colors</div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-3">
               {COLOR_OPTIONS.map((color) => (
                 <Chip
-                  className="p-6"
-                  key={color}
-                  label={color}
-                  onClick={() => toggleChip("pref_colors", color)}
-                  variant={
-                    form.pref_colors.includes(color) ? "filled" : "outlined"
-                  }
-                  color={
-                    form.pref_colors.includes(color) ? "primary" : "default"
-                  }
-                  clickable
+                  key={color.value}
+                  label={color.label}
+                  selected={form.pref_colors.includes(color.value)}
+                  selectedBg={color.selectedBg}
+                  selectedText={color.selectedText}
+                  selectedBorder={color.selectedBorder}
+                  onClick={() => toggleChip("pref_colors", color.value)}
                 />
               ))}
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
             <Button
               className="w-full sm:w-auto"
               variant="secondary"
@@ -495,24 +551,40 @@ export default function RegisterForm({ onSubmit, loading }) {
               onClick={handlePrevStep}
               disabled={loading}
             >
-              Prev Step
+              <span className="flex items-center gap-2">
+                <span
+                  className="material-symbols-outlined leading-none"
+                  style={{ fontSize: "18px" }}
+                >
+                  arrow_back
+                </span>
+                <span>Prev Step</span>
+              </span>
             </Button>
 
             <Button
               className="w-full sm:w-auto"
-              variant="secondary"
+              variant="primary"
               type="submit"
               disabled={loading}
             >
-              {loading ? "Creating account..." : "Get Started"}
+              <span className="flex items-center gap-2">
+                <span>{loading ? "Creating account..." : "Get Started"}</span>
+                <span
+                  className="material-symbols-outlined leading-none"
+                  style={{ fontSize: "18px" }}
+                >
+                  arrow_forward
+                </span>
+              </span>
             </Button>
           </div>
         </>
       )}
 
-      <p className="text-sm opacity-70">
+      <p className="pt-2 text-center text-sm">
         Already have an account?{" "}
-        <Link href="/login" className="underline">
+        <Link href="/login" className="underline font-bold">
           Login
         </Link>
       </p>

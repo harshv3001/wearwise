@@ -1,25 +1,37 @@
 "use client";
 
-export default function BeforeChip({
+import styles from "./Chip.module.scss";
+
+export default function Chip({
   label,
   selected = false,
   disabled = false,
   onClick,
   className = "",
+  selectedBg,
+  selectedText,
+  selectedBorder,
 }) {
+  const chipClassName = [
+    styles.chip,
+    selected ? styles.selected : "",
+    disabled ? styles.disabled : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={[
-        "inline-flex items-center rounded-full px-3 py-1 text-sm",
-        "ring-1 ring-inset",
-        selected ? "ring-zinc-600" : "ring-zinc-300",
-        "hover:opacity-90 active:opacity-80",
-        "disabled:opacity-60 disabled:cursor-not-allowed",
-        className,
-      ].join(" ")}
+      className={chipClassName}
+      style={{
+        ...(selectedBg ? { "--chip-selected-bg": selectedBg } : {}),
+        ...(selectedText ? { "--chip-selected-text": selectedText } : {}),
+        ...(selectedBorder ? { "--chip-selected-border": selectedBorder } : {}),
+      }}
     >
       {label}
     </button>
