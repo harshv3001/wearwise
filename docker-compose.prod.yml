@@ -1,0 +1,13 @@
+services:
+  db:
+    profiles:
+      - local-only
+
+  api:
+    env_file:
+      - .env.prod
+    depends_on: !reset []
+
+  web:
+    env_file:
+      - .env.prod
