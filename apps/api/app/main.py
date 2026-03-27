@@ -29,6 +29,7 @@ app.add_middleware(
         "http://127.0.0.1:3000",  
         "https://wearwise-eight.vercel.app",
         "https://wearwise.xyz",
+        "https://www.wearwise.xyz"
     ],
     allow_credentials=True,
     allow_methods=["*"],
