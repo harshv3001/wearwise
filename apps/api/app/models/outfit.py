@@ -1,7 +1,10 @@
+import uuid
+
 from sqlalchemy import (
     Column, Integer, String, DateTime, Boolean,
-    ForeignKey, text, UniqueConstraint
+    ForeignKey, text
 )
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -9,10 +12,16 @@ from app.database import Base
 class Outfit(Base):
     __tablename__ = "outfits"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        index=True,
+        default=uuid.uuid4,
+        server_default=text("gen_random_uuid()"),
+    )
 
     user_id = Column(
-        Integer,
+        UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
@@ -43,13 +52,13 @@ class OutfitItem(Base):
     __tablename__ = "outfit_items"
 
     outfit_id = Column(
-        Integer,
+        UUID(as_uuid=True),
         ForeignKey("outfits.id", ondelete="CASCADE"),
         primary_key=True,
     )
 
     closet_item_id = Column(
-        Integer,
+        UUID(as_uuid=True),
         ForeignKey("closet_items.id", ondelete="CASCADE"),
         primary_key=True,
     )

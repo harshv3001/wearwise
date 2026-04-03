@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Optional, List
+from uuid import UUID
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
@@ -22,7 +23,7 @@ class UserCreate(BaseModel):
 class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int
+    id: UUID
     name: str
     email: EmailStr
 
@@ -45,4 +46,4 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    id: Optional[int] = None
+    id: Optional[UUID] = None

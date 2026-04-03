@@ -1,4 +1,5 @@
 from typing import Optional, List
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File
 from sqlalchemy.orm import Session, joinedload
@@ -22,7 +23,7 @@ router = APIRouter(prefix="/outfits", tags=["Outfits"])
 
 def _validate_closet_items_belong_to_user(
     db: Session,
-    user_id: int,
+    user_id: UUID,
     items: List[OutfitItemCreate],
 ) -> None:
     if not items:
@@ -54,7 +55,7 @@ def _validate_closet_items_belong_to_user(
         )
 
 
-def _get_outfit_or_404(db: Session, outfit_id: int, user_id: int) -> outfit_models.Outfit:
+def _get_outfit_or_404(db: Session, outfit_id: UUID, user_id: UUID) -> outfit_models.Outfit:
     outfit = (
         db.query(outfit_models.Outfit)
         .filter(outfit_models.Outfit.id == outfit_id, outfit_models.Outfit.user_id == user_id)
@@ -220,7 +221,7 @@ def list_outfits(
 
 @router.get("/{outfit_id}", response_model=OutfitDetailOut)
 def get_outfit(
-    outfit_id: int,
+    outfit_id: UUID,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
 ):
@@ -239,7 +240,7 @@ def get_outfit(
 
 @router.patch("/{outfit_id}", response_model=OutfitOut)
 def update_outfit(
-    outfit_id: int,
+    outfit_id: UUID,
     payload: OutfitUpdate,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
@@ -289,7 +290,7 @@ def update_outfit(
 
 @router.post("/{outfit_id}/image", response_model=OutfitDetailOut)
 def upload_outfit_image(
-    outfit_id: int,
+    outfit_id: UUID,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
@@ -318,7 +319,7 @@ def upload_outfit_image(
 
 @router.delete("/{outfit_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_outfit(
-    outfit_id: int,
+    outfit_id: UUID,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
 ):

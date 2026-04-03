@@ -1,4 +1,5 @@
 from typing import List, Optional
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File
 from sqlalchemy.orm import Session
 from sqlalchemy import asc, desc
@@ -117,7 +118,7 @@ def list_items(
 
 @router.get("/{item_id}", response_model=ClosetItemOut)
 def get_item(
-    item_id: int,
+    item_id: UUID,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
 ):
@@ -137,7 +138,7 @@ def get_item(
 
 @router.put("/{item_id}", response_model=ClosetItemOut)
 def update_item(
-    item_id: int,
+    item_id: UUID,
     payload: ClosetItemUpdate,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
@@ -163,7 +164,7 @@ def update_item(
 
 @router.post("/{item_id}/image", response_model=ClosetItemOut)
 def upload_closet_item_image(
-    item_id: int,
+    item_id: UUID,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
@@ -195,7 +196,7 @@ def upload_closet_item_image(
 
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_item(
-    item_id: int,
+    item_id: UUID,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
 ):

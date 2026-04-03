@@ -1,6 +1,8 @@
+import uuid
+
 from sqlalchemy import Column, Integer, Float, String, ForeignKey, DateTime, Date
-from typing import Set
-from sqlalchemy.orm import relationship, Mapped
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 from app.database import Base
 from sqlalchemy.sql.expression import text
 
@@ -8,10 +10,16 @@ from sqlalchemy.sql.expression import text
 class ClosetItem(Base):
     __tablename__ = "closet_items"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        index=True,
+        default=uuid.uuid4,
+        server_default=text("gen_random_uuid()"),
+    )
 
     user_id = Column(
-        Integer,
+        UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,

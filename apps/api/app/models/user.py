@@ -1,5 +1,7 @@
+import uuid
+
 from sqlalchemy import Column, Integer, String, TIMESTAMP
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from app.database import Base
 from sqlalchemy.sql.expression import text
 
@@ -7,7 +9,13 @@ from sqlalchemy.sql.expression import text
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        index=True,
+        default=uuid.uuid4,
+        server_default=text("gen_random_uuid()"),
+    )
 
     name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True, index=True)

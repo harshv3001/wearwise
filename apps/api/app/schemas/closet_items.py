@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime, date
+from uuid import UUID
 
 
 class ClosetItemBase(BaseModel):
@@ -35,8 +36,8 @@ class ClosetItemUpdate(BaseModel):
 
 
 class ClosetItemOut(ClosetItemBase):
-    id: int
-    user_id: int
+    id: UUID
+    user_id: UUID
     times_worn: int
     image_url: Optional[str] = None
     created_at: datetime

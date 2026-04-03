@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from uuid import UUID
 import jwt
 from jwt import InvalidTokenError
 from fastapi import Depends, HTTPException, status
@@ -15,6 +16,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
+    if "user_id" in to_encode and isinstance(to_encode["user_id"], UUID):
+        to_encode["user_id"] = str(to_encode["user_id"])
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     )
@@ -30,7 +33,7 @@ def verify_access_token(
         user_id = payload.get("user_id")
         if user_id is None:
             raise credentials_exception
-        return user.TokenData(id=int(user_id))
+        return user.TokenData(id=UUID(user_id))
     except (InvalidTokenError, ValueError) as exc:
         raise credentials_exception from exc
 

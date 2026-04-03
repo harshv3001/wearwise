@@ -1,4 +1,7 @@
-from sqlalchemy import Column, Integer, Date, DateTime, ForeignKey, String, text, UniqueConstraint
+import uuid
+
+from sqlalchemy import Column, Date, DateTime, ForeignKey, String, text
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -6,17 +9,23 @@ from app.database import Base
 class WearLog(Base):
     __tablename__ = "wear_logs"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        index=True,
+        default=uuid.uuid4,
+        server_default=text("gen_random_uuid()"),
+    )
 
     user_id = Column(
-        Integer,
+        UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
 
     outfit_id = Column(
-        Integer,
+        UUID(as_uuid=True),
         ForeignKey("outfits.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
