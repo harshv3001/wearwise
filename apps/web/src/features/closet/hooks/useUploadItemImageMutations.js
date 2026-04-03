@@ -10,15 +10,26 @@ export function useUploadItemImageMutation() {
   return useMutation({
     mutationFn: ({ itemId, formData }) => uploadImageApi(itemId, formData),
 
-    onSuccess: (data, variables) => {
-      // refresh item detail
-      queryClient.invalidateQueries({
-        queryKey: closetQueryKeys.detail(variables.itemId),
+    onSuccess: (updatedItem, variables) => {
+      queryClient.setQueryData(
+        closetQueryKeys.detail(variables.itemId),
+        updatedItem
+      );
+
+      const cachedClosetQueries = queryClient.getQueriesData({
+        queryKey: closetQueryKeys.lists(),
       });
 
-      // refresh list (so image shows there too)
-      queryClient.invalidateQueries({
-        queryKey: closetQueryKeys.lists(),
+      cachedClosetQueries.forEach(([queryKey, cachedData]) => {
+        if (!Array.isArray(cachedData)) {
+          return;
+        }
+
+        queryClient.setQueryData(queryKey, (previousItems = []) =>
+          previousItems.map((item) =>
+            item.id === variables.itemId ? updatedItem : item
+          )
+        );
       });
     },
   });

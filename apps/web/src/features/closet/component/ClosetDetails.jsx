@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Button from "@/app/components/ui/Button";
 import Input from "@/app/components/ui/Input/Input";
 import SelectInput from "@/app/components/ui/SelectInput/SelectInput";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 import { useUpdateClosetItemMutation } from "../hooks/useUpdateClosetItemMutation";
+import { useUploadItemImageMutation } from "../hooks/useUploadItemImageMutations";
 import styles from "./ClosetDetails.module.scss";
 import { SEASON_OPTIONS } from "../../../lib/static-data";
 import {
@@ -164,6 +165,8 @@ function renderField({ field, isEditing, value, onChange }) {
 
 export default function ClosetDetails({ item }) {
   const updateClosetItemMutation = useUpdateClosetItemMutation();
+  const uploadItemImageMutation = useUploadItemImageMutation();
+  const fileInputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(() => buildFormData(item));
 
@@ -198,6 +201,27 @@ export default function ClosetDetails({ item }) {
     await updateClosetItemMutation.mutateAsync({ itemId: item.id, payload });
     setIsEditing(false);
   }, [item, formData, originalPayload, updateClosetItemMutation]);
+
+  const handleImageChange = useCallback(
+    async (event) => {
+      const selectedFile = event.target.files?.[0];
+
+      if (!selectedFile || !item?.id) {
+        return;
+      }
+
+      const imageFormData = new FormData();
+      imageFormData.append("file", selectedFile);
+
+      await uploadItemImageMutation.mutateAsync({
+        itemId: item.id,
+        formData: imageFormData,
+      });
+
+      event.target.value = "";
+    },
+    [item, uploadItemImageMutation]
+  );
 
   return (
     <section className={styles.page}>
@@ -246,6 +270,14 @@ export default function ClosetDetails({ item }) {
 
       <div className={styles.detailsCard}>
         <div className={styles.imageColumn}>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className={styles.hiddenInput}
+            onChange={handleImageChange}
+          />
+
           <div className={styles.imageFrame}>
             <ImageWithFallback
               imageUrl={item?.image_url}
@@ -255,6 +287,21 @@ export default function ClosetDetails({ item }) {
               imgClassName={styles.imageFill}
             />
           </div>
+
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadItemImageMutation.isPending}
+            className={styles.changeImageButton}
+          >
+            {uploadItemImageMutation.isPending
+              ? "Updating Image..."
+              : item?.image_url
+                ? "Change Image"
+                : "Add Image"}
+          </Button>
 
           <div className={styles.metaList}>
             <div className={styles.metaRow}>
