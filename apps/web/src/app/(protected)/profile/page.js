@@ -1,17 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
-import { clearToken } from "../../../lib/auth";
+import { logoutUser } from "../../../lib/session";
 
 export default function ProfilePage() {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
   const handleLogout = () => {
-    clearToken(); // remove token from session storage
-    queryClient.clear(); // clear cached private data
-    router.replace("/login"); // go to login
+    logoutUser();
   };
 
   return (
