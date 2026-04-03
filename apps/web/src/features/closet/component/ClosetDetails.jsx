@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Button from "@/app/components/ui/Button";
 import Input from "@/app/components/ui/Input/Input";
 import SelectInput from "@/app/components/ui/SelectInput/SelectInput";
@@ -8,6 +8,13 @@ import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFa
 import { useUpdateClosetItemMutation } from "../hooks/useUpdateClosetItemMutation";
 import styles from "./ClosetDetails.module.scss";
 import { SEASON_OPTIONS } from "../../../lib/static-data";
+import {
+  formatCurrency,
+  formatDate,
+  formatDisplayValue,
+} from "../../../lib/helperFunctions";
+
+// ─── Pure helpers (no closure over component state) ───────────────────────────
 
 const EMPTY_FORM = {
   name: "",
@@ -23,47 +30,45 @@ const EMPTY_FORM = {
   notes: "",
 };
 
+const DETAIL_SECTIONS = [
+  { key: "name", label: "Name", type: "text" },
+  {
+    key: "category",
+    label: "Category",
+    type: "text",
+  },
+  { key: "brand", label: "Brand", type: "text" },
+  { key: "color", label: "Color", type: "text" },
+  { key: "material", label: "Material", type: "text" },
+  { key: "store", label: "Store", type: "text" },
+  {
+    key: "date_acquired",
+    label: "Purchased On",
+    type: "date",
+    format: formatDate,
+  },
+  {
+    key: "season",
+    label: "Season",
+    type: "select",
+    options: SEASON_OPTIONS,
+  },
+  {
+    key: "price",
+    label: "Price",
+    type: "number",
+    format: formatCurrency,
+  },
+  { key: "times_worn", label: "Times Worn", type: "number" },
+  { key: "notes", label: "Notes", type: "text" },
+];
+
 function formatTitle(name) {
-  if (!name) return "Closet Item Details";
-  return `${name} Details`;
-}
-
-function formatDisplayValue(value, fallback = "-") {
-  if (value === null || value === undefined || value === "") {
-    return fallback;
-  }
-
-  return String(value);
-}
-
-function formatCurrency(value) {
-  if (value === null || value === undefined || value === "") {
-    return "-";
-  }
-
-  const amount = Number(value);
-  return Number.isNaN(amount) ? String(value) : `$${amount}`;
-}
-
-function formatDate(value) {
-  if (!value) return "-";
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
+  return name ? `${name} Details` : "Closet Item Details";
 }
 
 function buildFormData(item) {
   if (!item) return EMPTY_FORM;
-
   return {
     name: item.name ?? "",
     category: item.category ?? "",
@@ -79,21 +84,21 @@ function buildFormData(item) {
   };
 }
 
-function getFieldValue(fieldKey, value, isEditing) {
-  if (isEditing) {
-    return value ?? "";
-  }
-
-  if (fieldKey === "price") {
-    return formatCurrency(value);
-  }
-
-  if (fieldKey === "date_acquired") {
-    return formatDate(value);
-  }
-
-  return formatDisplayValue(value);
+function normalizePayload(formData) {
+  return {
+    ...formData,
+    price:
+      formData.price === "" || formData.price === null
+        ? 0
+        : Number(formData.price),
+    times_worn:
+      formData.times_worn === "" || formData.times_worn === null
+        ? 0
+        : Number(formData.times_worn),
+  };
 }
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 function Field({
   isEditing,
@@ -119,6 +124,44 @@ function Field({
   );
 }
 
+function renderField({ field, isEditing, value, onChange }) {
+  if (isEditing && field.type === "select") {
+    return (
+      <SelectInput
+        key={field.key}
+        label={field.label}
+        name={field.key}
+        value={value}
+        onChange={onChange}
+        options={field.options}
+        placeholder={`Select ${field.label.toLowerCase()}`}
+        className={styles.field}
+        selectClassName={styles.editableInput}
+      />
+    );
+  }
+
+  const displayValue = isEditing
+    ? value ?? ""
+    : field.format
+    ? field.format(value)
+    : formatDisplayValue(value);
+
+  return (
+    <Field
+      key={field.key}
+      isEditing={isEditing}
+      label={field.label}
+      name={field.key}
+      type={isEditing ? field.type : "text"}
+      value={displayValue}
+      onChange={onChange}
+    />
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
 export default function ClosetDetails({ item }) {
   const updateClosetItemMutation = useUpdateClosetItemMutation();
   const [isEditing, setIsEditing] = useState(false);
@@ -128,56 +171,33 @@ export default function ClosetDetails({ item }) {
     setFormData(buildFormData(item));
   }, [item]);
 
-  const detailSections = useMemo(
-    () => [
-      { key: "name", label: "Name", type: "text" },
-      { key: "category", label: "Category", type: "select-category" },
-      { key: "brand", label: "Brand", type: "text" },
-      { key: "color", label: "Color", type: "text" },
-      { key: "material", label: "Material", type: "text" },
-      { key: "store", label: "Store", type: "text" },
-      { key: "date_acquired", label: "Purchased On", type: "date" },
-      { key: "season", label: "Season", type: "select-season" },
-      { key: "price", label: "Price", type: "number" },
-      { key: "times_worn", label: "Times Worn", type: "number" },
-    ],
-    []
+  const originalPayload = useMemo(
+    () => normalizePayload(buildFormData(item)),
+    [item]
   );
 
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  const handleChange = useCallback((field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  }, []);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setFormData(buildFormData(item));
     setIsEditing(false);
-  };
+  }, [item]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (!item?.id) return;
 
-    const payload = {
-      ...formData,
-      price:
-        formData.price === "" || formData.price === null
-          ? 0
-          : Number(formData.price),
-      times_worn:
-        formData.times_worn === "" || formData.times_worn === null
-          ? 0
-          : Number(formData.times_worn),
-    };
+    const payload = normalizePayload(formData);
 
-    await updateClosetItemMutation.mutateAsync({
-      itemId: item.id,
-      payload,
-    });
+    if (JSON.stringify(payload) === JSON.stringify(originalPayload)) {
+      setIsEditing(false);
+      return;
+    }
 
+    await updateClosetItemMutation.mutateAsync({ itemId: item.id, payload });
     setIsEditing(false);
-  };
+  }, [item, formData, originalPayload, updateClosetItemMutation]);
 
   return (
     <section className={styles.page}>
@@ -189,7 +209,7 @@ export default function ClosetDetails({ item }) {
             <>
               <Button
                 type="button"
-                variant="default"
+                variant="tertiary"
                 size="sm"
                 onClick={handleCancel}
                 className={styles.actionButton}
@@ -210,7 +230,7 @@ export default function ClosetDetails({ item }) {
           ) : (
             <Button
               type="button"
-              variant="default"
+              variant="secondary"
               size="sm"
               onClick={() => setIsEditing(true)}
               className={styles.editButton}
@@ -260,54 +280,14 @@ export default function ClosetDetails({ item }) {
 
         <div className={styles.formColumn}>
           <div className={styles.formGrid}>
-            {detailSections.map((field) => {
-              if (isEditing && field.type === "select-season") {
-                return (
-                  <SelectInput
-                    key={field.key}
-                    label={field.label}
-                    name={field.key}
-                    value={formData[field.key]}
-                    onChange={(e) => handleChange(field.key, e.target.value)}
-                    options={SEASON_OPTIONS}
-                    placeholder="Select season"
-                    className={styles.field}
-                    selectClassName={styles.editableInput}
-                  />
-                );
-              }
-
-              return (
-                <Field
-                  key={field.key}
-                  isEditing={isEditing}
-                  label={field.label}
-                  name={field.key}
-                  type={
-                    isEditing && field.type !== "select-season"
-                      ? field.type
-                      : "text"
-                  }
-                  value={getFieldValue(
-                    field.key,
-                    formData[field.key],
-                    isEditing
-                  )}
-                  onChange={(e) => handleChange(field.key, e.target.value)}
-                />
-              );
-            })}
-
-            <Field
-              isEditing={isEditing}
-              label="Notes"
-              name="notes"
-              value={
-                isEditing ? formData.notes : formatDisplayValue(formData.notes)
-              }
-              onChange={(e) => handleChange("notes", e.target.value)}
-              placeholder="Add notes"
-            />
+            {DETAIL_SECTIONS.map((field) =>
+              renderField({
+                field,
+                isEditing,
+                value: formData[field.key],
+                onChange: (e) => handleChange(field.key, e.target.value),
+              })
+            )}
           </div>
         </div>
       </div>
