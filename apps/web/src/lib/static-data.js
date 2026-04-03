@@ -8,3 +8,11 @@ export const categorySummaryData = [
   { id: 7, name: "Accessories", qty: 15 },
   { id: 8, name: "Outerwear", qty: 6 },
 ];
+
+export const SEASON_OPTIONS = [
+  { value: "all", label: "All Seasons" },
+  { value: "spring", label: "Spring" },
+  { value: "summer", label: "Summer" },
+  { value: "fall", label: "Fall" },
+  { value: "winter", label: "Winter" },
+];

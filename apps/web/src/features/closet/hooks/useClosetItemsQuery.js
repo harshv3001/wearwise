@@ -2,10 +2,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getClosetItemsApi, getClosetItemByIdApi } from "../api/closetApi";
+import { closetQueryKeys } from "./closetQueryKeys";
 
 export function useClosetItemsQuery(category = "") {
   return useQuery({
-    queryKey: ["closet-items", category],
+    queryKey: closetQueryKeys.list(category),
     queryFn: () => getClosetItemsApi(category),
     staleTime: 1000 * 60 * 5,
   });
@@ -13,7 +14,7 @@ export function useClosetItemsQuery(category = "") {
 
 export function useClosetSingleItemQuery(itemId) {
   return useQuery({
-    queryKey: ["closet-items", itemId],
+    queryKey: closetQueryKeys.detail(itemId),
     queryFn: () => getClosetItemByIdApi(itemId),
     staleTime: 1000 * 60 * 5,
   });

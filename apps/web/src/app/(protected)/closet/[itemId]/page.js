@@ -2,17 +2,16 @@
 
 import { useParams } from "next/navigation";
 import { useClosetSingleItemQuery } from "../../../../features/closet/hooks/useClosetItemsQuery";
+import ClosetDetails from "@/features/closet/component/ClosetDetails";
 
 const ClosetDetailsPage = () => {
-  // const { id: selectedOutfitId } = params;
   const params = useParams();
   const selectedItemId = params?.itemId;
   const { data: singleItem } = useClosetSingleItemQuery(selectedItemId);
 
   return (
     <main style={{ padding: 24 }}>
-      <h1>Closet Details</h1>
-      {/* <OutfitDetails outfit={singleOutfit} /> */}
+      {singleItem ? <ClosetDetails item={singleItem} /> : <p>Loading...</p>}
     </main>
   );
 };
