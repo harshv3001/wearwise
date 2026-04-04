@@ -9,7 +9,12 @@ export default function HeaderNav({ onNavigate }) {
         label="Dashboard"
         onNavigate={onNavigate}
       />
-      <HeaderNavLink href="/closet" label="My closet" onNavigate={onNavigate} />
+      <HeaderNavLink
+        href="/closet"
+        label="My closet"
+        onNavigate={onNavigate}
+        exact={true}
+      />
       <HeaderNavLink
         href="/outfit-generator"
         label="Make an Outfit"

@@ -262,7 +262,7 @@ export default function ClosetDetails({ item }) {
               <span className="material-symbols-outlined" aria-hidden="true">
                 edit
               </span>
-              Edit
+              Edit Details
             </Button>
           )}
         </div>
@@ -299,8 +299,8 @@ export default function ClosetDetails({ item }) {
             {uploadItemImageMutation.isPending
               ? "Updating Image..."
               : item?.image_url
-                ? "Change Image"
-                : "Add Image"}
+              ? "Change Image"
+              : "Add Image"}
           </Button>
 
           <div className={styles.metaList}>
