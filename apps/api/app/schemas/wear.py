@@ -1,4 +1,5 @@
 from typing import Optional
+from uuid import UUID
 from pydantic import BaseModel, Field
 from datetime import date
 
@@ -15,6 +16,6 @@ class WearCreate(BaseModel):
 
 
 class WearOut(BaseModel):
-    outfit_id: int
-    wear_log_id: int
+    outfit_id: UUID
+    wear_log_id: UUID
     date_worn: date

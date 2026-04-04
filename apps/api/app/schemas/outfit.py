@@ -1,11 +1,12 @@
 from app.schemas.closet_items import ClosetItemOut
 from typing import Optional, List
+from uuid import UUID
 from pydantic import BaseModel, Field
 from datetime import datetime
 
 
 class OutfitItemBase(BaseModel):
-    closet_item_id: int
+    closet_item_id: UUID
     position: int = Field(default=0, ge=0)
     note: Optional[str] = Field(default=None, max_length=255)
 
@@ -15,7 +16,7 @@ class OutfitItemCreate(OutfitItemBase):
 
 
 class OutfitItemOut(OutfitItemBase):
-    outfit_id: int
+    outfit_id: UUID
     image_url: Optional[str] = None
 
 
@@ -45,7 +46,7 @@ class OutfitUpdate(BaseModel):
 
 
 class OutfitOut(OutfitBase):
-    id: int
+    id: UUID
     image_url: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
@@ -56,7 +57,7 @@ class OutfitOut(OutfitBase):
 
 
 class OutfitListItem(BaseModel):
-    id: int
+    id: UUID
     name: str
     occasion: Optional[str] = None
     season: Optional[str] = None
@@ -79,7 +80,7 @@ class OutfitListResponse(BaseModel):
 
 
 class OutfitItemDetailOut(OutfitItemBase):
-    outfit_id: int
+    outfit_id: UUID
     closet_item: ClosetItemOut
 
     class Config:
@@ -87,7 +88,7 @@ class OutfitItemDetailOut(OutfitItemBase):
 
 
 class OutfitDetailOut(OutfitBase):
-    id: int
+    id: UUID
     image_url: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None

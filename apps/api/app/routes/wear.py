@@ -1,9 +1,9 @@
 from datetime import date as date_type
 from typing import Optional, List
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
 
 from app.database import get_db
 from app.oauth2 import get_current_user
@@ -27,7 +27,7 @@ router = APIRouter(prefix="/wear", tags=["Wear"])
 
 def _validate_closet_items_belong_to_user(
     db: Session,
-    user_id: int,
+    user_id: UUID,
     items: List[OutfitItemCreate],
 ) -> None:
     if not items or len(items) == 0:
@@ -62,7 +62,7 @@ def _validate_closet_items_belong_to_user(
         )
 
 
-def _get_wearlog_or_404(db: Session, wear_log_id: int, user_id: int) -> wear_log_models.WearLog:
+def _get_wearlog_or_404(db: Session, wear_log_id: UUID, user_id: UUID) -> wear_log_models.WearLog:
     wl = (
         db.query(wear_log_models.WearLog)
         .filter(wear_log_models.WearLog.id == wear_log_id, wear_log_models.WearLog.user_id == user_id)
@@ -73,7 +73,7 @@ def _get_wearlog_or_404(db: Session, wear_log_id: int, user_id: int) -> wear_log
     return wl
 
 
-def _get_outfit_item_ids(db: Session, outfit_id: int) -> List[int]:
+def _get_outfit_item_ids(db: Session, outfit_id: UUID) -> List[UUID]:
     rows = (
         db.query(outfit_models.OutfitItem.closet_item_id)
         .filter(outfit_models.OutfitItem.outfit_id == outfit_id)
@@ -82,7 +82,7 @@ def _get_outfit_item_ids(db: Session, outfit_id: int) -> List[int]:
     return [r[0] for r in rows]
 
 
-def _inc_times_worn(db: Session, user_id: int, closet_item_ids: List[int], delta: int) -> None:
+def _inc_times_worn(db: Session, user_id: UUID, closet_item_ids: List[UUID], delta: int) -> None:
     if not closet_item_ids:
         return
 
@@ -207,7 +207,7 @@ def list_wear_logs(
 
 @router.get("/{wear_log_id}", response_model=WearLogOut)
 def get_wear_log(
-    wear_log_id: int,
+    wear_log_id: UUID,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
 ):
@@ -217,7 +217,7 @@ def get_wear_log(
 
 @router.patch("/{wear_log_id}", response_model=WearLogOut)
 def update_wear_log(
-    wear_log_id: int,
+    wear_log_id: UUID,
     payload: WearLogUpdate,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
@@ -236,7 +236,7 @@ def update_wear_log(
 
 @router.delete("/{wear_log_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_wear_log(
-    wear_log_id: int,
+    wear_log_id: UUID,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
 ):

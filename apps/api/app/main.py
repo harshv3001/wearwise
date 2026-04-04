@@ -4,13 +4,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from .database import Base, engine
 from .routes import auth, closet_items, outfit, wear
 
 from . import models
-
-
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="WearWise API")
 

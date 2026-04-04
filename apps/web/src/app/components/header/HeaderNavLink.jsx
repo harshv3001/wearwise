@@ -4,9 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./Header.module.scss";
 
-export default function HeaderNavLink({ href, label, onNavigate }) {
+export default function HeaderNavLink({
+  href,
+  label,
+  onNavigate,
+  exact = false,
+}) {
   const pathname = usePathname();
-  const isActive = pathname === href || pathname?.startsWith(`${href}/`);
+  const isActive = exact
+    ? pathname === href
+    : pathname === href || pathname?.startsWith(`${href}/`);
 
   return (
     <Link

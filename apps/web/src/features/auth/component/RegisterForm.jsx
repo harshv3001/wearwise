@@ -503,10 +503,10 @@ export default function RegisterForm({ onSubmit, loading }) {
               size="sm"
               className="w-full lg:w-50 sm:h-max sm:mt-7"
             >
-              <spna className="flex items-center gap-1">
+              <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined">location_on</span>
                 <span>Use my location</span>
-              </spna>
+              </span>
             </Button>
           </div>
 

@@ -8,6 +8,7 @@ import styles from "./CreateClosetItem.module.scss";
 import { useRef, useState } from "react";
 import { useCreateClosetItemMutation } from "../hooks/useCreateClosetItemMutation";
 import { useUploadItemImageMutation } from "../hooks/useUploadItemImageMutations";
+import { SEASON_OPTIONS } from "../../../lib/static-data";
 
 const initialFormData = {
   name: "",
@@ -134,13 +135,7 @@ export default function CreateClosetItem({ open, onClose }) {
             label="Season"
             value={formData.season}
             onChange={(e) => onChange("season", e.target.value)}
-            options={[
-              { value: "all", label: "All Seasons" },
-              { value: "spring", label: "Spring" },
-              { value: "summer", label: "Summer" },
-              { value: "fall", label: "Fall" },
-              { value: "winter", label: "Winter" },
-            ]}
+            options={SEASON_OPTIONS}
             placeholder="Select season"
           />
 
