@@ -3,15 +3,19 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AuthLayout from "../AuthLayout";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LoginForm from "../../../features/auth/component/LoginForm";
-import { loginApi } from "../../../features/auth/api/authApi";
+import {
+  currentUserQueryKey,
+  loginApi,
+} from "../../../features/auth/api/authApi";
 import { setToken } from "../../../lib/auth";
 import { getApiErrorMessage } from "../../../lib/apiError";
 import Button from "@/app/components/ui/Button";
 
 export default function LoginPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const loginMut = useMutation({
     mutationFn: loginApi,
@@ -19,6 +23,9 @@ export default function LoginPage() {
       const token = data?.access_token || data?.token;
       if (!token) return alert("Login succeeded but token missing.");
       setToken(token);
+      if (data?.user) {
+        queryClient.setQueryData(currentUserQueryKey, data.user);
+      }
       router.replace("/dashboard");
     },
     onError: (err) => alert(getApiErrorMessage(err, "Login failed")),

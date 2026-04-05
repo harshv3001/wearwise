@@ -9,6 +9,7 @@ from app.models import user as user_model
 from app.database import get_db
 
 from app import utils, oauth2
+from app.oauth2 import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -40,7 +41,7 @@ def register(user: user_schema.UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 
-@router.post("/login", response_model=user_schema.Token)
+@router.post("/login", response_model=user_schema.LoginResponse)
 def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
 
     user_selected = (
@@ -54,4 +55,9 @@ def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
         )
 
     token = oauth2.create_access_token(data={"user_id": user_selected.id})
-    return {"access_token": token, "token_type": "bearer"}
+    return {"access_token": token, "token_type": "bearer", "user": user_selected}
+
+
+@router.get("/me", response_model=user_schema.UserOut)
+def get_me(current_user: user_model.User = Depends(get_current_user)):
+    return current_user

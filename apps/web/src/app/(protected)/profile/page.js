@@ -1,8 +1,11 @@
 "use client";
 
 import { logoutUser } from "../../../lib/session";
+import { useCurrentUser } from "../../../features/auth/hooks/useCurrentUser";
 
 export default function ProfilePage() {
+  const { data: user, isLoading } = useCurrentUser();
+
   const handleLogout = () => {
     logoutUser();
   };
@@ -10,6 +13,23 @@ export default function ProfilePage() {
   return (
     <main style={{ padding: 24 }}>
       <h1>Profile</h1>
+      {isLoading ? (
+        <p>Loading your profile...</p>
+      ) : (
+        <div style={{ marginBottom: 16 }}>
+          <p>
+            <strong>Name:</strong> {user?.name || "-"}
+          </p>
+          <p>
+            <strong>Email:</strong> {user?.email || "-"}
+          </p>
+          <p>
+            <strong>Location:</strong>{" "}
+            {[user?.city, user?.state, user?.country].filter(Boolean).join(", ") ||
+              "-"}
+          </p>
+        </div>
+      )}
       <div>
         <button
           type="button"

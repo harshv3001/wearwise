@@ -2,14 +2,19 @@
 
 import { useRouter } from "next/navigation";
 import AuthLayout from "../AuthLayout";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import RegisterForm from "../../../features/auth/component/RegisterForm";
-import { registerApi, loginApi } from "../../../features/auth/api/authApi";
+import {
+  currentUserQueryKey,
+  registerApi,
+  loginApi,
+} from "../../../features/auth/api/authApi";
 import { setToken } from "../../../lib/auth";
 import { getApiErrorMessage } from "../../../lib/apiError";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const registerMut = useMutation({
     mutationFn: registerApi,
@@ -36,6 +41,9 @@ export default function RegisterPage() {
       }
 
       setToken(token);
+      if (data?.user) {
+        queryClient.setQueryData(currentUserQueryKey, data.user);
+      }
       router.replace("/dashboard");
     } catch (err) {
       alert(getApiErrorMessage(err, "Registration failed"));

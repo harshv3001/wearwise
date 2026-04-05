@@ -1,5 +1,7 @@
 import { http } from "../../../lib/http";
 
+export const currentUserQueryKey = ["me"];
+
 // FastAPI OAuth2PasswordRequestForm -> x-www-form-urlencoded with "username"
 export async function loginApi({ email, password }) {
   const body = new URLSearchParams();
@@ -11,6 +13,11 @@ export async function loginApi({ email, password }) {
   });
 
   return res.data; // { access_token, token_type }
+}
+
+export async function getCurrentUserApi() {
+  const res = await http.get("/auth/me");
+  return res.data;
 }
 
 // Register -> JSON payload (matches your schema)

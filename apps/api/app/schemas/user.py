@@ -45,5 +45,9 @@ class Token(BaseModel):
     token_type: str = "bearer"
 
 
+class LoginResponse(Token):
+    user: UserOut
+
+
 class TokenData(BaseModel):
     id: Optional[UUID] = None
