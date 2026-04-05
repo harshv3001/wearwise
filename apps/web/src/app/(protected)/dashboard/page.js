@@ -7,11 +7,16 @@ import CategorySummaryCard from "../../../features/category-summary/component/Ca
 import ReportOutfitModal from "../../../features/outfits/components/ReportOutfitModal";
 import CreateClosetItem from "../../../features/closet/component/CreateClosetItem.jsx";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
+import { useCurrentUser } from "../../../features/auth/hooks/useCurrentUser";
+import { useWeather } from "../../../features/weather/hooks/useWeather";
+import WeatherCard from "../../../features/weather/components/WeatherCard";
 
 export default function DashboardPage() {
   const [category, setCategory] = useState("");
 
   const { data: closetItems, isLoading, error } = useClosetItemsQuery(category);
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
+  const weatherQuery = useWeather(user?.latitude, user?.longitude);
 
   const [openReportModal, setOpenReportModal] = useState(false);
   const [openItemModal, setOpenItemModal] = useState(false);
@@ -30,6 +35,14 @@ export default function DashboardPage() {
           </Button>
         </div>
       </div>
+      <section className="m-2 mb-6">
+        <WeatherCard
+          user={user}
+          weather={weatherQuery.data}
+          isLoading={isUserLoading || weatherQuery.isLoading}
+          isError={weatherQuery.isError}
+        />
+      </section>
       <section className="flex flex-wrap gap-4 justify-center">
         <CategorySummaryCard items={categorySummaryData} />
         {/* <CategorySummaryCard items={categorySummaryData} />
