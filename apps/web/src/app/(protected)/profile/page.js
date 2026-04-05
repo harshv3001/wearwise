@@ -5,6 +5,10 @@ import { useCurrentUser } from "../../../features/auth/hooks/useCurrentUser";
 
 export default function ProfilePage() {
   const { data: user, isLoading } = useCurrentUser();
+  const fullName = [user?.first_name, user?.last_name]
+    .map((value) => value?.trim())
+    .filter(Boolean)
+    .join(" ");
 
   const handleLogout = () => {
     logoutUser();
@@ -18,7 +22,7 @@ export default function ProfilePage() {
       ) : (
         <div style={{ marginBottom: 16 }}>
           <p>
-            <strong>Name:</strong> {user?.name || "-"}
+            <strong>Name:</strong> {fullName || user?.email || "-"}
           </p>
           <p>
             <strong>Email:</strong> {user?.email || "-"}

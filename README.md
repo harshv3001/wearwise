@@ -1,5 +1,35 @@
 # closet-app
 
+## Environment setup
+
+Real secrets should stay out of the repo. This project already ignores local env files like `.env`, `.env.dev`, and `.env.local`.
+
+1. Copy `.env.example` to `.env` for host-machine development.
+2. Put only local values in `.env`, not production RDS or AWS credentials.
+3. For Docker runs, use the existing `.env.dev` file and `docker compose`.
+
+### Host-machine backend commands
+
+Use `.env` with a local database URL such as `localhost:5433`:
+
+```bash
+cd apps/api
+alembic upgrade head
+```
+
+### Docker backend commands
+
+The backend can read a different env file through `APP_ENV_FILE`:
+
+```bash
+docker compose up -d db
+cd apps/api
+APP_ENV_FILE=.env.dev alembic upgrade head
+```
+
+### Production
+
+Production secrets should come from the deployment environment, secret manager, or CI/CD variables, not from committed files.
 
 
 ## Getting started

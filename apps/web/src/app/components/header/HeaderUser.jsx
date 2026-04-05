@@ -9,7 +9,11 @@ export default function HeaderUser({ href }) {
   const pathname = usePathname();
   const { data: user } = useCurrentUser();
   const isActive = pathname === href || pathname?.startsWith(`${href}/`);
-  const label = user?.name?.trim() || "User";
+  const fullName = [user?.first_name, user?.last_name]
+    .map((value) => value?.trim())
+    .filter(Boolean)
+    .join(" ");
+  const label = fullName || user?.email || "User";
 
   return (
     <Link

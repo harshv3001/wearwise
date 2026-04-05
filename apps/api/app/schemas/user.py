@@ -5,7 +5,9 @@ from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
 class UserCreate(BaseModel):
-    name: str = Field(min_length=1)
+    # name: str = Field(min_length=1)
+    first_name: str = Field(min_length=1)
+    last_name: str = Field(min_length=1)
     email: EmailStr
     password: str = Field(min_length=4, max_length=60)
 
@@ -24,7 +26,9 @@ class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
-    name: str
+    # name: str
+    first_name: str
+    last_name: str
     email: EmailStr
 
     age: Optional[int]

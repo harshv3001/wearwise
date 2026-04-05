@@ -28,7 +28,9 @@ def register(user: user_schema.UserCreate, db: Session = Depends(get_db)):
 
     user_dict = user.model_dump()
 
-    user_dict["name"] = user_dict["name"].strip()
+    # user_dict["name"] = user_dict["name"].strip()
+    user_dict["first_name"] = user_dict["first_name"].strip()
+    user_dict["last_name"] = user_dict["last_name"].strip()
     user_dict["email"] = user_dict["email"].strip().lower()
 
     user_dict["password"] = utils.hash_password(user.password.strip())
