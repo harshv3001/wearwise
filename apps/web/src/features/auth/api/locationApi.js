@@ -47,3 +47,30 @@ export async function searchCitiesApi({
 
   return res.data;
 }
+
+export async function reverseGeocodeCurrentLocationApi({
+  latitude,
+  longitude,
+  signal,
+}) {
+  const params = new URLSearchParams({
+    latitude: String(latitude),
+    longitude: String(longitude),
+    localityLanguage: "en",
+  });
+
+  const response = await fetch(
+    `https://api.bigdatacloud.net/data/reverse-geocode-client?${params.toString()}`,
+    {
+      method: "GET",
+      signal,
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Reverse geocoding failed. Please try again.");
+  }
+
+  return response.json();
+}

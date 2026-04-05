@@ -10,6 +10,55 @@ import { STYLE_OPTIONS, COLOR_OPTIONS } from "../../../lib/static-data";
 import { useCountriesQuery } from "../hooks/useCountriesQuery";
 import { useStatesQuery } from "../hooks/useStatesQuery";
 import { useCitySearch } from "../hooks/useCitySearch";
+import { useCurrentLocation } from "../hooks/useCurrentLocation";
+
+function normalizeText(value) {
+  return (value || "").trim().toLowerCase();
+}
+
+function findMatchingCountryOption(options, location) {
+  if (!location) {
+    return null;
+  }
+
+  const byCode = options.find(
+    (option) =>
+      location.country_code &&
+      option.code &&
+      option.code.toUpperCase() === location.country_code.toUpperCase()
+  );
+  if (byCode) {
+    return byCode;
+  }
+
+  return (
+    options.find(
+      (option) => normalizeText(option.value) === normalizeText(location.country)
+    ) || null
+  );
+}
+
+function findMatchingStateOption(options, location) {
+  if (!location) {
+    return null;
+  }
+
+  const byCode = options.find(
+    (option) =>
+      location.state_code &&
+      option.code &&
+      option.code.toUpperCase() === location.state_code.toUpperCase()
+  );
+  if (byCode) {
+    return byCode;
+  }
+
+  return (
+    options.find(
+      (option) => normalizeText(option.value) === normalizeText(location.state)
+    ) || null
+  );
+}
 
 export default function StepTwoReg({
   form,
@@ -23,6 +72,7 @@ export default function StepTwoReg({
 
   const countriesQuery = useCountriesQuery();
   const statesQuery = useStatesQuery(form.country);
+  const currentLocation = useCurrentLocation();
   const citySearchQuery = useCitySearch({
     query: form.city,
     country: form.country,
@@ -91,6 +141,47 @@ export default function StepTwoReg({
     statesQuery.isFetching,
     statesQuery.isLoading,
   ]);
+
+  useEffect(() => {
+    if (!countryOptions.length || !form.country_code) {
+      return;
+    }
+
+    const matchedCountry = findMatchingCountryOption(countryOptions, form);
+    if (!matchedCountry || matchedCountry.value === form.country) {
+      return;
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      country: matchedCountry.value,
+      country_code: matchedCountry.code || prev.country_code || "",
+    }));
+  }, [countryOptions, form, setForm]);
+
+  useEffect(() => {
+    if (!stateOptions.length || !form.state) {
+      return;
+    }
+
+    const matchedState = findMatchingStateOption(stateOptions, form);
+    if (!matchedState) {
+      return;
+    }
+
+    if (
+      matchedState.value === form.state &&
+      (matchedState.code || "") === (form.state_code || "")
+    ) {
+      return;
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      state: matchedState.value,
+      state_code: matchedState.code || prev.state_code || "",
+    }));
+  }, [form, setForm, stateOptions]);
 
   const toggleChip = (key, value) => {
     setForm((prev) => {
@@ -194,6 +285,53 @@ export default function StepTwoReg({
     }));
 
     setIsCityFocused(false);
+  };
+
+  const handleUseCurrentLocation = async () => {
+    currentLocation.clearError();
+
+    try {
+      const location = await currentLocation.getCurrentLocation();
+      const matchedCountry = findMatchingCountryOption(countryOptions, location);
+      const nextCountry = matchedCountry?.value || location.country;
+      const nextCountryCode = matchedCountry?.code || location.country_code || "";
+
+      setForm((prev) => ({
+        ...prev,
+        country: nextCountry,
+        country_code: nextCountryCode,
+        state: location.state,
+        state_code: location.state_code || "",
+        city: location.city,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        selected_city: {
+          city: location.city,
+          state: location.state,
+          state_code: location.state_code || "",
+          country: nextCountry,
+          country_code: nextCountryCode,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          display_label:
+            location.display_label ||
+            [location.city, location.state, nextCountry].filter(Boolean).join(", "),
+        },
+      }));
+
+      setErrors((prev) => ({
+        ...prev,
+        country: "",
+        state: "",
+        city: "",
+      }));
+
+      setIsCityFocused(false);
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        return;
+      }
+    }
   };
 
   return (
@@ -311,12 +449,14 @@ export default function StepTwoReg({
             variant="tertiary"
             size="sm"
             className="w-full lg:w-50 sm:h-max"
-            disabled
-            title="We will add automatic location next."
+            disabled={loading || currentLocation.isLoading}
+            onClick={handleUseCurrentLocation}
           >
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined">location_on</span>
-              <span>Use my location</span>
+              <span>
+                {currentLocation.isLoading ? "Detecting location..." : "Use my location"}
+              </span>
             </span>
           </Button>
         </div>
@@ -333,6 +473,10 @@ export default function StepTwoReg({
           We couldn&apos;t load states for this country. You can still continue by
           choosing a city if state data is unavailable.
         </p>
+      ) : null}
+
+      {currentLocation.error ? (
+        <p className="text-sm text-red-500">{currentLocation.error}</p>
       ) : null}
 
       <div className="space-y-3">
