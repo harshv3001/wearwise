@@ -15,8 +15,12 @@ class UserCreate(BaseModel):
     gender: Optional[str] = None
 
     country: Optional[str] = None
+    country_code: Optional[str] = None
     state: Optional[str] = None
+    state_code: Optional[str] = None
     city: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
     pref_styles: Optional[List[str]] = None
     pref_colors: Optional[List[str]] = None
@@ -35,8 +39,12 @@ class UserOut(BaseModel):
     gender: Optional[str]
 
     country: Optional[str]
+    country_code: Optional[str]
     state: Optional[str]
+    state_code: Optional[str]
     city: Optional[str]
+    latitude: Optional[float]
+    longitude: Optional[float]
 
     pref_styles: Optional[List[str]]
     pref_colors: Optional[List[str]]

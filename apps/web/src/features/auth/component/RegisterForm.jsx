@@ -27,8 +27,14 @@ const INITIAL_FORM = {
   age: "",
   gender: "",
   country: "",
+  country_code: "",
   state: "",
+  state_code: "",
   city: "",
+  latitude: null,
+  longitude: null,
+  state_required: true,
+  selected_city: null,
   pref_styles: [],
   pref_colors: [],
 };
@@ -45,7 +51,6 @@ export default function RegisterForm({ onSubmit, loading }) {
     setForm((prev) => ({
       ...prev,
       [name]: value,
-      ...(name === "country" && { state: "", city: "" }),
     }));
 
     setErrors((prev) => ({
@@ -115,12 +120,19 @@ export default function RegisterForm({ onSubmit, loading }) {
       nextErrors.country = "Country is required";
     }
 
-    if (!form.state.trim()) {
+    if (form.state_required && !form.state.trim()) {
       nextErrors.state = "State is required";
     }
 
     if (!form.city.trim()) {
       nextErrors.city = "City is required";
+    } else if (!form.selected_city) {
+      nextErrors.city = "Select a city from the suggestions";
+    } else if (
+      typeof form.latitude !== "number" ||
+      typeof form.longitude !== "number"
+    ) {
+      nextErrors.city = "Select a city with valid coordinates";
     }
 
     return nextErrors;
@@ -186,7 +198,7 @@ export default function RegisterForm({ onSubmit, loading }) {
 
     if (!validateAll()) return;
 
-    const { confirmPassword, ...payload } = form;
+    const { confirmPassword, selected_city, state_required, ...payload } = form;
 
     onSubmit({
       ...payload,
@@ -233,10 +245,10 @@ export default function RegisterForm({ onSubmit, loading }) {
       ) : (
         <StepTwoReg
           form={form}
-          onChange={onChange}
           errors={errors}
           loading={loading}
           setForm={setForm}
+          setErrors={setErrors}
           handlePrevStep={handlePrevStep}
         />
       )}

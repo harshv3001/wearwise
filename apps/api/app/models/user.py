@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, Integer, String, TIMESTAMP
+from sqlalchemy import Column, Float, Integer, String, TIMESTAMP
 from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from app.database import Base
 from sqlalchemy.sql.expression import text
@@ -27,8 +27,12 @@ class User(Base):
     gender = Column(String, nullable=True)
 
     country = Column(String, nullable=True)
+    country_code = Column(String, nullable=True)
     state = Column(String, nullable=True)
+    state_code = Column(String, nullable=True)
     city = Column(String, nullable=True)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
 
     pref_styles = Column(ARRAY(String), nullable=True)
     pref_colors = Column(ARRAY(String), nullable=True)

@@ -14,6 +14,14 @@ from app.oauth2 import get_current_user
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
+def _clean_optional_string(value: str | None) -> str | None:
+    if value is None:
+        return None
+
+    cleaned = value.strip()
+    return cleaned or None
+
+
 @router.post(
     "/register",
     status_code=status.HTTP_201_CREATED,
@@ -32,6 +40,11 @@ def register(user: user_schema.UserCreate, db: Session = Depends(get_db)):
     user_dict["first_name"] = user_dict["first_name"].strip()
     user_dict["last_name"] = user_dict["last_name"].strip()
     user_dict["email"] = user_dict["email"].strip().lower()
+    user_dict["country"] = _clean_optional_string(user_dict.get("country"))
+    user_dict["country_code"] = _clean_optional_string(user_dict.get("country_code"))
+    user_dict["state"] = _clean_optional_string(user_dict.get("state"))
+    user_dict["state_code"] = _clean_optional_string(user_dict.get("state_code"))
+    user_dict["city"] = _clean_optional_string(user_dict.get("city"))
 
     user_dict["password"] = utils.hash_password(user.password.strip())
 
