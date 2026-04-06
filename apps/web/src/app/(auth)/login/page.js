@@ -8,6 +8,7 @@ import LoginForm from "../../../features/auth/component/LoginForm";
 import {
   currentUserQueryKey,
   loginApi,
+  startOAuthApi,
 } from "../../../features/auth/api/authApi";
 import { setToken } from "../../../lib/auth";
 import { getApiErrorMessage } from "../../../lib/apiError";
@@ -32,6 +33,18 @@ export default function LoginPage() {
   });
 
   const handleSubmit = (values) => loginMut.mutate(values);
+  const handleSocialLogin = async (provider) => {
+    try {
+      const data = await startOAuthApi(provider, "login");
+      if (!data?.authorization_url) {
+        alert("Unable to start social login right now.");
+        return;
+      }
+      window.location.assign(data.authorization_url);
+    } catch (err) {
+      alert(getApiErrorMessage(err, `Could not start ${provider} login`));
+    }
+  };
 
   return (
     <AuthLayout>
@@ -54,14 +67,24 @@ export default function LoginPage() {
           ------------------- Or continue with --------------------
         </div>
         <div className="flex gap-x-16 justify-center">
-          <Button variant="secondary">
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => handleSocialLogin("facebook")}
+          >
             <span
               className="material-symbols-outlined leading-none"
               style={{ fontSize: "18px" }}
             ></span>
             <span>Facebook</span>
           </Button>
-          <Button variant="secondary">Google</Button>
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => handleSocialLogin("google")}
+          >
+            Google
+          </Button>
         </div>
       </div>
     </AuthLayout>

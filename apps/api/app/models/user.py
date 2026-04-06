@@ -21,7 +21,9 @@ class User(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True, index=True)
-    password = Column(String, nullable=False)
+    password = Column(String, nullable=True)
+    email_verified_at = Column(TIMESTAMP(timezone=True), nullable=True)
+    email_verification_source = Column(String, nullable=True)
 
     age = Column(Integer, nullable=True)
     gender = Column(String, nullable=True)

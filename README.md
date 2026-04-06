@@ -8,6 +8,27 @@ Real secrets should stay out of the repo. This project already ignores local env
 2. Put only local values in `.env`, not production RDS or AWS credentials.
 3. For Docker runs, use the existing `.env.dev` file and `docker compose`.
 
+### OAuth-related env vars
+
+The backend now supports Google and Facebook OAuth. Configure these values in your backend env file:
+
+```bash
+API_BASE_URL=http://localhost:8000
+FRONTEND_URL=http://localhost:3000
+AUTH_COOKIE_SECURE=false
+AUTH_COOKIE_SAMESITE=lax
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+FACEBOOK_CLIENT_ID=...
+FACEBOOK_CLIENT_SECRET=...
+```
+
+The frontend should point to the backend with:
+
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
 ### Host-machine backend commands
 
 Use `.env` with a local database URL such as `localhost:5433`:

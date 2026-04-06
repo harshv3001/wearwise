@@ -34,6 +34,8 @@ class UserOut(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
+    email_verified_at: Optional[datetime] = None
+    email_verification_source: Optional[str] = None
 
     age: Optional[int]
     gender: Optional[str]
@@ -55,6 +57,7 @@ class UserOut(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+    expires_in: int | None = None
 
 
 class LoginResponse(Token):

@@ -1,6 +1,8 @@
 import { http } from "../../../lib/http";
 
 export const currentUserQueryKey = ["me"];
+export const authIdentitiesQueryKey = ["auth-identities"];
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 // FastAPI OAuth2PasswordRequestForm -> x-www-form-urlencoded with "username"
 export async function loginApi({ email, password }) {
@@ -20,8 +22,29 @@ export async function getCurrentUserApi() {
   return res.data;
 }
 
+export async function getAuthIdentitiesApi() {
+  const res = await http.get("/auth/identities");
+  return res.data;
+}
+
 // Register -> JSON payload (matches your schema)
 export async function registerApi(payload) {
   const res = await http.post("/auth/register", payload);
   return res.data;
+}
+
+export async function startOAuthApi(provider, intent = "login") {
+  const res = await http.get(`/auth/oauth/${provider}/start`, {
+    params: { intent },
+  });
+  return res.data;
+}
+
+export async function exchangeOAuthCodeApi(code) {
+  const res = await http.post("/auth/oauth/exchange", { code });
+  return res.data;
+}
+
+export function getOAuthProviderStartUrl(provider, intent = "login") {
+  return `${apiBaseUrl}/auth/oauth/${provider}/start?intent=${intent}`;
 }
