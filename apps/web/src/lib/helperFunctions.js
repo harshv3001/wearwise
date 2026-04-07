@@ -19,3 +19,72 @@ export function formatDisplayValue(value, fallback = "-") {
   if (value === null || value === undefined || value === "") return fallback;
   return String(value);
 }
+
+export function isValidEmail(value) {
+  return /^\S+@\S+\.\S+$/.test((value || "").trim());
+}
+
+export function validateRequired(value, message) {
+  return String(value || "").trim() ? "" : message;
+}
+
+export function validateEmail(value, { requiredMessage, invalidMessage }) {
+  const trimmedValue = (value || "").trim();
+
+  if (!trimmedValue) {
+    return requiredMessage;
+  }
+
+  return isValidEmail(trimmedValue) ? "" : invalidMessage;
+}
+
+export function validatePassword(value, { requiredMessage, minLength, minLengthMessage }) {
+  const trimmedValue = String(value || "");
+
+  if (!trimmedValue) {
+    return requiredMessage;
+  }
+
+  if (trimmedValue.length < minLength) {
+    return minLengthMessage;
+  }
+
+  return "";
+}
+
+export function validatePasswordConfirmation(password, confirmation, { requiredMessage, mismatchMessage }) {
+  if (!confirmation) {
+    return requiredMessage;
+  }
+
+  return password === confirmation ? "" : mismatchMessage;
+}
+
+export function hasValidationErrors(errorMap, fields) {
+  return fields.some((field) => Boolean(errorMap[field]));
+}
+
+export function validatePositiveNumber(value, { requiredMessage, invalidMessage, allowZero = false }) {
+  if (value === "" || value === null || value === undefined) {
+    return requiredMessage;
+  }
+
+  const numericValue = Number(value);
+  if (Number.isNaN(numericValue)) {
+    return invalidMessage;
+  }
+
+  if (allowZero ? numericValue < 0 : numericValue <= 0) {
+    return invalidMessage;
+  }
+
+  return "";
+}
+
+export function getPlaceholderValue(value, fallback) {
+  if (value === null || value === undefined || value === "") {
+    return fallback;
+  }
+
+  return String(value);
+}

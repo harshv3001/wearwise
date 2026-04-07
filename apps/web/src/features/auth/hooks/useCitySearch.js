@@ -10,9 +10,10 @@ export function useCitySearch({
   state,
   countryCode,
   stateCode,
+  enabled: externalEnabled = true,
 }) {
   const debouncedQuery = useDebouncedValue(query, 500);
-  const enabled = Boolean(country) && debouncedQuery.trim().length >= 2;
+  const enabled = externalEnabled && Boolean(country) && debouncedQuery.trim().length >= 2;
 
   return useQuery({
     queryKey: locationQueryKeys.citySearch({

@@ -1,0 +1,30 @@
+.displayField {
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(18, 18, 18, 0.08);
+  background: #faf8f4;
+}
+
+.fieldLabel {
+  margin: 0 0 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4b4b4b;
+}
+
+.fieldValue,
+.fieldPlaceholder {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.fieldValue {
+  color: #171717;
+}
+
+.fieldPlaceholder {
+  color: #888;
+}

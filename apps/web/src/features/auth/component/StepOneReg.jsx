@@ -91,11 +91,12 @@ export default function StepOneReg({
           label="Age"
           name="age"
           type="number"
-          min="0"
+          min="1"
+          max="120"
           value={form.age}
           onChange={(e) => {
-            const value = e.target.value;
-            if (Number(value) >= 0 || value === "") {
+            const { value } = e.target;
+            if (value === "" || (Number(value) >= 1 && Number(value) <= 120)) {
               onChange(e);
             }
           }}

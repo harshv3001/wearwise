@@ -4,6 +4,11 @@ import { useState } from "react";
 import Input from "../../../app/components/ui/Input/Input";
 import Button from "../../../app/components/ui/Button";
 import EyeToggleButton from "@/app/components/ui/EyeToggleButton/EyeToggleButton";
+import {
+  hasValidationErrors,
+  validateEmail,
+  validatePassword,
+} from "../../../lib/helperFunctions";
 
 export default function LoginForm({ onSubmit, loading }) {
   const [email, setEmail] = useState("");
@@ -12,22 +17,20 @@ export default function LoginForm({ onSubmit, loading }) {
   const [errors, setErrors] = useState({ email: "", password: "" });
 
   const validate = () => {
-    const nextErrors = { email: "", password: "" };
-
-    if (!email) {
-      nextErrors.email = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-      nextErrors.email = "Email is invalid";
-    }
-
-    if (!password) {
-      nextErrors.password = "Password is required";
-    } else if (password.length < 5) {
-      nextErrors.password = "Password must be at least 5 characters";
-    }
+    const nextErrors = {
+      email: validateEmail(email, {
+        requiredMessage: "Email is required",
+        invalidMessage: "Email is invalid",
+      }),
+      password: validatePassword(password, {
+        requiredMessage: "Password is required",
+        minLength: 5,
+        minLengthMessage: "Password must be at least 5 characters",
+      }),
+    };
 
     setErrors(nextErrors);
-    return !nextErrors.email && !nextErrors.password;
+    return !hasValidationErrors(nextErrors, ["email", "password"]);
   };
 
   const handleSubmit = (e) => {

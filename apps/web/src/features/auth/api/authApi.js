@@ -27,6 +27,20 @@ export async function getAuthIdentitiesApi() {
   return res.data;
 }
 
+export async function updateCurrentUserApi(payload) {
+  const res = await http.patch("/auth/me", payload);
+  return res.data;
+}
+
+export async function uploadProfileImageApi(formData) {
+  const res = await http.post("/auth/me/image", formData);
+  return res.data;
+}
+
+export async function changePasswordApi(payload) {
+  await http.post("/auth/change-password", payload);
+}
+
 // Register -> JSON payload (matches your schema)
 export async function registerApi(payload) {
   const res = await http.post("/auth/register", payload);

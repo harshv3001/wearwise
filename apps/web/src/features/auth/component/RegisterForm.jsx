@@ -4,6 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import StepOneReg from "./StepOneReg";
 import StepTwoReg from "./StepTwoReg";
+import {
+  hasValidationErrors,
+  validateEmail,
+  validatePassword,
+  validatePasswordConfirmation,
+  validatePositiveNumber,
+  validateRequired,
+} from "../../../lib/helperFunctions";
 
 const INITIAL_ERRORS = {
   first_name: "",
@@ -61,50 +69,31 @@ export default function RegisterForm({ onSubmit, loading }) {
 
   const getStepOneErrors = () => {
     const nextErrors = {
-      first_name: "",
-      last_name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      age: "",
-      gender: "",
+      first_name: validateRequired(form.first_name, "First name is required"),
+      last_name: validateRequired(form.last_name, "Last name is required"),
+      email: validateEmail(form.email, {
+        requiredMessage: "Email is required",
+        invalidMessage: "Email is invalid",
+      }),
+      password: validatePassword(form.password, {
+        requiredMessage: "Password is required",
+        minLength: 5,
+        minLengthMessage: "Password must be at least 5 characters",
+      }),
+      confirmPassword: validatePasswordConfirmation(
+        form.password,
+        form.confirmPassword,
+        {
+          requiredMessage: "Please confirm your password",
+          mismatchMessage: "Passwords do not match",
+        }
+      ),
+      age: validatePositiveNumber(form.age, {
+        requiredMessage: "Age is required",
+        invalidMessage: "Age must be greater than 0",
+      }),
+      gender: validateRequired(form.gender, "Gender is required"),
     };
-
-    if (!form.first_name.trim()) {
-      nextErrors.first_name = "First name is required";
-    }
-
-    if (!form.last_name.trim()) {
-      nextErrors.last_name = "Last name is required";
-    }
-
-    if (!form.email) {
-      nextErrors.email = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
-      nextErrors.email = "Email is invalid";
-    }
-
-    if (!form.password) {
-      nextErrors.password = "Password is required";
-    } else if (form.password.length < 5) {
-      nextErrors.password = "Password must be at least 5 characters";
-    }
-
-    if (!form.confirmPassword) {
-      nextErrors.confirmPassword = "Please confirm your password";
-    } else if (form.password !== form.confirmPassword) {
-      nextErrors.confirmPassword = "Passwords do not match";
-    }
-
-    if (!form.age) {
-      nextErrors.age = "Age is required";
-    } else if (Number(form.age) <= 0) {
-      nextErrors.age = "Age must be greater than 0";
-    }
-
-    if (!form.gender) {
-      nextErrors.gender = "Gender is required";
-    }
 
     return nextErrors;
   };
@@ -116,9 +105,7 @@ export default function RegisterForm({ onSubmit, loading }) {
       city: "",
     };
 
-    if (!form.country) {
-      nextErrors.country = "Country is required";
-    }
+    nextErrors.country = validateRequired(form.country, "Country is required");
 
     if (form.state_required && !form.state.trim()) {
       nextErrors.state = "State is required";
@@ -147,7 +134,7 @@ export default function RegisterForm({ onSubmit, loading }) {
         ...nextErrors,
       }));
 
-      return ![
+      return !hasValidationErrors(nextErrors, [
         "first_name",
         "last_name",
         "email",
@@ -155,7 +142,7 @@ export default function RegisterForm({ onSubmit, loading }) {
         "confirmPassword",
         "age",
         "gender",
-      ].some((key) => nextErrors[key]);
+      ]);
     };
 
     if (!validateStepOne()) return;
@@ -172,7 +159,7 @@ export default function RegisterForm({ onSubmit, loading }) {
       ...stepTwoErrors,
     });
 
-    const stepOneValid = ![
+    const stepOneValid = !hasValidationErrors(stepOneErrors, [
       "first_name",
       "last_name",
       "email",
@@ -180,11 +167,13 @@ export default function RegisterForm({ onSubmit, loading }) {
       "confirmPassword",
       "age",
       "gender",
-    ].some((key) => stepOneErrors[key]);
+    ]);
 
-    const stepTwoValid = !["country", "state", "city"].some(
-      (key) => stepTwoErrors[key]
-    );
+    const stepTwoValid = !hasValidationErrors(stepTwoErrors, [
+      "country",
+      "state",
+      "city",
+    ]);
 
     return stepOneValid && stepTwoValid;
   };

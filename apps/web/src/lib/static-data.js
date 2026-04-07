@@ -104,3 +104,14 @@ export const GENDER_OPTIONS = [
   { label: "Other", value: "other" },
   { label: "Prefer not to say", value: "prefer_not_to_say" },
 ];
+
+export const STATIC_AI_SETTINGS = {
+  weekdayDefault: "Formal",
+  weatherSuggestions: true,
+  prioritizeUnused: true,
+};
+
+export const STATIC_STATS = {
+  closetItems: 52,
+  outfitsLogged: 14,
+};

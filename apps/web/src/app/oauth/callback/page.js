@@ -22,7 +22,6 @@ export default function OAuthCallbackPage() {
     hasRun.current = true;
 
     const code = searchParams.get("code");
-    const intent = searchParams.get("intent") || "login";
     const oauthError = searchParams.get("oauth_error");
 
     if (oauthError) {
@@ -49,7 +48,7 @@ export default function OAuthCallbackPage() {
           queryClient.setQueryData(currentUserQueryKey, data.user);
         }
 
-        router.replace(intent === "link" ? "/profile" : "/dashboard");
+        router.replace("/dashboard");
       })
       .catch((err) => {
         alert(getApiErrorMessage(err, "Social login failed"));

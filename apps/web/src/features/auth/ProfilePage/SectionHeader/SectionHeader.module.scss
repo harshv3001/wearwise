@@ -1,0 +1,20 @@
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.cardTitle {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #161616;
+}
+
+.sectionCopy {
+  margin: 0;
+  color: #696969;
+  font-size: 0.95rem;
+}

@@ -5,6 +5,11 @@ import axios from "axios";
 let isLoggingOut = false;
 
 export function logoutUser(redirectTo = "/login") {
+  const safeRedirectTo =
+    typeof redirectTo === "string" && redirectTo.trim()
+      ? redirectTo
+      : "/login";
+
   clearToken();
   queryClient.clear();
 
@@ -17,8 +22,8 @@ export function logoutUser(redirectTo = "/login") {
 
   isLoggingOut = true;
 
-  if (window.location.pathname !== redirectTo) {
-    window.location.replace(redirectTo);
+  if (window.location.pathname !== safeRedirectTo) {
+    window.location.replace(safeRedirectTo);
     return;
   }
 
