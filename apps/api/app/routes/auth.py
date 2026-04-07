@@ -32,7 +32,7 @@ from app.services.oauth import (
 from app.utils import build_image_url, delete_upload_file, save_upload_file
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
-USERNAME_PATTERN = re.compile(r"^[a-zA-Z0-9_.-]+$")
+USERNAME_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9_.-]*$")
 
 
 def _clean_optional_string(value: str | None) -> str | None:
@@ -64,7 +64,7 @@ def _normalize_username(username: str | None) -> str | None:
     if not USERNAME_PATTERN.fullmatch(normalized):
         raise HTTPException(
             status_code=422,
-            detail="Username can only include letters, numbers, dots, underscores, and hyphens",
+            detail="Username must start with a letter and can only include letters, numbers, dots, underscores, and hyphens",
         )
     return normalized
 

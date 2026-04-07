@@ -15,6 +15,7 @@ export default function ProfileHero({
   locationLabel,
   handleStartEditing,
   handleCancelEditing,
+  hasPassword,
 }) {
   const fullName = getUserFullName(user) || "Your profile";
   const initials = getUserInitials(user);
@@ -84,17 +85,19 @@ export default function ProfileHero({
       <div className={styles.heroActions}>
         {isEditing ? (
           <>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploadProfileImageMutation.isPending}
-            >
-              {uploadProfileImageMutation.isPending
-                ? "Uploading..."
-                : "Upload Photo"}
-            </Button>
+            {hasPassword && (
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadProfileImageMutation.isPending}
+              >
+                {uploadProfileImageMutation.isPending
+                  ? "Uploading..."
+                  : "Upload Photo"}
+              </Button>
+            )}
             <div className={styles.editActions}>
               <Button
                 type="button"

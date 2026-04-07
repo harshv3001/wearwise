@@ -21,6 +21,11 @@ import {
   normalizeProfilePayload,
 } from "../../../features/auth/ProfilePage/profileHelpers";
 import styles from "./page.module.scss";
+import {
+  authIdentitiesQueryKey,
+  getAuthIdentitiesApi,
+} from "@/features/auth/api/authApi";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ProfilePage() {
   const { data: user, isLoading } = useCurrentUser();
@@ -35,6 +40,11 @@ export default function ProfilePage() {
     if (!user || isEditing) return;
     setFormData(buildProfileFormData(user));
   }, [user, isEditing]);
+
+  const { data: identities, isPending: identitiesLoading } = useQuery({
+    queryKey: authIdentitiesQueryKey,
+    queryFn: getAuthIdentitiesApi,
+  });
 
   const originalPayload = useMemo(
     () => normalizeProfilePayload(buildProfileFormData(user)),
@@ -106,17 +116,13 @@ export default function ProfilePage() {
           : "We couldn't save your changes. Please try again."
       );
     }
-  }, [currentPayload, formData, hasUnsavedChanges, updateProfileMutation, originalPayload]);
-
-  if (isLoading) {
-    return (
-      <main className={styles.page}>
-        <div className={styles.loadingState}>
-          <p>Loading your profile...</p>
-        </div>
-      </main>
-    );
-  }
+  }, [
+    currentPayload,
+    formData,
+    hasUnsavedChanges,
+    updateProfileMutation,
+    originalPayload,
+  ]);
 
   const handleStartEditing = () => {
     setFormData(buildProfileFormData(user));
@@ -158,54 +164,69 @@ export default function ProfilePage() {
     setSaveError("");
   };
 
-  const locationLabel = getUserLocationLabel(user);
+  const locationLabel = useMemo(() => getUserLocationLabel(user), [user]);
+
+  const hasPassword = useMemo(
+    () => Boolean(identities?.has_password),
+    [identities]
+  );
+
+  console.log("hasPassword", hasPassword);
 
   return (
     <main className={styles.page}>
-      <div className={styles.shell}>
-        <ProfileHero
-          user={user}
-          isEditing={isEditing}
-          locationLabel={locationLabel}
-          handleStartEditing={handleStartEditing}
-          handleCancelEditing={handleCancelEditing}
-          onSave={handleSaveProfile}
-          isSaving={updateProfileMutation.isPending}
-        />
-
-        {saveError ? (
-          <div className={styles.bannerError}>{saveError}</div>
-        ) : null}
-
-        <div>
-          <ProfileNotice user={user} />
+      {isLoading || identitiesLoading ? (
+        <div className={styles.loadingState}>
+          <p>Loading your profile...</p>
         </div>
+      ) : (
+        <div className={styles.shell}>
+          <ProfileHero
+            user={user}
+            isEditing={isEditing}
+            locationLabel={locationLabel}
+            handleStartEditing={handleStartEditing}
+            handleCancelEditing={handleCancelEditing}
+            onSave={handleSaveProfile}
+            isSaving={updateProfileMutation.isPending}
+            hasPassword={hasPassword}
+          />
 
-        <div className={styles.grid}>
-          <BasicInfoCard
-            user={user}
-            isEditing={isEditing}
-            formData={formData}
-            errors={errors}
-            handleInputChange={handleInputChange}
-          />
-          <AISettingsCard />
-          <LocationCard
-            user={user}
-            isEditing={isEditing}
-            formData={formData}
-            onLocationUpdate={handleLocationUpdate}
-          />
-          <StatsCard />
-          <PreferencesCard
-            user={user}
-            isEditing={isEditing}
-            formData={formData}
-            handleToggleMultiValue={handleToggleMultiValue}
-          />
-          <AccountSecurityCard />
+          {saveError ? (
+            <div className={styles.bannerError}>{saveError}</div>
+          ) : null}
+
+          <div>
+            <ProfileNotice user={user} />
+          </div>
+
+          <div className={styles.grid}>
+            <BasicInfoCard
+              user={user}
+              isEditing={isEditing}
+              formData={formData}
+              errors={errors}
+              handleInputChange={handleInputChange}
+              hasPassword={hasPassword}
+            />
+            <AISettingsCard />
+            <LocationCard
+              user={user}
+              isEditing={isEditing}
+              formData={formData}
+              onLocationUpdate={handleLocationUpdate}
+            />
+            <StatsCard />
+            <PreferencesCard
+              user={user}
+              isEditing={isEditing}
+              formData={formData}
+              handleToggleMultiValue={handleToggleMultiValue}
+            />
+            <AccountSecurityCard hasPassword={hasPassword} />
+          </div>
         </div>
-      </div>
+      )}
     </main>
   );
 }

@@ -14,6 +14,7 @@ export default function BasicInfoCard({
   formData,
   errors,
   handleInputChange,
+  hasPassword,
 }) {
   return (
     <section className={styles.card}>
@@ -31,6 +32,7 @@ export default function BasicInfoCard({
               value={formData.first_name}
               onChange={handleInputChange}
               error={errors.first_name}
+              disabled={!hasPassword}
             />
             <Input
               label="Last Name"
@@ -38,6 +40,7 @@ export default function BasicInfoCard({
               value={formData.last_name}
               onChange={handleInputChange}
               error={errors.last_name}
+              disabled={!hasPassword}
             />
             <Input
               label="Email"
@@ -46,6 +49,7 @@ export default function BasicInfoCard({
               value={formData.email}
               onChange={handleInputChange}
               error={errors.email}
+              disabled={!hasPassword}
             />
             <Input
               label="Username"
@@ -65,7 +69,10 @@ export default function BasicInfoCard({
                 value={formData.age}
                 onChange={(e) => {
                   const { value } = e.target;
-                  if (value === "" || (Number(value) >= 1 && Number(value) <= 120)) {
+                  if (
+                    value === "" ||
+                    (Number(value) >= 1 && Number(value) <= 120)
+                  ) {
                     handleInputChange(e);
                   }
                 }}

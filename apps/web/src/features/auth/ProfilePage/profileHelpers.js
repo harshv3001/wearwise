@@ -142,6 +142,8 @@ export function buildProfileValidationErrors(formData) {
   if (username) {
     if (username.length < 3) {
       nextErrors.username = "Username must be at least 3 characters.";
+    } else if (!/^[a-zA-Z]/.test(username)) {
+      nextErrors.username = "Username must start with a letter.";
     } else if (!/^[a-zA-Z0-9_.-]+$/.test(username)) {
       nextErrors.username =
         "Username can only use letters, numbers, dots, hyphens, and underscores.";

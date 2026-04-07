@@ -12,23 +12,13 @@ import {
 } from "../profileHelpers";
 import { hasValidationErrors } from "../../../../lib/helperFunctions";
 import styles from "./AccountSecurityCard.module.scss";
-import {
-  authIdentitiesQueryKey,
-  getAuthIdentitiesApi,
-} from "../../api/authApi";
-import { useQuery } from "@tanstack/react-query";
 
-export default function AccountSecurityCard() {
+export default function AccountSecurityCard({ hasPassword }) {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordForm, setPasswordForm] = useState(EMPTY_PASSWORD_FORM);
   const [passwordErrors, setPasswordErrors] = useState({});
   const [passwordMessage, setPasswordMessage] = useState("");
   const changePasswordMutation = useChangePasswordMutation();
-
-  const { data: identities } = useQuery({
-    queryKey: authIdentitiesQueryKey,
-    queryFn: getAuthIdentitiesApi,
-  });
 
   const handlePasswordInputChange = (event) => {
     const { name, value } = event.target;
@@ -94,8 +84,6 @@ export default function AccountSecurityCard() {
       );
     }
   };
-
-  const hasPassword = Boolean(identities?.has_password);
 
   return (
     <section className={styles.card}>
