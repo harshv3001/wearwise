@@ -20,6 +20,15 @@
   margin-top: 18px;
 }
 
+.genderOptions {
+  flex-wrap: nowrap !important;
+  gap: 16px;
+}
+
+.genderOptions :global(.MuiFormControlLabel-root) {
+  margin-right: 0;
+}
+
 @media (max-width: 640px) {
   .card {
     padding: 18px;
@@ -32,5 +41,10 @@
 
   .fullWidth {
     grid-column: unset;
+  }
+
+  .genderOptions {
+    flex-wrap: wrap !important;
+    gap: 8px 16px;
   }
 }

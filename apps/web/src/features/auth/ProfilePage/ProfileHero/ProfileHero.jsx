@@ -95,6 +95,8 @@ export default function ProfileHero({
               >
                 {uploadProfileImageMutation.isPending
                   ? "Uploading..."
+                  : user?.image_url
+                  ? "Change Photo"
                   : "Upload Photo"}
               </Button>
             )}

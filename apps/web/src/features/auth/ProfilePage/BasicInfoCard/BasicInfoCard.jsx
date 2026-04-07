@@ -59,38 +59,38 @@ export default function BasicInfoCard({
               placeholder="Choose a username"
               error={errors.username}
             />
-            <div className={styles.fullWidth}>
-              <Input
-                label="Age"
-                name="age"
-                type="number"
-                min="1"
-                max="120"
-                value={formData.age}
-                onChange={(e) => {
-                  const { value } = e.target;
-                  if (
-                    value === "" ||
-                    (Number(value) >= 1 && Number(value) <= 120)
-                  ) {
-                    handleInputChange(e);
-                  }
-                }}
-                placeholder="Age"
-                inputMode="numeric"
-                error={errors.age}
-              />
-            </div>
-          </div>
-          <div className={styles.radioSection}>
+
+            <Input
+              label="Age"
+              name="age"
+              type="number"
+              min="1"
+              max="120"
+              value={formData.age}
+              onChange={(e) => {
+                const { value } = e.target;
+                if (
+                  value === "" ||
+                  (Number(value) >= 1 && Number(value) <= 120)
+                ) {
+                  handleInputChange(e);
+                }
+              }}
+              placeholder="Age"
+              inputMode="numeric"
+              error={errors.age}
+            />
             <RadioGroup
               label="Gender"
               name="gender"
               value={formData.gender}
               onChange={handleInputChange}
               options={GENDER_OPTIONS}
+              className={styles.fullWidth}
+              groupClassName={styles.genderOptions}
             />
           </div>
+          <div className={styles.radioSection}></div>
         </>
       ) : (
         <div className={styles.formGrid}>

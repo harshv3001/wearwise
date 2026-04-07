@@ -21,21 +21,11 @@ function findMatchingOption(options, code, name) {
     );
     if (byCode) return byCode;
   }
-  return options.find((o) => normalizeText(o.value) === normalizeText(name)) || null;
+  return (
+    options.find((o) => normalizeText(o.value) === normalizeText(name)) || null
+  );
 }
 
-/**
- * Shared location fields: country, state/province, city (with autocomplete),
- * and a "Use my location" button.
- *
- * Props:
- *   values          – current form values (country, country_code, state, state_code, city, latitude, longitude)
- *   onUpdate        – (updates: object) => void  — called with any field changes; may include
- *                     `state_required` and `selected_city` which callers can store or ignore
- *   onErrorsClear   – optional (fields: string[]) => void — called to clear validation errors
- *   required        – whether country/state/city are required fields (default false)
- *   errors          – optional { country, state, city } validation error strings
- */
 export default function LocationFields({
   values,
   onUpdate,
@@ -85,11 +75,13 @@ export default function LocationFields({
     [statesQuery.data]
   );
 
-  const stateHasOptions = statesQuery.isSuccess && !statesQuery.isError && stateOptions.length > 0;
+  const stateHasOptions =
+    statesQuery.isSuccess && !statesQuery.isError && stateOptions.length > 0;
 
   // Sync stateRequired into parent form so registration can validate it
   useEffect(() => {
-    if (!values.country || statesQuery.isLoading || statesQuery.isFetching) return;
+    if (!values.country || statesQuery.isLoading || statesQuery.isFetching)
+      return;
     const next = !statesQuery.isError && stateOptions.length > 0;
     if (stateRequired === next) return;
     setStateRequired(next);
@@ -107,7 +99,11 @@ export default function LocationFields({
   // (needed when geolocation fires before countries have loaded)
   useEffect(() => {
     if (!countryOptions.length || !values.country_code) return;
-    const matched = findMatchingOption(countryOptions, values.country_code, values.country);
+    const matched = findMatchingOption(
+      countryOptions,
+      values.country_code,
+      values.country
+    );
     if (!matched || matched.value === values.country) return;
     onUpdateRef.current({
       country: matched.value,
@@ -118,7 +114,11 @@ export default function LocationFields({
   // Normalize state name to match the loaded dropdown option
   useEffect(() => {
     if (!stateOptions.length || !values.state) return;
-    const matched = findMatchingOption(stateOptions, values.state_code, values.state);
+    const matched = findMatchingOption(
+      stateOptions,
+      values.state_code,
+      values.state
+    );
     if (!matched) return;
     if (
       matched.value === values.state &&
@@ -215,7 +215,8 @@ export default function LocationFields({
         location.country
       );
       const nextCountry = matchedCountry?.value || location.country;
-      const nextCountryCode = matchedCountry?.code || location.country_code || "";
+      const nextCountryCode =
+        matchedCountry?.code || location.country_code || "";
       const newSelectedCity = {
         city: location.city,
         state: location.state,
@@ -226,7 +227,9 @@ export default function LocationFields({
         longitude: location.longitude,
         display_label:
           location.display_label ||
-          [location.city, location.state, nextCountry].filter(Boolean).join(", "),
+          [location.city, location.state, nextCountry]
+            .filter(Boolean)
+            .join(", "),
       };
       setSelectedCity(newSelectedCity);
       setIsCityFocused(false);
@@ -255,7 +258,9 @@ export default function LocationFields({
         onChange={handleCountryChange}
         options={countryOptions}
         placeholder={
-          countriesQuery.isLoading ? "Loading countries..." : "Select your country"
+          countriesQuery.isLoading
+            ? "Loading countries..."
+            : "Select your country"
         }
         required={required}
         disabled={countriesQuery.isLoading || countriesQuery.isError}
@@ -272,17 +277,17 @@ export default function LocationFields({
           !values.country
             ? "Select a country first"
             : statesQuery.isLoading
-              ? "Loading states..."
-              : stateHasOptions
-                ? "Select your state"
-                : "No states available"
+            ? "Loading states..."
+            : stateHasOptions
+            ? "Select your state"
+            : "No states available"
         }
         required={required && stateHasOptions}
         disabled={!values.country || statesQuery.isLoading || !stateHasOptions}
         error={errors.state}
       />
 
-      <div className="relative lg:col-span-2">
+      <div className="relative">
         <Input
           label="City"
           name="city"
@@ -290,7 +295,9 @@ export default function LocationFields({
           onChange={handleCityInputChange}
           onFocus={() => setIsCityFocused(true)}
           onBlur={() => window.setTimeout(() => setIsCityFocused(false), 120)}
-          placeholder={values.country ? "Search for your city" : "Select a country first"}
+          placeholder={
+            values.country ? "Search for your city" : "Select a country first"
+          }
           required={required}
           disabled={!values.country}
           error={errors.city}
@@ -302,7 +309,7 @@ export default function LocationFields({
           autoComplete="off"
         />
 
-        {shouldShowSuggestions ? (
+        {shouldShowSuggestions && (
           <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-[var(--ww-border,#d7d7d7)] bg-white shadow-lg">
             {citySearchQuery.isLoading || citySearchQuery.isFetching ? (
               <div className="px-4 py-3 text-sm text-slate-600">
@@ -346,16 +353,17 @@ export default function LocationFields({
               </ul>
             ) : null}
           </div>
-        ) : null}
+        )}
       </div>
 
-      <div className="lg:col-span-2">
+      <div className="lg:self-center">
         <Button
           variant="tertiary"
           size="sm"
           type="button"
           disabled={currentLocation.isLoading}
           onClick={handleUseCurrentLocation}
+          className="w-full"
         >
           <span className="flex items-center gap-1">
             <span className="material-symbols-outlined">location_on</span>

@@ -9,7 +9,10 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.models.auth_session import AuthSession
+from app.models.auth_provider_account import AuthProviderAccount
 from app.models.user import User
+from app.schemas.user import UserOut
+from app.utils import build_image_url
 from app import oauth2
 
 
@@ -25,12 +28,35 @@ def hash_refresh_token(token: str) -> str:
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 
-def build_login_response(user: User, access_token: str) -> dict:
+def serialize_user(user: User, db: Session) -> UserOut:
+    image_url = build_image_url(user.image_path)
+
+    if not image_url:
+        linked_account = (
+            db.query(AuthProviderAccount)
+            .filter(
+                AuthProviderAccount.user_id == user.id,
+                AuthProviderAccount.provider_avatar_url.isnot(None),
+            )
+            .order_by(AuthProviderAccount.linked_at.asc())
+            .first()
+        )
+        image_url = linked_account.provider_avatar_url if linked_account else None
+
+    return UserOut.model_validate(
+        {
+            **user.__dict__,
+            "image_url": image_url,
+        }
+    )
+
+
+def build_login_response(user: User, access_token: str, db: Session) -> dict:
     return {
         "access_token": access_token,
         "token_type": "bearer",
         "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        "user": user,
+        "user": serialize_user(user, db),
     }
 
 
@@ -66,7 +92,7 @@ def issue_auth_tokens(
     access_token = oauth2.create_access_token(data={"user_id": user.id})
     refresh_token, _ = create_session(db, user=user, request=request)
     set_refresh_cookie(response, refresh_token)
-    return build_login_response(user, access_token)
+    return build_login_response(user, access_token, db)
 
 
 def set_refresh_cookie(response: Response, refresh_token: str) -> None:

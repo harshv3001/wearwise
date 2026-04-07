@@ -19,6 +19,7 @@ from app.services.auth_sessions import (
     issue_auth_tokens,
     refresh_session,
     revoke_session_by_refresh_token,
+    serialize_user,
 )
 from app.services.oauth import (
     build_frontend_callback_url,
@@ -29,7 +30,7 @@ from app.services.oauth import (
     verify_frontend_exchange_code,
     verify_state_token,
 )
-from app.utils import build_image_url, delete_upload_file, save_upload_file
+from app.utils import delete_upload_file, save_upload_file
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 USERNAME_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9_.-]*$")
@@ -76,28 +77,6 @@ def _clean_optional_list(values: list[str] | None) -> list[str] | None:
     cleaned = [value.strip() for value in values if value and value.strip()]
     return cleaned or None
 
-
-def _serialize_user(user: user_model.User, db: Session) -> user_schema.UserOut:
-    image_url = build_image_url(user.image_path)
-
-    if not image_url:
-        linked_account = (
-            db.query(AuthProviderAccount)
-            .filter(
-                AuthProviderAccount.user_id == user.id,
-                AuthProviderAccount.provider_avatar_url.isnot(None),
-            )
-            .order_by(AuthProviderAccount.linked_at.asc())
-            .first()
-        )
-        image_url = linked_account.provider_avatar_url if linked_account else None
-
-    return user_schema.UserOut.model_validate(
-        {
-            **user.__dict__,
-            "image_url": image_url,
-        }
-    )
 
 
 def _oauth_error_redirect(
@@ -158,7 +137,7 @@ def register(user: user_schema.UserCreate, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return _serialize_user(new_user, db)
+    return serialize_user(new_user, db)
 
 
 @router.post("/login", response_model=user_schema.LoginResponse)
@@ -233,7 +212,7 @@ def get_me(
     current_user: user_model.User = Depends(oauth2.get_current_user),
     db: Session = Depends(get_db),
 ):
-    return _serialize_user(current_user, db)
+    return serialize_user(current_user, db)
 
 
 @router.patch("/me", response_model=user_schema.UserOut)
@@ -244,7 +223,7 @@ def update_me(
 ):
     update_data = payload.model_dump(exclude_unset=True)
     if not update_data:
-        return _serialize_user(current_user, db)
+        return serialize_user(current_user, db)
 
     if "first_name" in update_data:
         update_data["first_name"] = _require_non_empty_string(
@@ -296,7 +275,7 @@ def update_me(
 
     db.commit()
     db.refresh(current_user)
-    return _serialize_user(current_user, db)
+    return serialize_user(current_user, db)
 
 
 @router.post("/me/image", response_model=user_schema.UserOut)
@@ -313,7 +292,7 @@ def upload_profile_image(
     current_user.image_path = new_image_key
     db.commit()
     db.refresh(current_user)
-    return _serialize_user(current_user, db)
+    return serialize_user(current_user, db)
 
 
 @router.get("/identities")
