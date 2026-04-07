@@ -20,8 +20,10 @@ class User(Base):
     # name = Column(String, nullable=False)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
+    username = Column(String, nullable=True, unique=True, index=True)
     email = Column(String, nullable=False, unique=True, index=True)
     password = Column(String, nullable=True)
+    image_path = Column(String, nullable=True)
     email_verified_at = Column(TIMESTAMP(timezone=True), nullable=True)
     email_verification_source = Column(String, nullable=True)
 

@@ -1,6 +1,8 @@
 from urllib.parse import quote
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
+import re
+
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status, UploadFile, File
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -27,8 +29,10 @@ from app.services.oauth import (
     verify_frontend_exchange_code,
     verify_state_token,
 )
+from app.utils import build_image_url, delete_upload_file, save_upload_file
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
+USERNAME_PATTERN = re.compile(r"^[a-zA-Z0-9_.-]+$")
 
 
 def _clean_optional_string(value: str | None) -> str | None:
@@ -41,6 +45,59 @@ def _clean_optional_string(value: str | None) -> str | None:
 
 def _normalize_email(email: str) -> str:
     return email.strip().lower()
+
+
+def _require_non_empty_string(value: str, field_name: str) -> str:
+    cleaned = value.strip()
+    if not cleaned:
+        raise HTTPException(status_code=422, detail=f"{field_name} is required")
+    return cleaned
+
+
+def _normalize_username(username: str | None) -> str | None:
+    cleaned = _clean_optional_string(username)
+    if not cleaned:
+        return None
+    normalized = cleaned.lower()
+    if len(normalized) < 3:
+        raise HTTPException(status_code=422, detail="Username must be at least 3 characters")
+    if not USERNAME_PATTERN.fullmatch(normalized):
+        raise HTTPException(
+            status_code=422,
+            detail="Username can only include letters, numbers, dots, underscores, and hyphens",
+        )
+    return normalized
+
+
+def _clean_optional_list(values: list[str] | None) -> list[str] | None:
+    if values is None:
+        return None
+
+    cleaned = [value.strip() for value in values if value and value.strip()]
+    return cleaned or None
+
+
+def _serialize_user(user: user_model.User, db: Session) -> user_schema.UserOut:
+    image_url = build_image_url(user.image_path)
+
+    if not image_url:
+        linked_account = (
+            db.query(AuthProviderAccount)
+            .filter(
+                AuthProviderAccount.user_id == user.id,
+                AuthProviderAccount.provider_avatar_url.isnot(None),
+            )
+            .order_by(AuthProviderAccount.linked_at.asc())
+            .first()
+        )
+        image_url = linked_account.provider_avatar_url if linked_account else None
+
+    return user_schema.UserOut.model_validate(
+        {
+            **user.__dict__,
+            "image_url": image_url,
+        }
+    )
 
 
 def _oauth_error_redirect(
@@ -72,15 +129,27 @@ def register(user: user_schema.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=409, detail="Email already registered")
 
     user_dict = user.model_dump()
-    user_dict["first_name"] = user_dict["first_name"].strip()
-    user_dict["last_name"] = user_dict["last_name"].strip()
+    user_dict["first_name"] = _require_non_empty_string(user_dict["first_name"], "First name")
+    user_dict["last_name"] = _require_non_empty_string(user_dict["last_name"], "Last name")
+    user_dict["username"] = _normalize_username(user_dict.get("username"))
     user_dict["email"] = normalized_email
     user_dict["country"] = _clean_optional_string(user_dict.get("country"))
     user_dict["country_code"] = _clean_optional_string(user_dict.get("country_code"))
     user_dict["state"] = _clean_optional_string(user_dict.get("state"))
     user_dict["state_code"] = _clean_optional_string(user_dict.get("state_code"))
     user_dict["city"] = _clean_optional_string(user_dict.get("city"))
+    user_dict["pref_styles"] = _clean_optional_list(user_dict.get("pref_styles"))
+    user_dict["pref_colors"] = _clean_optional_list(user_dict.get("pref_colors"))
     user_dict["password"] = utils.hash_password(user.password.strip())
+
+    if user_dict["username"]:
+        username_exists = (
+            db.query(user_model.User)
+            .filter(user_model.User.username == user_dict["username"])
+            .first()
+        )
+        if username_exists:
+            raise HTTPException(status_code=409, detail="Username is already taken")
 
     new_user = user_model.User(
         **user_dict,
@@ -89,7 +158,7 @@ def register(user: user_schema.UserCreate, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return new_user
+    return _serialize_user(new_user, db)
 
 
 @router.post("/login", response_model=user_schema.LoginResponse)
@@ -160,8 +229,91 @@ def logout(
 
 
 @router.get("/me", response_model=user_schema.UserOut)
-def get_me(current_user: user_model.User = Depends(oauth2.get_current_user)):
-    return current_user
+def get_me(
+    current_user: user_model.User = Depends(oauth2.get_current_user),
+    db: Session = Depends(get_db),
+):
+    return _serialize_user(current_user, db)
+
+
+@router.patch("/me", response_model=user_schema.UserOut)
+def update_me(
+    payload: user_schema.UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: user_model.User = Depends(oauth2.get_current_user),
+):
+    update_data = payload.model_dump(exclude_unset=True)
+    if not update_data:
+        return _serialize_user(current_user, db)
+
+    if "first_name" in update_data:
+        update_data["first_name"] = _require_non_empty_string(
+            update_data["first_name"], "First name"
+        )
+    if "last_name" in update_data:
+        update_data["last_name"] = _require_non_empty_string(
+            update_data["last_name"], "Last name"
+        )
+    if "username" in update_data:
+        update_data["username"] = _normalize_username(update_data["username"])
+    if "email" in update_data:
+        update_data["email"] = _normalize_email(update_data["email"])
+    for field in ("gender", "country", "country_code", "state", "state_code", "city"):
+        if field in update_data:
+            update_data[field] = _clean_optional_string(update_data[field])
+    for field in ("pref_styles", "pref_colors"):
+        if field in update_data:
+            update_data[field] = _clean_optional_list(update_data[field])
+
+    if "email" in update_data and update_data["email"] != current_user.email:
+        email_exists = (
+            db.query(user_model.User)
+            .filter(
+                user_model.User.email == update_data["email"],
+                user_model.User.id != current_user.id,
+            )
+            .first()
+        )
+        if email_exists:
+            raise HTTPException(status_code=409, detail="Email already registered")
+        current_user.email_verified_at = None
+        current_user.email_verification_source = None
+
+    if "username" in update_data and update_data["username"] != current_user.username:
+        username_exists = (
+            db.query(user_model.User)
+            .filter(
+                user_model.User.username == update_data["username"],
+                user_model.User.id != current_user.id,
+            )
+            .first()
+        )
+        if username_exists:
+            raise HTTPException(status_code=409, detail="Username is already taken")
+
+    for key, value in update_data.items():
+        setattr(current_user, key, value)
+
+    db.commit()
+    db.refresh(current_user)
+    return _serialize_user(current_user, db)
+
+
+@router.post("/me/image", response_model=user_schema.UserOut)
+def upload_profile_image(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: user_model.User = Depends(oauth2.get_current_user),
+):
+    new_image_key = save_upload_file(file, folder="profile_images")
+
+    if current_user.image_path:
+        delete_upload_file(current_user.image_path)
+
+    current_user.image_path = new_image_key
+    db.commit()
+    db.refresh(current_user)
+    return _serialize_user(current_user, db)
 
 
 @router.get("/identities")
@@ -181,11 +333,51 @@ def get_linked_identities(
             {
                 "provider": account.provider,
                 "provider_email": account.provider_email,
+                "provider_avatar_url": account.provider_avatar_url,
                 "linked_at": account.linked_at,
             }
             for account in linked_accounts
         ],
     }
+
+
+@router.post("/change-password", status_code=status.HTTP_204_NO_CONTENT)
+def change_password(
+    payload: auth_schema.ChangePasswordRequest,
+    db: Session = Depends(get_db),
+    current_user: user_model.User = Depends(oauth2.get_current_user),
+):
+    if not current_user.password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password change is not available for social-only accounts.",
+        )
+
+    current_password = payload.current_password.strip()
+    new_password = payload.new_password.strip()
+    confirm_new_password = payload.confirm_new_password.strip()
+
+    if not utils.verify_password(current_password, current_user.password):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Current password is incorrect.",
+        )
+
+    if new_password != confirm_new_password:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="New password and confirm password do not match.",
+        )
+
+    if current_password == new_password:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="New password must be different from your current password.",
+        )
+
+    current_user.password = utils.hash_password(new_password)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get("/providers")
@@ -215,18 +407,10 @@ def start_oauth(
     provider: auth_schema.ProviderName,
     response: Response,
     intent: auth_schema.OAuthIntent = Query(default="login"),
-    current_user: user_model.User | None = Depends(oauth2.get_current_user_optional),
 ):
-    if intent == "link" and not current_user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="You must be signed in to link a provider",
-        )
-
     state = create_state_token(
         provider=provider,
         intent=intent,
-        user_id=str(current_user.id) if current_user and intent == "link" else None,
     )
     response.set_cookie(
         key="wearwise_oauth_state",
@@ -274,24 +458,8 @@ async def oauth_callback(
             intent=state_payload.get("intent"),
         )
 
-    current_user = None
-    if state_payload.get("intent") == "link" and state_payload.get("user_id"):
-        current_user = (
-            db.query(user_model.User)
-            .filter(user_model.User.id == state_payload["user_id"])
-            .first()
-        )
-        if not current_user:
-            return _oauth_error_redirect(
-                error="link_session_expired",
-                provider=provider,
-                intent=state_payload.get("intent"),
-            )
-
     try:
-        user, _, linked_now = resolve_or_create_user(
-            db, profile=profile, current_user=current_user
-        )
+        user, _, linked_now = resolve_or_create_user(db, profile=profile)
     except HTTPException as exc:
         return _oauth_error_redirect(
             error=str(exc.detail),
