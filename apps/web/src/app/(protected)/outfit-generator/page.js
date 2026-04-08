@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useClosetItemsQuery } from "../../../features/closet/hooks/useClosetItemsQuery.js";
 import Button from "../../components/ui/Button.jsx";
 import OutfitCategoryRow from "./OutfitCategoryRow.jsx";
+import SaveOutfitModal from "./components/SaveOutfitModal.jsx";
+import styles from "./page.module.scss";
 
 const INITIAL_CATEGORY_COUNT = 3;
 
@@ -13,8 +15,8 @@ export default function OutfitGeneratorPage() {
   const [activeCategories, setActiveCategories] = useState([]);
   const [focusedItemsByCategory, setFocusedItemsByCategory] = useState({});
   const [selectedItemsByCategory, setSelectedItemsByCategory] = useState({});
-  const [draggedCategory, setDraggedCategory] = useState(null);
-  const [dragOverCategory, setDragOverCategory] = useState(null);
+
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
   const groupedCategories = useMemo(() => {
     const closetData = {};
@@ -44,7 +46,7 @@ export default function OutfitGeneratorPage() {
     (category) => !visibleCategories.includes(category)
   );
 
-  const handleAddCategory = () => {
+  const handleAddCategory = useCallback(() => {
     if (remainingCategories.length === 0) return;
 
     setActiveCategories((prev) => [
@@ -53,9 +55,9 @@ export default function OutfitGeneratorPage() {
         : allCategoryNames.slice(0, INITIAL_CATEGORY_COUNT)),
       remainingCategories[0],
     ]);
-  };
+  }, [allCategoryNames, remainingCategories]);
 
-  const handleRemoveCategory = (categoryToRemove) => {
+  const handleRemoveCategory = useCallback((categoryToRemove) => {
     setActiveCategories((prev) =>
       (prev.length > 0
         ? prev
@@ -72,9 +74,9 @@ export default function OutfitGeneratorPage() {
       delete next[categoryToRemove];
       return next;
     });
-  };
+  }, [allCategoryNames]);
 
-  const handleFocusedItemChange = (categoryName, selectedItem) => {
+  const handleFocusedItemChange = useCallback((categoryName, selectedItem) => {
     if (!selectedItem?.id) return;
 
     setFocusedItemsByCategory((prev) => ({
@@ -92,9 +94,9 @@ export default function OutfitGeneratorPage() {
         [categoryName]: selectedItem,
       };
     });
-  };
+  }, []);
 
-  const handleToggleSelectedItem = (categoryName) => {
+  const handleToggleSelectedItem = useCallback((categoryName) => {
     const focusedItem = focusedItemsByCategory[categoryName];
     if (!focusedItem?.id) return;
 
@@ -110,14 +112,29 @@ export default function OutfitGeneratorPage() {
         [categoryName]: focusedItem,
       };
     });
-  };
+  }, [focusedItemsByCategory]);
 
   const selectedItemCount = useMemo(() => {
     return Object.keys(selectedItemsByCategory).length;
   }, [selectedItemsByCategory]);
 
-  const reorderCategories = (sourceCategory, targetCategory) => {
-    if (!sourceCategory || !targetCategory || sourceCategory === targetCategory) {
+  const orderedSelectedItems = useMemo(() => {
+    return visibleCategories
+      .filter((categoryName) => Boolean(selectedItemsByCategory[categoryName]))
+      .map((categoryName, index) => ({
+        ...selectedItemsByCategory[categoryName],
+        category: categoryName,
+        position: index + 1,
+        layer: 1,
+      }));
+  }, [selectedItemsByCategory, visibleCategories]);
+
+  const reorderCategories = useCallback((sourceCategory, targetCategory) => {
+    if (
+      !sourceCategory ||
+      !targetCategory ||
+      sourceCategory === targetCategory
+    ) {
       return;
     }
 
@@ -138,56 +155,47 @@ export default function OutfitGeneratorPage() {
     nextCategories.splice(targetIndex, 0, movedCategory);
 
     setActiveCategories(nextCategories);
-  };
+  }, [activeCategories, allCategoryNames]);
 
-  const handleDragStart = (event, categoryName) => {
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData("text/plain", categoryName);
-    setDraggedCategory(categoryName);
-    setDragOverCategory(categoryName);
-  };
+  const handleOpenSaveModal = useCallback(() => {
+    if (orderedSelectedItems.length === 0) {
+      alert("Select at least one item before saving the outfit.");
+      return;
+    }
 
-  const handleDragEnter = (categoryName) => {
-    if (!draggedCategory || draggedCategory === categoryName) return;
-    setDragOverCategory(categoryName);
-  };
+    setIsSaveModalOpen(true);
+  }, [orderedSelectedItems.length]);
 
-  const handleDrop = (categoryName) => {
-    reorderCategories(draggedCategory, categoryName);
-    setDraggedCategory(null);
-    setDragOverCategory(null);
-  };
-
-  const handleDragEnd = () => {
-    setDraggedCategory(null);
-    setDragOverCategory(null);
-  };
+  const handleCloseSaveModal = useCallback(() => {
+    setIsSaveModalOpen(false);
+  }, []);
 
   if (isLoading) {
     return <main className="p-6">Loading...</main>;
   }
 
   return (
-    <main className="p-6">
-      <div className="mx-auto max-w-[980px]">
-        <div className="mb-8">
-          <h1 className="text-[32px] text-center">Make an Outfit</h1>
-          <div className="mt-4 flex items-center justify-end gap-4">
-            <span className="text-sm font-medium text-[#6f5b56]">
+    <main className={styles.page}>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Make an Outfit</h1>
+          <div className={styles.actions}>
+            <span className={styles.readyText}>
               {selectedItemCount} item{selectedItemCount === 1 ? "" : "s"} ready
             </span>
             <Button
               type="button"
-              onClick={() => alert("Outfit saved!")}
+              onClick={handleOpenSaveModal}
               variant="primary"
               size="lg"
+              disabled={selectedItemCount === 0}
             >
               Save the Outfit
             </Button>
           </div>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className={styles.rows}>
           {visibleCategories.map((categoryName, index) => (
             <OutfitCategoryRow
               key={categoryName}
@@ -196,24 +204,19 @@ export default function OutfitGeneratorPage() {
               closetItems={groupedCategories[categoryName] || []}
               isSelected={Boolean(selectedItemsByCategory[categoryName])}
               isFocused={Boolean(focusedItemsByCategory[categoryName])}
-              isDragged={draggedCategory === categoryName}
-              isDragOver={dragOverCategory === categoryName}
               canRemove={index >= INITIAL_CATEGORY_COUNT}
               onFocusedItemChange={handleFocusedItemChange}
               onToggleSelectedItem={handleToggleSelectedItem}
               onRemoveCategory={handleRemoveCategory}
-              onDragStart={handleDragStart}
-              onDragEnter={handleDragEnter}
-              onDrop={handleDrop}
-              onDragEnd={handleDragEnd}
+              reorderCategories={reorderCategories}
             />
           ))}
-          <div className="flex items-center justify-start pt-2">
+          <div className={styles.addButtonRow}>
             {remainingCategories.length > 0 && (
               <button
                 type="button"
                 onClick={handleAddCategory}
-                className="w-10 h-10 rounded-full border border-gray-300 text-xl flex items-center justify-center hover:bg-gray-100"
+                className={styles.addButton}
               >
                 +
               </button>
@@ -221,6 +224,12 @@ export default function OutfitGeneratorPage() {
           </div>
         </div>
       </div>
+
+      <SaveOutfitModal
+        open={isSaveModalOpen}
+        onClose={handleCloseSaveModal}
+        selectedItems={orderedSelectedItems}
+      />
     </main>
   );
 }

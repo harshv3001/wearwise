@@ -130,6 +130,7 @@ def wear_outfit(
                     outfit_id=outfit.id,
                     closet_item_id=it.closet_item_id,
                     position=it.position,
+                    layer=it.layer,
                     note=it.note,
                 )
             )

@@ -13,12 +13,22 @@ from app.utils import save_upload_file, build_image_url, delete_upload_file
 
 router = APIRouter(prefix="/closet-items", tags=["Closet Items"])
 
+def _normalize_category(value: Optional[str]) -> Optional[str]:
+    if value is None:
+        return None
+
+    trimmed = " ".join(str(value).strip().split())
+    if not trimmed:
+        return None
+
+    return trimmed.title()
+
 def _serialize_closet_item(item: closet_items_models.ClosetItem) -> ClosetItemOut:
     return ClosetItemOut(
         id=item.id,
         user_id=item.user_id,
         name=item.name,
-        category=item.category,
+        category=_normalize_category(item.category),
         color=item.color,
         season=item.season,
         brand=item.brand,
@@ -40,8 +50,11 @@ def create_item(
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
 ):
+    payload_data = payload.model_dump()
+    payload_data["category"] = _normalize_category(payload_data.get("category"))
+
     item = closet_items_models.ClosetItem(
-        user_id=current_user.id, **payload.model_dump()
+        user_id=current_user.id, **payload_data
     )
     db.add(item)
     db.commit()
@@ -70,7 +83,8 @@ def list_items(
     query = db.query(closet_item).filter(closet_item.user_id == current_user.id)
 
     if category:
-        query = query.filter(closet_item.category == category)
+        normalized_category = _normalize_category(category)
+        query = query.filter(closet_item.category == normalized_category)
     if color:
         query = query.filter(closet_item.color == color)
     if season:
@@ -155,6 +169,9 @@ def update_item(
     update_data = payload.model_dump(exclude_unset=True)
     if not update_data:
         return _serialize_closet_item(item)
+
+    if "category" in update_data:
+        update_data["category"] = _normalize_category(update_data["category"])
 
     qset.update(update_data, synchronize_session=False)
     db.commit()

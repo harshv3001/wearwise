@@ -44,7 +44,7 @@ class Outfit(Base):
         "OutfitItem",
         back_populates="outfit",
         cascade="all, delete-orphan",
-        order_by="OutfitItem.position",
+        order_by=lambda: (OutfitItem.position.asc(), OutfitItem.layer.asc()),
     )
 
 
@@ -64,6 +64,7 @@ class OutfitItem(Base):
     )
 
     position = Column(Integer, nullable=False, server_default=text("0"))
+    layer = Column(Integer, nullable=False, server_default=text("1"))
     note = Column(String, nullable=True)
     outfit = relationship("Outfit", back_populates="outfit_items")
     closet_item = relationship("ClosetItem")

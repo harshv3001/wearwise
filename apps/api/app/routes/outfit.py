@@ -116,6 +116,7 @@ def create_outfit(
                 outfit_id=outfit.id,
                 closet_item_id=it.closet_item_id,
                 position=it.position,
+                layer=it.layer,
                 note=it.note,
             )
         )
@@ -174,6 +175,7 @@ def list_outfits(
                 outfit_models.OutfitItem.outfit_id,
                 outfit_models.OutfitItem.closet_item_id,
                 outfit_models.OutfitItem.position,
+                outfit_models.OutfitItem.layer,
                 outfit_models.OutfitItem.note,
                 closet_items_models.ClosetItem.image_path,
             )
@@ -185,6 +187,7 @@ def list_outfits(
             .order_by(
                 outfit_models.OutfitItem.outfit_id.asc(),
                 outfit_models.OutfitItem.position.asc(),
+                outfit_models.OutfitItem.layer.asc(),
             )
             .all()
         )
@@ -193,6 +196,7 @@ def list_outfits(
                 {
                     "closet_item_id": row.closet_item_id,
                     "position": row.position,
+                    "layer": row.layer,
                     "outfit_id": row.outfit_id,
                     "note": row.note,
                     "image_url": build_image_url(row.image_path),
@@ -231,7 +235,10 @@ def get_outfit(
         db.query(outfit_models.OutfitItem)
         .options(joinedload(outfit_models.OutfitItem.closet_item))
         .filter(outfit_models.OutfitItem.outfit_id == outfit.id)
-        .order_by(outfit_models.OutfitItem.position.asc())
+        .order_by(
+            outfit_models.OutfitItem.position.asc(),
+            outfit_models.OutfitItem.layer.asc(),
+        )
         .all()
     )
 
@@ -271,6 +278,7 @@ def update_outfit(
                     outfit_id=outfit.id,
                     closet_item_id=it.closet_item_id,
                     position=it.position,
+                    layer=it.layer,
                     note=it.note,
                 )
             )
@@ -281,7 +289,10 @@ def update_outfit(
     outfit_items = (
         db.query(outfit_models.OutfitItem)
         .filter(outfit_models.OutfitItem.outfit_id == outfit.id)
-        .order_by(outfit_models.OutfitItem.position.asc())
+        .order_by(
+            outfit_models.OutfitItem.position.asc(),
+            outfit_models.OutfitItem.layer.asc(),
+        )
         .all()
     )
 
@@ -310,7 +321,10 @@ def upload_outfit_image(
         db.query(outfit_models.OutfitItem)
         .options(joinedload(outfit_models.OutfitItem.closet_item))
         .filter(outfit_models.OutfitItem.outfit_id == outfit.id)
-        .order_by(outfit_models.OutfitItem.position.asc())
+        .order_by(
+            outfit_models.OutfitItem.position.asc(),
+            outfit_models.OutfitItem.layer.asc(),
+        )
         .all()
     )
 

@@ -8,6 +8,7 @@ from datetime import datetime
 class OutfitItemBase(BaseModel):
     closet_item_id: UUID
     position: int = Field(default=0, ge=0)
+    layer: int = Field(default=1, ge=1)
     note: Optional[str] = Field(default=None, max_length=255)
 
 

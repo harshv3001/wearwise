@@ -28,16 +28,24 @@ export default function Carousel({
 }) {
   const paddedItems = useMemo(() => padItems(closetItems), [closetItems]);
   const isSingleItem = closetItems.length === 1;
+  const shouldEnableFullLoop = closetItems.length > 2;
+  const shouldUseDirectionalSwipe = closetItems.length === 2;
   const parentSetSelectedCallbackRef = useRef(parentSetSelectedCallback);
+  const pointerStateRef = useRef({
+    pointerId: null,
+    startX: null,
+    swiped: false,
+  });
 
   const startIndex = isSingleItem ? 1 : 0;
   const [selectedSnap, setSelectedSnap] = useState(startIndex);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
-      loop: true,
+      loop: shouldEnableFullLoop,
       align: "center",
       startIndex,
+      watchDrag: shouldEnableFullLoop,
     },
     [ClassNames()]
   );
@@ -75,6 +83,69 @@ export default function Carousel({
     selectedSnap === paddedItems.length - 1 ? 0 : selectedSnap + 1;
   const isPrevBlank = paddedItems[prevIndex]?.isBlank ?? false;
   const isNextBlank = paddedItems[nextIndex]?.isBlank ?? false;
+
+  const handleViewportPointerDown = useCallback(
+    (event) => {
+      if (!shouldUseDirectionalSwipe) return;
+      pointerStateRef.current = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        swiped: false,
+      };
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    },
+    [shouldUseDirectionalSwipe]
+  );
+
+  const handleViewportPointerMove = useCallback(
+    (event) => {
+      if (!shouldUseDirectionalSwipe) return;
+
+      const { pointerId, startX, swiped } = pointerStateRef.current;
+      if (pointerId !== event.pointerId || startX === null || swiped) return;
+
+      const deltaX = event.clientX - startX;
+      if (Math.abs(deltaX) < 30) return;
+
+      if (deltaX > 0) {
+        if (!isPrevBlank) {
+          emblaApi?.scrollPrev();
+        }
+      } else if (!isNextBlank) {
+        emblaApi?.scrollNext();
+      }
+
+      pointerStateRef.current = {
+        pointerId,
+        startX,
+        swiped: true,
+      };
+    },
+    [emblaApi, isNextBlank, isPrevBlank, shouldUseDirectionalSwipe]
+  );
+
+  const handleViewportPointerUp = useCallback(
+    (event) => {
+      if (!shouldUseDirectionalSwipe) return;
+      if (pointerStateRef.current.pointerId === event.pointerId) {
+        event.currentTarget.releasePointerCapture?.(event.pointerId);
+      }
+      pointerStateRef.current = {
+        pointerId: null,
+        startX: null,
+        swiped: false,
+      };
+    },
+    [shouldUseDirectionalSwipe]
+  );
+
+  const resetDirectionalSwipe = useCallback(() => {
+    pointerStateRef.current = {
+      pointerId: null,
+      startX: null,
+      swiped: false,
+    };
+  }, []);
 
   const determineSlideInnerClassName = useCallback(
     (index) => {
@@ -137,7 +208,15 @@ export default function Carousel({
         </div>
       )}
 
-      <div className={styles.embla__viewport} ref={emblaRef}>
+      <div
+        className={styles.embla__viewport}
+        ref={emblaRef}
+        onPointerDown={handleViewportPointerDown}
+        onPointerMove={handleViewportPointerMove}
+        onPointerUp={handleViewportPointerUp}
+        onPointerCancel={resetDirectionalSwipe}
+        onPointerLeave={resetDirectionalSwipe}
+      >
         <div className={styles.embla__container}>{renderSlides()}</div>
       </div>
 

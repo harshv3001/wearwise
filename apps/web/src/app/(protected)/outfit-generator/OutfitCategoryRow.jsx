@@ -3,67 +3,97 @@
 import Carousel from "../../../features/carousel/component/Carousel.jsx";
 import SaveToggle from "../../components/ui/SaveToggle/SaveToggle.jsx";
 import { formatCapitalizedValue } from "../../../lib/helperFunctions.js";
+import { memo, useCallback, useState } from "react";
 
-export default function OutfitCategoryRow({
+function OutfitCategoryRow({
   categoryName,
-  index,
   closetItems,
   isSelected,
   isFocused,
-  isDragged,
-  isDragOver,
   canRemove,
   onFocusedItemChange,
   onToggleSelectedItem,
   onRemoveCategory,
-  onDragStart,
-  onDragEnter,
-  onDrop,
-  onDragEnd,
+  reorderCategories,
 }) {
-  const rowClassName = `grid grid-cols-[120px_minmax(0,1fr)_120px] items-center gap-6 rounded-[24px] border px-5 py-3 transition ${
-    isDragOver && !isDragged
+  const [isDraggingRow, setIsDraggingRow] = useState(false);
+  const [isDragOverRow, setIsDragOverRow] = useState(false);
+
+  const handleDragStart = useCallback(
+    (event) => {
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", categoryName);
+      setIsDraggingRow(true);
+    },
+    [categoryName]
+  );
+
+  const handleDragEnter = useCallback(
+    (event) => {
+      const sourceCategory = event.dataTransfer.getData("text/plain");
+      if (!sourceCategory || sourceCategory === categoryName) return;
+      setIsDragOverRow((prev) => (prev ? prev : true));
+    },
+    [categoryName]
+  );
+
+  const handleDragLeave = useCallback((event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setIsDragOverRow((prev) => (prev ? false : prev));
+    }
+  }, []);
+
+  const handleDrop = useCallback(
+    (event) => {
+      const sourceCategory = event.dataTransfer.getData("text/plain");
+      reorderCategories(sourceCategory, categoryName);
+      setIsDragOverRow(false);
+    },
+    [categoryName, reorderCategories]
+  );
+
+  const handleDragEnd = useCallback(() => {
+    setIsDraggingRow(false);
+    setIsDragOverRow(false);
+  }, []);
+
+  const rowClassName = `grid grid-cols-[120px_minmax(0,1fr)_120px] items-center gap-6 rounded-[24px] border px-5 py-3 transition max-md:grid-cols-1 max-md:gap-4 max-md:px-4 max-md:py-4 ${
+    isDragOverRow && !isDraggingRow
       ? "border-[#d48d7b] bg-[#fff7f4] shadow-[0_0_0_4px_rgba(244,190,173,0.35)]"
       : "border-transparent"
-  } ${isDragged ? "cursor-grabbing opacity-70" : "cursor-grab"}`;
+  } ${isDraggingRow ? "cursor-grabbing opacity-70" : "cursor-grab"}`;
 
-  const handleDragStart = (event) => {
-    onDragStart(event, categoryName);
-  };
-
-  const handleDragEnter = () => {
-    onDragEnter(categoryName);
-  };
-
-  const handleDrop = () => {
-    onDrop(categoryName);
-  };
-
-  const handleRemove = () => {
+  const handleRemove = useCallback(() => {
     onRemoveCategory(categoryName);
-  };
+  }, [categoryName, onRemoveCategory]);
 
-  const handleToggleSave = () => {
+  const handleToggleSave = useCallback(() => {
     onToggleSelectedItem(categoryName);
-  };
+  }, [categoryName, onToggleSelectedItem]);
 
-  const handleFocusedChange = (selectedItem) => {
-    onFocusedItemChange(categoryName, selectedItem);
-  };
+  const handleFocusedChange = useCallback(
+    (selectedItem) => {
+      onFocusedItemChange(categoryName, selectedItem);
+    },
+    [categoryName, onFocusedItemChange]
+  );
 
   return (
     <div
-      draggable
-      onDragStart={handleDragStart}
       onDragEnter={handleDragEnter}
       onDragOver={(event) => event.preventDefault()}
+      onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      onDragEnd={onDragEnd}
       className={rowClassName}
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 max-md:order-1">
         <div className="min-w-0">
-          <div className="mb-2 flex items-center gap-2 text-[#b57d70]">
+          <div
+            draggable
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            className="mb-2 flex w-fit items-center gap-2 text-[#b57d70]"
+          >
             <span
               className="material-symbols-outlined text-[18px]"
               aria-hidden="true"
@@ -105,7 +135,7 @@ export default function OutfitCategoryRow({
         hideTitle
       />
 
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end max-md:order-3 max-md:justify-start">
         <SaveToggle
           selected={isSelected}
           disabled={!isFocused}
@@ -115,3 +145,5 @@ export default function OutfitCategoryRow({
     </div>
   );
 }
+
+export default memo(OutfitCategoryRow);
