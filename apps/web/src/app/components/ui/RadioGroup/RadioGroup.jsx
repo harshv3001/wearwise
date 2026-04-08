@@ -1,7 +1,7 @@
 "use client";
 
 import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup"; // ✅ correct
+import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
@@ -15,9 +15,11 @@ export default function CustomRadioGroup({
   options = [],
   row = true,
   required = false,
+  className = "",
+  groupClassName = "",
 }) {
   return (
-    <FormControl>
+    <FormControl className={className}>
       {label && (
         <FormLabel id={`${name}-label`} className={styles.fieldLabel}>
           {label} {required ? "*" : ""}
@@ -29,6 +31,7 @@ export default function CustomRadioGroup({
         name={name}
         value={value}
         onChange={onChange}
+        className={groupClassName}
       >
         {options.map((opt) => (
           <FormControlLabel

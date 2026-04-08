@@ -3,15 +3,20 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AuthLayout from "../AuthLayout";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LoginForm from "../../../features/auth/component/LoginForm";
-import { loginApi } from "../../../features/auth/api/authApi";
+import {
+  currentUserQueryKey,
+  loginApi,
+  startOAuthApi,
+} from "../../../features/auth/api/authApi";
 import { setToken } from "../../../lib/auth";
 import { getApiErrorMessage } from "../../../lib/apiError";
 import Button from "@/app/components/ui/Button";
 
 export default function LoginPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const loginMut = useMutation({
     mutationFn: loginApi,
@@ -19,12 +24,27 @@ export default function LoginPage() {
       const token = data?.access_token || data?.token;
       if (!token) return alert("Login succeeded but token missing.");
       setToken(token);
+      if (data?.user) {
+        queryClient.setQueryData(currentUserQueryKey, data.user);
+      }
       router.replace("/dashboard");
     },
     onError: (err) => alert(getApiErrorMessage(err, "Login failed")),
   });
 
   const handleSubmit = (values) => loginMut.mutate(values);
+  const handleSocialLogin = async (provider) => {
+    try {
+      const data = await startOAuthApi(provider, "login");
+      if (!data?.authorization_url) {
+        alert("Unable to start social login right now.");
+        return;
+      }
+      window.location.assign(data.authorization_url);
+    } catch (err) {
+      alert(getApiErrorMessage(err, `Could not start ${provider} login`));
+    }
+  };
 
   return (
     <AuthLayout>
@@ -47,14 +67,24 @@ export default function LoginPage() {
           ------------------- Or continue with --------------------
         </div>
         <div className="flex gap-x-16 justify-center">
-          <Button variant="secondary">
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => handleSocialLogin("facebook")}
+          >
             <span
               className="material-symbols-outlined leading-none"
               style={{ fontSize: "18px" }}
             ></span>
             <span>Facebook</span>
           </Button>
-          <Button variant="secondary">Google</Button>
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => handleSocialLogin("google")}
+          >
+            Google
+          </Button>
         </div>
       </div>
     </AuthLayout>

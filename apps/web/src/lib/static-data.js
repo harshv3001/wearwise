@@ -16,3 +16,102 @@ export const SEASON_OPTIONS = [
   { value: "fall", label: "Fall" },
   { value: "winter", label: "Winter" },
 ];
+
+export const STYLE_OPTIONS = [
+  { label: "Casual", value: "casual" },
+  { label: "Sporty", value: "sporty" },
+  { label: "Formal", value: "formal" },
+  { label: "Streetwear", value: "streetwear" },
+  { label: "Other", value: "other" },
+];
+
+export const COLOR_OPTIONS = [
+  {
+    label: "Black",
+    value: "black",
+    selectedBg: "var(--ww-chip-black-bg)",
+    selectedText: "var(--ww-chip-black-text)",
+    selectedBorder: "var(--ww-chip-black-border)",
+  },
+  {
+    label: "White",
+    value: "white",
+    selectedBg: "var(--ww-chip-white-bg)",
+    selectedText: "var(--ww-chip-white-text)",
+    selectedBorder: "var(--ww-chip-white-border)",
+  },
+  {
+    label: "Red",
+    value: "red",
+    selectedBg: "var(--ww-chip-red-bg)",
+    selectedText: "var(--ww-chip-red-text)",
+    selectedBorder: "var(--ww-chip-red-border)",
+  },
+  {
+    label: "Yellow",
+    value: "yellow",
+    selectedBg: "var(--ww-chip-yellow-bg)",
+    selectedText: "var(--ww-chip-yellow-text)",
+    selectedBorder: "var(--ww-chip-yellow-border)",
+  },
+  {
+    label: "Green",
+    value: "green",
+    selectedBg: "var(--ww-chip-green-bg)",
+    selectedText: "var(--ww-chip-green-text)",
+    selectedBorder: "var(--ww-chip-green-border)",
+  },
+  {
+    label: "Blue",
+    value: "blue",
+    selectedBg: "var(--ww-chip-blue-bg)",
+    selectedText: "var(--ww-chip-blue-text)",
+    selectedBorder: "var(--ww-chip-blue-border)",
+  },
+  {
+    label: "Pink",
+    value: "pink",
+    selectedBg: "var(--ww-chip-pink-bg)",
+    selectedText: "var(--ww-chip-pink-text)",
+    selectedBorder: "var(--ww-chip-pink-border)",
+  },
+  {
+    label: "Orange",
+    value: "orange",
+    selectedBg: "var(--ww-chip-orange-bg)",
+    selectedText: "var(--ww-chip-orange-text)",
+    selectedBorder: "var(--ww-chip-orange-border)",
+  },
+  {
+    label: "Brown",
+    value: "brown",
+    selectedBg: "var(--ww-chip-brown-bg)",
+    selectedText: "var(--ww-chip-brown-text)",
+    selectedBorder: "var(--ww-chip-brown-border)",
+  },
+  {
+    label: "Grey",
+    value: "grey",
+    selectedBg: "var(--ww-chip-grey-bg)",
+    selectedText: "var(--ww-chip-grey-text)",
+    selectedBorder: "var(--ww-chip-grey-border)",
+  },
+];
+
+export const GENDER_OPTIONS = [
+  { label: "Male", value: "male" },
+  { label: "Woman", value: "female" },
+  { label: "Other", value: "other" },
+  { label: "Prefer not to say", value: "prefer_not_to_say" },
+];
+
+export const STATIC_AI_SETTINGS = {
+  weekdayDefault: "Formal",
+  weatherSuggestions: true,
+  prioritizeUnused: true,
+};
+
+export const STATIC_STATS = {
+  closetItems: 52,
+  outfitsLogged: 14,
+};

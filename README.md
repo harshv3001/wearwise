@@ -1,5 +1,56 @@
 # closet-app
 
+## Environment setup
+
+Real secrets should stay out of the repo. This project already ignores local env files like `.env`, `.env.dev`, and `.env.local`.
+
+1. Copy `.env.example` to `.env` for host-machine development.
+2. Put only local values in `.env`, not production RDS or AWS credentials.
+3. For Docker runs, use the existing `.env.dev` file and `docker compose`.
+
+### OAuth-related env vars
+
+The backend now supports Google and Facebook OAuth. Configure these values in your backend env file:
+
+```bash
+API_BASE_URL=http://localhost:8000
+FRONTEND_URL=http://localhost:3000
+AUTH_COOKIE_SECURE=false
+AUTH_COOKIE_SAMESITE=lax
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+FACEBOOK_CLIENT_ID=...
+FACEBOOK_CLIENT_SECRET=...
+```
+
+The frontend should point to the backend with:
+
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+### Host-machine backend commands
+
+Use `.env` with a local database URL such as `localhost:5433`:
+
+```bash
+cd apps/api
+alembic upgrade head
+```
+
+### Docker backend commands
+
+The backend can read a different env file through `APP_ENV_FILE`:
+
+```bash
+docker compose up -d db
+cd apps/api
+APP_ENV_FILE=.env.dev alembic upgrade head
+```
+
+### Production
+
+Production secrets should come from the deployment environment, secret manager, or CI/CD variables, not from committed files.
 
 
 ## Getting started

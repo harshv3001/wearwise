@@ -1,25 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getToken } from "../../lib/auth";
+import { useCurrentUser } from "../../features/auth/hooks/useCurrentUser";
 
 export default function RequireAuth({ children }) {
   const router = useRouter();
-  const [checked, setChecked] = useState(false);
+  const token = getToken();
+  const { isLoading, isFetched } = useCurrentUser();
 
   useEffect(() => {
-    const token = getToken();
-
     if (!token) {
       router.replace("/login");
-      return;
     }
+  }, [router, token]);
 
-    setChecked(true);
-  }, [router]);
-
-  if (!checked) return null; // prevents flashing dashboard before redirect
+  if (!token) return null;
+  if (isLoading && !isFetched) return null;
 
   return children;
 }

@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from .routes import auth, closet_items, outfit, wear
+from .routes import auth, closet_items, locations, outfit, wear, weather
 
 from . import models
 
@@ -15,6 +15,7 @@ UPLOADS_DIR = BASE_DIR / "uploads"
 UPLOADS_DIR.mkdir(exist_ok=True)
 (UPLOADS_DIR / "closet_items").mkdir(exist_ok=True)
 (UPLOADS_DIR / "outfits").mkdir(exist_ok=True)
+(UPLOADS_DIR / "profile_images").mkdir(exist_ok=True)
 
 app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 
@@ -33,6 +34,8 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(locations.router)
+app.include_router(weather.router)
 app.include_router(closet_items.router)
 app.include_router(outfit.router)
 app.include_router(wear.router)
