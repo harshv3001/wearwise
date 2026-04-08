@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import ClassNames from "embla-carousel-class-names";
 import Link from "next/link";
@@ -24,9 +24,11 @@ export default function Carousel({
   parentSetSelectedCallback,
   disableRemoval,
   hideTitle,
+  hideHeader,
 }) {
-  const paddedItems = padItems(closetItems);
+  const paddedItems = useMemo(() => padItems(closetItems), [closetItems]);
   const isSingleItem = closetItems.length === 1;
+  const parentSetSelectedCallbackRef = useRef(parentSetSelectedCallback);
 
   const startIndex = isSingleItem ? 1 : 0;
   const [selectedSnap, setSelectedSnap] = useState(startIndex);
@@ -40,17 +42,21 @@ export default function Carousel({
     [ClassNames()]
   );
 
+  useEffect(() => {
+    parentSetSelectedCallbackRef.current = parentSetSelectedCallback;
+  }, [parentSetSelectedCallback]);
+
   const onSelect = useCallback(() => {
     if (!emblaApi || !paddedItems.length) return;
 
     const snap = emblaApi.selectedScrollSnap();
-    setSelectedSnap(snap);
+    setSelectedSnap((prev) => (prev === snap ? prev : snap));
 
     const selectedItem = paddedItems[snap];
     if (selectedItem && !selectedItem.isBlank) {
-      parentSetSelectedCallback(selectedItem.id);
+      parentSetSelectedCallbackRef.current(selectedItem);
     }
-  }, [emblaApi, paddedItems, parentSetSelectedCallback]);
+  }, [emblaApi, paddedItems]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -113,19 +119,23 @@ export default function Carousel({
       </div>
     ));
 
+  const showHeader = !hideHeader && (!hideTitle || !disableRemoval);
+
   return (
     <div className="carousel">
-      <div className={styles.carousel_header}>
-        {!hideTitle ? <h4>{categoryName}</h4> : null}
+      {showHeader && (
+        <div className={styles.carousel_header}>
+          {!hideTitle ? <h4>{categoryName}</h4> : null}
 
-        {!disableRemoval ? (
-          <button onClick={removalCallback} type="button">
-            <span className="material-symbols-outlined" aria-hidden="true">
-              remove
-            </span>
-          </button>
-        ) : null}
-      </div>
+          {!disableRemoval ? (
+            <button onClick={removalCallback} type="button">
+              <span className="material-symbols-outlined" aria-hidden="true">
+                remove
+              </span>
+            </button>
+          ) : null}
+        </div>
+      )}
 
       <div className={styles.embla__viewport} ref={emblaRef}>
         <div className={styles.embla__container}>{renderSlides()}</div>
