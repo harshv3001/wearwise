@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Carousel from "../../../features/carousel/component/Carousel.jsx";
 import { useClosetItemsQuery } from "../../../features/closet/hooks/useClosetItemsQuery.js";
 import Button from "../../components/ui/Button.jsx";
-import { formatCapitalizedValue } from "../../../lib/helperFunctions.js";
+import OutfitCategoryRow from "./OutfitCategoryRow.jsx";
 
 const INITIAL_CATEGORY_COUNT = 3;
 
@@ -14,6 +13,8 @@ export default function OutfitGeneratorPage() {
   const [activeCategories, setActiveCategories] = useState([]);
   const [focusedItemsByCategory, setFocusedItemsByCategory] = useState({});
   const [selectedItemsByCategory, setSelectedItemsByCategory] = useState({});
+  const [draggedCategory, setDraggedCategory] = useState(null);
+  const [dragOverCategory, setDragOverCategory] = useState(null);
 
   const groupedCategories = useMemo(() => {
     const closetData = {};
@@ -115,6 +116,53 @@ export default function OutfitGeneratorPage() {
     return Object.keys(selectedItemsByCategory).length;
   }, [selectedItemsByCategory]);
 
+  const reorderCategories = (sourceCategory, targetCategory) => {
+    if (!sourceCategory || !targetCategory || sourceCategory === targetCategory) {
+      return;
+    }
+
+    const currentCategories =
+      activeCategories.length > 0
+        ? activeCategories
+        : allCategoryNames.slice(0, INITIAL_CATEGORY_COUNT);
+
+    const sourceIndex = currentCategories.indexOf(sourceCategory);
+    const targetIndex = currentCategories.indexOf(targetCategory);
+
+    if (sourceIndex === -1 || targetIndex === -1) {
+      return;
+    }
+
+    const nextCategories = [...currentCategories];
+    const [movedCategory] = nextCategories.splice(sourceIndex, 1);
+    nextCategories.splice(targetIndex, 0, movedCategory);
+
+    setActiveCategories(nextCategories);
+  };
+
+  const handleDragStart = (event, categoryName) => {
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", categoryName);
+    setDraggedCategory(categoryName);
+    setDragOverCategory(categoryName);
+  };
+
+  const handleDragEnter = (categoryName) => {
+    if (!draggedCategory || draggedCategory === categoryName) return;
+    setDragOverCategory(categoryName);
+  };
+
+  const handleDrop = (categoryName) => {
+    reorderCategories(draggedCategory, categoryName);
+    setDraggedCategory(null);
+    setDragOverCategory(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedCategory(null);
+    setDragOverCategory(null);
+  };
+
   if (isLoading) {
     return <main className="p-6">Loading...</main>;
   }
@@ -141,75 +189,24 @@ export default function OutfitGeneratorPage() {
 
         <div className="flex flex-col gap-4">
           {visibleCategories.map((categoryName, index) => (
-            <div
+            <OutfitCategoryRow
               key={categoryName}
-              className="grid grid-cols-[120px_minmax(0,1fr)_120px] items-center gap-6 px-5"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold tracking-[0.24em] text-[#b57d70]">
-                    CATEGORY
-                  </p>
-                  <p className="truncate text-base font-bold text-[#463533]">
-                    {formatCapitalizedValue(categoryName)}
-                  </p>
-                </div>
-                {index >= INITIAL_CATEGORY_COUNT ? (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveCategory(categoryName)}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d9c9c4] bg-white text-[#8d6d66] transition hover:border-[#c3a29a] hover:bg-[#fff4f1]"
-                    aria-label={`Remove ${categoryName} row`}
-                  >
-                    <span
-                      className="material-symbols-outlined"
-                      aria-hidden="true"
-                    >
-                      remove
-                    </span>
-                  </button>
-                ) : null}
-              </div>
-
-              <Carousel
-                categoryName={categoryName}
-                closetItems={groupedCategories[categoryName] || []}
-                parentSetSelectedCallback={(selectedItem) =>
-                  handleFocusedItemChange(categoryName, selectedItem)
-                }
-                removalCallback={() => handleRemoveCategory(categoryName)}
-                disableRemoval={index < INITIAL_CATEGORY_COUNT}
-                hideHeader
-                hideTitle
-              />
-              <div className="flex items-center justify-end">
-                <button
-                  type="button"
-                  onClick={() => handleToggleSelectedItem(categoryName)}
-                  disabled={!focusedItemsByCategory[categoryName]}
-                  aria-pressed={Boolean(selectedItemsByCategory[categoryName])}
-                  className={`flex min-w-[120px] items-center justify-between gap-3 rounded-full border px-4 py-3 text-left transition ${
-                    selectedItemsByCategory[categoryName]
-                      ? "border-[#1f7a67] bg-[#dff7ee] text-[#134c40]"
-                      : "border-[#d9c9c4] bg-white text-[#6f5b56] hover:border-[#c3a29a] hover:bg-[#fff4f1]"
-                  } disabled:cursor-not-allowed disabled:opacity-50`}
-                >
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em]">
-                    Save
-                  </span>
-                  <span
-                    className={`flex h-7 w-7 items-center justify-center rounded-full border text-sm ${
-                      selectedItemsByCategory[categoryName]
-                        ? "border-[#1f7a67] bg-[#1f7a67] text-white"
-                        : "border-[#cdb9b2] bg-[#fff8f6] text-transparent"
-                    }`}
-                    aria-hidden="true"
-                  >
-                    ✓
-                  </span>
-                </button>
-              </div>
-            </div>
+              index={index}
+              categoryName={categoryName}
+              closetItems={groupedCategories[categoryName] || []}
+              isSelected={Boolean(selectedItemsByCategory[categoryName])}
+              isFocused={Boolean(focusedItemsByCategory[categoryName])}
+              isDragged={draggedCategory === categoryName}
+              isDragOver={dragOverCategory === categoryName}
+              canRemove={index >= INITIAL_CATEGORY_COUNT}
+              onFocusedItemChange={handleFocusedItemChange}
+              onToggleSelectedItem={handleToggleSelectedItem}
+              onRemoveCategory={handleRemoveCategory}
+              onDragStart={handleDragStart}
+              onDragEnter={handleDragEnter}
+              onDrop={handleDrop}
+              onDragEnd={handleDragEnd}
+            />
           ))}
           <div className="flex items-center justify-start pt-2">
             {remainingCategories.length > 0 && (
