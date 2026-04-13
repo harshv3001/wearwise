@@ -38,8 +38,9 @@ export default function ReportOutfitStepSelectOutfit({
         })),
     }));
   }, [outfits, closetItems]);
-  const handleViewOutfitDetails = () => {
-    // Implement navigation to outfit details page or open a modal with outfit details
+
+  const handleViewOutfitDetails = (outfitId) => {
+    return `/outfit-details/${outfitId}`;
   };
 
   return (
@@ -67,12 +68,14 @@ export default function ReportOutfitStepSelectOutfit({
             key={`outfit-${outfitIndex}-${outfit?.id}`}
           >
             <div className={styles.outfitPreviewCard}>
-              <ImageWithFallback
-                imageUrl={outfit?.image_url}
-                alt={outfit?.name}
-                fallbackText={outfit?.name}
-                imgClassName={styles.outfitPreviewImage}
-              />
+              <div className={styles.outfitPreviewImageFrame}>
+                <ImageWithFallback
+                  imageUrl={outfit?.image_url}
+                  alt={outfit?.name}
+                  fallbackText={outfit?.name}
+                  className={styles.outfitPreviewImage}
+                />
+              </div>
               <div className="text-center">{outfit?.name}</div>
             </div>
 
@@ -106,7 +109,10 @@ export default function ReportOutfitStepSelectOutfit({
                     Select this outfit
                   </Button>
 
-                  <Link href={`/outfit-details/${outfit.id}`} target="_blank">
+                  <Link
+                    href={handleViewOutfitDetails(outfit.id)}
+                    target="_blank"
+                  >
                     <Button type="button" variant="primary" size="md">
                       View details
                     </Button>
