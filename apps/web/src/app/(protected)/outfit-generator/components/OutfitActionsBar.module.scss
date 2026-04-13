@@ -35,3 +35,9 @@
   padding-left: 28px;
   padding-right: 28px;
 }
+
+@media (max-width: 640) {
+  .wrapper {
+    flex-direction: column;
+  }
+}

@@ -1,4 +1,6 @@
 .page {
+  --outfit-panel-height: min(82vh, calc(100dvh - 220px));
+  --outfit-canvas-height: min(74vh, calc(100dvh - 260px));
   padding: 24px;
   background: radial-gradient(
       circle at top left,
@@ -51,12 +53,63 @@
   flex: 1;
 }
 
+.mobileClosetBar {
+  display: none;
+}
+
+.mobileClosetButton {
+  min-width: 0;
+  gap: 10px;
+  padding-left: 18px;
+  padding-right: 18px;
+  align-self: flex-start;
+}
+
+.mobileClosetIcon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+@media (max-width: 1024px) {
+  .builderLayout {
+    gap: 18px;
+  }
+
+  .sidebarPane {
+    width: 0;
+  }
+
+  .mobileClosetBar {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .stagePane {
+    align-items: center;
+  }
+
+  .stagePane :global(section) {
+    width: 100%;
+  }
+}
+
 @media (max-width: 720px) {
   .page {
+    --outfit-panel-height: min(74vh, calc(100dvh - 200px));
+    --outfit-canvas-height: min(68vh, calc(100dvh - 240px));
     padding: 20px 14px 28px;
   }
 
   .header {
     margin-bottom: 18px;
+  }
+
+  .mobileClosetBar {
+    width: 100%;
+  }
+
+  .mobileClosetButton {
+    width: 100%;
+    justify-content: center;
   }
 }

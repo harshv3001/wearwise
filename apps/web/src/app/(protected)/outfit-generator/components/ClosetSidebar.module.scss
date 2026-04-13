@@ -1,6 +1,6 @@
 .sidebar {
   display: flex;
-  height: 82vh;
+  height: var(--outfit-panel-height, 82vh);
   width: 100%;
   flex-direction: column;
   border-radius: 20px;
@@ -8,6 +8,41 @@
   padding: 15px 10px;
   box-shadow: 0 14px 34px rgba(224, 184, 173, 0.18);
   border: 1px solid #d48979;
+}
+
+.mobileTitle {
+  color: #453637;
+}
+
+.mobileHeader {
+  border-bottom-color: rgba(212, 137, 121, 0.4);
+}
+
+.mobileDrawer {
+  width: min(360px, calc(100vw - 32px));
+  background: #fff4f1;
+  border-right: 1px solid #d48979;
+  border-radius: 0 24px 24px 0;
+  box-shadow: 18px 0 36px rgba(136, 98, 87, 0.18);
+}
+
+.mobileDrawerBody {
+  overflow-y: auto;
+  overflow-x: visible;
+  padding: 12px 12px 18px;
+}
+
+.closeButton {
+  color: #453637;
+  border-radius: 999px;
+
+  &:hover {
+    background: rgba(212, 137, 121, 0.12);
+  }
+}
+
+.closeIcon {
+  font-size: 24px;
 }
 
 .title {
@@ -26,4 +61,10 @@
   overflow-y: auto;
   overflow-x: visible;
   padding: 0 2px;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    display: none;
+  }
 }

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
+import Button from "@/app/components/ui/Button.jsx";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery.js";
 import { useCreateOutfitMutation } from "@/features/outfits/hooks/useCreateOutfitMutation.js";
 import { useUploadOutfitImageMutation } from "@/features/outfits/hooks/useUploadOutfitImageMutation.js";
@@ -31,6 +32,7 @@ export default function OutfitGeneratorPage() {
   const [canvasSnapshot, setCanvasSnapshot] = useState("");
   const [snapshotError, setSnapshotError] = useState("");
   const [snapshotRequestId, setSnapshotRequestId] = useState(0);
+  const [isClosetSidebarOpen, setIsClosetSidebarOpen] = useState(false);
   const {
     canvasItems,
     selectedItemId,
@@ -138,41 +140,41 @@ export default function OutfitGeneratorPage() {
 
       console.log({ apiPayload, builderSnapshot });
 
-      // try {
-      //   const createdOutfit = await createOutfitMutation.mutateAsync(
-      //     apiPayload
-      //   );
+      try {
+        const createdOutfit = await createOutfitMutation.mutateAsync(
+          apiPayload
+        );
 
-      //   if (canvasSnapshot) {
-      //     const snapshotFile = dataUrlToFile(
-      //       canvasSnapshot,
-      //       buildOutfitSnapshotFilename(formValues.name)
-      //     );
+        if (canvasSnapshot) {
+          const snapshotFile = dataUrlToFile(
+            canvasSnapshot,
+            buildOutfitSnapshotFilename(formValues.name)
+          );
 
-      //     if (snapshotFile) {
-      //       const formData = new FormData();
-      //       formData.append("file", snapshotFile);
+          if (snapshotFile) {
+            const formData = new FormData();
+            formData.append("file", snapshotFile);
 
-      //       try {
-      //         await uploadOutfitImageMutation.mutateAsync({
-      //           outfitId: createdOutfit.id,
-      //           formData,
-      //         });
-      //       } catch (uploadError) {
-      //         console.error(
-      //           "Outfit created, but snapshot upload failed:",
-      //           uploadError
-      //         );
-      //       }
-      //     }
-      //   }
-      // } catch (error) {
-      //   throw new Error(
-      //     error?.response?.data?.detail ||
-      //       error?.message ||
-      //       "Could not save the outfit."
-      //   );
-      // }
+            try {
+              await uploadOutfitImageMutation.mutateAsync({
+                outfitId: createdOutfit.id,
+                formData,
+              });
+            } catch (uploadError) {
+              console.error(
+                "Outfit created, but snapshot upload failed:",
+                uploadError
+              );
+            }
+          }
+        }
+      } catch (error) {
+        throw new Error(
+          error?.response?.data?.detail ||
+            error?.message ||
+            "Could not save the outfit."
+        );
+      }
     },
     [
       canvasItems,
@@ -202,10 +204,30 @@ export default function OutfitGeneratorPage() {
               categoriesByName={groupedCategories}
               onAddItem={handleAddItem}
               onDragItemStart={handleDragItemStart}
+              open={isClosetSidebarOpen}
+              onClose={() => setIsClosetSidebarOpen(false)}
             />
           </div>
 
           <div className={styles.stagePane}>
+            <div className={styles.mobileClosetBar}>
+              <Button
+                type="button"
+                variant="tertiary"
+                size="md"
+                className={styles.mobileClosetButton}
+                onClick={() => setIsClosetSidebarOpen(true)}
+              >
+                <span
+                  className={`material-symbols-outlined ${styles.mobileClosetIcon}`}
+                  aria-hidden="true"
+                >
+                  dresser
+                </span>
+                Open closet
+              </Button>
+            </div>
+
             <OutfitActionsBar
               totalItems={canvasItems.length}
               isSaving={

@@ -7,13 +7,13 @@
 
 .stageShell {
   position: relative;
-  height: 74vh;
+  height: var(--outfit-canvas-height, 74vh);
   width: 100%;
   min-width: 0;
   overflow: hidden;
   border: 1px solid #d48979;
   border-radius: 16px;
-  background: #fff;
+  background: var(--ww-color-white);
   box-shadow: 14px 14px 34px rgba(190, 169, 160, 0.22);
 }
 
