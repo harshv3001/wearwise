@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Modal from "../../../components/ui/Modal/Modal.jsx";
 import Button from "../../../components/ui/Button.jsx";
 import Input from "../../../components/ui/Input/Input.jsx";
@@ -8,8 +9,6 @@ import ImageWithFallback from "../../../components/ui/ImageWithFallback/ImageWit
 import { SEASON_OPTIONS } from "../../../../lib/static-data.js";
 import { formatCapitalizedValue } from "../../../../lib/helperFunctions.js";
 import styles from "./SaveOutfitModal.module.scss";
-import { useCreateOutfitMutation } from "@/features/outfits/hooks/useCreateOutfitMutation.js";
-import { useState } from "react";
 
 const INITIAL_SAVE_FORM_DATA = {
   name: "",
@@ -26,17 +25,31 @@ const OCCASION_OPTIONS = [
   { value: "travel", label: "Travel" },
 ];
 
-export default function SaveOutfitModal({ open, onClose, selectedItems }) {
+export default function SaveOutfitModal({
+  open,
+  onClose,
+  canvasItems,
+  canvasSnapshot,
+  snapshotError,
+  onSubmit,
+  isSaving,
+}) {
   const [saveFormData, setSaveFormData] = useState(INITIAL_SAVE_FORM_DATA);
   const [saveFormErrors, setSaveFormErrors] = useState({});
+  const [submitError, setSubmitError] = useState("");
 
-  const createOutfitMutation = useCreateOutfitMutation();
+  const orderedItems = useMemo(
+    () => [...canvasItems].sort((left, right) => left.zIndex - right.zIndex),
+    [canvasItems]
+  );
 
   const resetSaveFlow = () => {
     setSaveFormData(INITIAL_SAVE_FORM_DATA);
     setSaveFormErrors({});
+    setSubmitError("");
     onClose();
   };
+  const handleRequestClose = isSaving ? () => {} : resetSaveFlow;
 
   const handleSaveFormChange = (field, value) => {
     setSaveFormData((prev) => ({
@@ -51,6 +64,10 @@ export default function SaveOutfitModal({ open, onClose, selectedItems }) {
         [field]: "",
       };
     });
+
+    if (submitError) {
+      setSubmitError("");
+    }
   };
 
   const handleSubmitOutfit = async () => {
@@ -60,8 +77,8 @@ export default function SaveOutfitModal({ open, onClose, selectedItems }) {
       nextErrors.name = "Outfit name is required";
     }
 
-    if (selectedItems.length === 0) {
-      alert("Select at least one item before saving the outfit.");
+    if (orderedItems.length === 0) {
+      setSubmitError("Add at least one item before saving this outfit.");
       return;
     }
 
@@ -70,37 +87,20 @@ export default function SaveOutfitModal({ open, onClose, selectedItems }) {
       return;
     }
 
-    const payload = {
-      name: saveFormData.name.trim(),
-      occasion: saveFormData.occasion || null,
-      season: saveFormData.season || null,
-      notes: saveFormData.notes.trim() || null,
-      is_favorite: false,
-      items: selectedItems.map((item) => ({
-        closet_item_id: item.id,
-        position: item.position,
-        layer: item.layer,
-        note: null,
-      })),
-    };
-
-    console.log("Submitting outfit with payload:", payload);
     try {
-      await createOutfitMutation.mutateAsync(payload);
-      alert("Outfit saved successfully!");
+      await onSubmit(saveFormData);
       resetSaveFlow();
     } catch (error) {
-      console.error("Failed to save outfit:", error);
-      alert("Could not save the outfit. Please try again.");
+      setSubmitError(
+        error?.message || "Could not save the outfit. Please try again."
+      );
     }
   };
-
-  const isSaving = createOutfitMutation.isPending;
 
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={handleRequestClose}
       title="Save Outfit"
       className={styles.modalLarge}
     >
@@ -151,29 +151,35 @@ export default function SaveOutfitModal({ open, onClose, selectedItems }) {
           />
         </div>
 
+        {submitError ? (
+          <div className="rounded-2xl border border-[#f1cbc1] bg-[#fff3ef] px-4 py-3 text-sm text-[#9d5c4e]">
+            {submitError}
+          </div>
+        ) : null}
+
         <div className={styles.bodyGrid}>
           <div className={styles.selectedCard}>
             <div className={styles.selectedHeader}>
               <div>
-                <h3 className={styles.selectedTitle}>Selected Items</h3>
+                <h3 className={styles.selectedTitle}>Canvas Items</h3>
                 <p className={styles.selectedSubtitle}>
-                  Ordered exactly as they will be saved in this outfit.
+                  Saved in their current layer order from back to front.
                 </p>
               </div>
               <div className={styles.selectedCount}>
-                {selectedItems.length} item
-                {selectedItems.length === 1 ? "" : "s"}
+                {orderedItems.length} item
+                {orderedItems.length === 1 ? "" : "s"}
               </div>
             </div>
 
             <div className={styles.selectedList}>
-              {selectedItems.map((item) => (
+              {orderedItems.map((item, index) => (
                 <div
-                  key={`save-item-${item.id}`}
+                  key={`save-item-${item.instanceId}`}
                   className={styles.selectedItem}
                 >
                   <ImageWithFallback
-                    imageUrl={item.image_url}
+                    imageUrl={item.imageUrl}
                     alt={item.name}
                     fallbackText={item.name}
                     className={styles.selectedImageFrame}
@@ -188,8 +194,8 @@ export default function SaveOutfitModal({ open, onClose, selectedItems }) {
                   </div>
 
                   <div className={styles.selectedMeta}>
-                    <div className={styles.positionLabel}>Position</div>
-                    <div className={styles.positionValue}>{item.position}</div>
+                    <div className={styles.positionLabel}>item</div>
+                    <div className={styles.positionValue}>{index + 1}</div>
                   </div>
                 </div>
               ))}
@@ -197,12 +203,26 @@ export default function SaveOutfitModal({ open, onClose, selectedItems }) {
           </div>
 
           <div className={styles.previewFrame}>
-            <div className={styles.previewEyebrow}>Outfit Preview</div>
-            <div className={styles.previewTitle}>Preview Coming Soon</div>
-            <p className={styles.previewText}>
-              This panel is ready for the future layered outfit preview. For
-              now, your selected items on the left define the saved order.
-            </p>
+            <div className={styles.previewEyebrow}>Your Outfit Snapshot</div>
+            {canvasSnapshot ? (
+              <ImageWithFallback
+                imageUrl={canvasSnapshot}
+                alt="Outfit canvas snapshot"
+                fallbackText="Outfit snapshot"
+                className={styles.previewImageFrame}
+                imgClassName={styles.previewImage}
+              />
+            ) : (
+              <>
+                <div className={styles.previewTitle}>
+                  {snapshotError ? "Preview Unavailable" : "No Snapshot Yet"}
+                </div>
+                <p className={styles.previewText}>
+                  {snapshotError ||
+                    "Add items to the canvas and the current outfit arrangement will appear here before you save."}
+                </p>
+              </>
+            )}
           </div>
         </div>
 
@@ -211,7 +231,7 @@ export default function SaveOutfitModal({ open, onClose, selectedItems }) {
             type="button"
             variant="tertiary"
             size="sm"
-            onClick={onClose}
+            onClick={resetSaveFlow}
             disabled={isSaving}
           >
             Cancel
@@ -221,7 +241,7 @@ export default function SaveOutfitModal({ open, onClose, selectedItems }) {
             variant="primary"
             size="md"
             onClick={handleSubmitOutfit}
-            disabled={isSaving || selectedItems.length === 0}
+            disabled={isSaving || orderedItems.length === 0}
           >
             {isSaving ? "Saving..." : "Save Outfit"}
           </Button>

@@ -20,9 +20,11 @@
     "embla-carousel-react": "^8.6.0",
     "graphql": "^16.12.0",
     "graphql-request": "^7.4.0",
+    "konva": "^10.2.5",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-konva": "^19.2.3",
     "react-redux": "^9.2.0",
     "recharts": "^3.7.0"
   },

@@ -1,174 +1,188 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
-import { useClosetItemsQuery } from "../../../features/closet/hooks/useClosetItemsQuery.js";
-import Button from "../../components/ui/Button.jsx";
-import OutfitCategoryRow from "./OutfitCategoryRow.jsx";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery.js";
+import { useCreateOutfitMutation } from "@/features/outfits/hooks/useCreateOutfitMutation.js";
+import { useUploadOutfitImageMutation } from "@/features/outfits/hooks/useUploadOutfitImageMutation.js";
 import SaveOutfitModal from "./components/SaveOutfitModal.jsx";
+import ClosetSidebar from "./components/ClosetSidebar.jsx";
+import OutfitActionsBar from "./components/OutfitActionsBar.jsx";
+import { useOutfitCanvasState } from "./hooks/useOutfitCanvasState.js";
+import {
+  buildOutfitSavePayload,
+  buildOutfitSnapshotFilename,
+  dataUrlToFile,
+} from "./utils/outfitCanvasUtils.js";
+import { groupClosetItemsByCategory } from "@/app/components/closet/closetCategoryUtils.js";
 import styles from "./page.module.scss";
 
-const INITIAL_CATEGORY_COUNT = 3;
+const OutfitCanvas = dynamic(() => import("./components/OutfitCanvas.jsx"), {
+  ssr: false,
+});
 
 export default function OutfitGeneratorPage() {
   const { data: allClosetItems, isLoading } = useClosetItemsQuery();
-
-  const [activeCategories, setActiveCategories] = useState([]);
-  const [focusedItemsByCategory, setFocusedItemsByCategory] = useState({});
-  const [selectedItemsByCategory, setSelectedItemsByCategory] = useState({});
-
+  const createOutfitMutation = useCreateOutfitMutation();
+  const uploadOutfitImageMutation = useUploadOutfitImageMutation();
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+  const [canvasError, setCanvasError] = useState("");
+  const [canvasSnapshot, setCanvasSnapshot] = useState("");
+  const [snapshotError, setSnapshotError] = useState("");
+  const [snapshotRequestId, setSnapshotRequestId] = useState(0);
+  const {
+    canvasItems,
+    selectedItemId,
+    setSelectedItemId,
+    addClosetItemToCanvas,
+    updateCanvasItem,
+    removeCanvasItem,
+    removeSelectedItem,
+    clearCanvasItems,
+    clearSelection,
+  } = useOutfitCanvasState();
 
-  const groupedCategories = useMemo(() => {
-    const closetData = {};
+  const groupedCategories = useMemo(
+    () => groupClosetItemsByCategory(allClosetItems || []),
+    [allClosetItems]
+  );
 
-    (allClosetItems || []).forEach((closetItem) => {
-      if (!closetData[closetItem.category]) {
-        closetData[closetItem.category] = [closetItem];
-      } else {
-        closetData[closetItem.category].push(closetItem);
-      }
-    });
-
-    return closetData;
-  }, [allClosetItems]);
-
-  const allCategoryNames = useMemo(
+  const categoryNames = useMemo(
     () => Object.keys(groupedCategories),
     [groupedCategories]
   );
 
-  const visibleCategories =
-    activeCategories.length > 0
-      ? activeCategories
-      : allCategoryNames.slice(0, INITIAL_CATEGORY_COUNT);
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!selectedItemId) return;
 
-  const remainingCategories = allCategoryNames.filter(
-    (category) => !visibleCategories.includes(category)
+      const targetTagName = event.target?.tagName;
+      const isEditableTarget =
+        event.target?.isContentEditable ||
+        ["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(targetTagName);
+
+      if (isEditableTarget) return;
+
+      if (event.key === "Delete" || event.key === "Backspace") {
+        event.preventDefault();
+        removeSelectedItem();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [removeSelectedItem, selectedItemId]);
+
+  const handleAddItem = useCallback(
+    (closetItem, droppedPosition) => {
+      if (
+        canvasItems.some(
+          (canvasItem) => canvasItem.closetItemId === closetItem?.id
+        )
+      ) {
+        setCanvasError(
+          `${closetItem?.name || "This item"} is already in the outfit.`
+        );
+        return;
+      }
+
+      setCanvasError("");
+      addClosetItemToCanvas(closetItem, stageSize, droppedPosition);
+    },
+    [addClosetItemToCanvas, canvasItems, stageSize]
   );
 
-  const handleAddCategory = useCallback(() => {
-    if (remainingCategories.length === 0) return;
-
-    setActiveCategories((prev) => [
-      ...(prev.length > 0
-        ? prev
-        : allCategoryNames.slice(0, INITIAL_CATEGORY_COUNT)),
-      remainingCategories[0],
-    ]);
-  }, [allCategoryNames, remainingCategories]);
-
-  const handleRemoveCategory = useCallback((categoryToRemove) => {
-    setActiveCategories((prev) =>
-      (prev.length > 0
-        ? prev
-        : allCategoryNames.slice(0, INITIAL_CATEGORY_COUNT)
-      ).filter((category) => category !== categoryToRemove)
+  const handleDragItemStart = useCallback((event, closetItem) => {
+    event.dataTransfer.effectAllowed = "copy";
+    event.dataTransfer.setData(
+      "application/x-wearwise-closet-item",
+      JSON.stringify(closetItem)
     );
-    setFocusedItemsByCategory((prev) => {
-      const next = { ...prev };
-      delete next[categoryToRemove];
-      return next;
-    });
-    setSelectedItemsByCategory((prev) => {
-      const next = { ...prev };
-      delete next[categoryToRemove];
-      return next;
-    });
-  }, [allCategoryNames]);
-
-  const handleFocusedItemChange = useCallback((categoryName, selectedItem) => {
-    if (!selectedItem?.id) return;
-
-    setFocusedItemsByCategory((prev) => ({
-      ...prev,
-      [categoryName]: selectedItem,
-    }));
-
-    setSelectedItemsByCategory((prev) => {
-      if (!prev[categoryName]) {
-        return prev;
-      }
-
-      return {
-        ...prev,
-        [categoryName]: selectedItem,
-      };
-    });
   }, []);
 
-  const handleToggleSelectedItem = useCallback((categoryName) => {
-    const focusedItem = focusedItemsByCategory[categoryName];
-    if (!focusedItem?.id) return;
-
-    setSelectedItemsByCategory((prev) => {
-      if (prev[categoryName]) {
-        const next = { ...prev };
-        delete next[categoryName];
-        return next;
-      }
-
-      return {
-        ...prev,
-        [categoryName]: focusedItem,
-      };
-    });
-  }, [focusedItemsByCategory]);
-
-  const selectedItemCount = useMemo(() => {
-    return Object.keys(selectedItemsByCategory).length;
-  }, [selectedItemsByCategory]);
-
-  const orderedSelectedItems = useMemo(() => {
-    return visibleCategories
-      .filter((categoryName) => Boolean(selectedItemsByCategory[categoryName]))
-      .map((categoryName, index) => ({
-        ...selectedItemsByCategory[categoryName],
-        category: categoryName,
-        position: index + 1,
-        layer: 1,
-      }));
-  }, [selectedItemsByCategory, visibleCategories]);
-
-  const reorderCategories = useCallback((sourceCategory, targetCategory) => {
-    if (
-      !sourceCategory ||
-      !targetCategory ||
-      sourceCategory === targetCategory
-    ) {
-      return;
-    }
-
-    const currentCategories =
-      activeCategories.length > 0
-        ? activeCategories
-        : allCategoryNames.slice(0, INITIAL_CATEGORY_COUNT);
-
-    const sourceIndex = currentCategories.indexOf(sourceCategory);
-    const targetIndex = currentCategories.indexOf(targetCategory);
-
-    if (sourceIndex === -1 || targetIndex === -1) {
-      return;
-    }
-
-    const nextCategories = [...currentCategories];
-    const [movedCategory] = nextCategories.splice(sourceIndex, 1);
-    nextCategories.splice(targetIndex, 0, movedCategory);
-
-    setActiveCategories(nextCategories);
-  }, [activeCategories, allCategoryNames]);
-
   const handleOpenSaveModal = useCallback(() => {
-    if (orderedSelectedItems.length === 0) {
-      alert("Select at least one item before saving the outfit.");
-      return;
-    }
-
+    if (canvasItems.length === 0) return;
+    setCanvasSnapshot("");
+    setSnapshotError("");
+    setSnapshotRequestId((previous) => previous + 1);
     setIsSaveModalOpen(true);
-  }, [orderedSelectedItems.length]);
+  }, [canvasItems.length]);
 
   const handleCloseSaveModal = useCallback(() => {
     setIsSaveModalOpen(false);
   }, []);
+
+  const handleClearCanvas = useCallback(() => {
+    clearCanvasItems();
+    setCanvasError("");
+    setCanvasSnapshot("");
+    setSnapshotError("");
+    setIsSaveModalOpen(false);
+  }, [clearCanvasItems]);
+
+  const handleSubmitOutfit = useCallback(
+    async (formValues) => {
+      const { apiPayload, builderSnapshot } = buildOutfitSavePayload(
+        formValues,
+        canvasItems
+      );
+
+      builderSnapshot.canvas = {
+        width: stageSize.width || null,
+        height: stageSize.height || null,
+      };
+
+      console.log({ apiPayload, builderSnapshot });
+
+      // try {
+      //   const createdOutfit = await createOutfitMutation.mutateAsync(
+      //     apiPayload
+      //   );
+
+      //   if (canvasSnapshot) {
+      //     const snapshotFile = dataUrlToFile(
+      //       canvasSnapshot,
+      //       buildOutfitSnapshotFilename(formValues.name)
+      //     );
+
+      //     if (snapshotFile) {
+      //       const formData = new FormData();
+      //       formData.append("file", snapshotFile);
+
+      //       try {
+      //         await uploadOutfitImageMutation.mutateAsync({
+      //           outfitId: createdOutfit.id,
+      //           formData,
+      //         });
+      //       } catch (uploadError) {
+      //         console.error(
+      //           "Outfit created, but snapshot upload failed:",
+      //           uploadError
+      //         );
+      //       }
+      //     }
+      //   }
+      // } catch (error) {
+      //   throw new Error(
+      //     error?.response?.data?.detail ||
+      //       error?.message ||
+      //       "Could not save the outfit."
+      //   );
+      // }
+    },
+    [
+      canvasItems,
+      canvasSnapshot,
+      createOutfitMutation,
+      stageSize.height,
+      stageSize.width,
+      uploadOutfitImageMutation,
+    ]
+  );
 
   if (isLoading) {
     return <main className="p-6">Loading...</main>;
@@ -176,51 +190,51 @@ export default function OutfitGeneratorPage() {
 
   return (
     <main className={styles.page}>
-      <div className={styles.container}>
-        <div className={styles.header}>
+      <div className={styles.shell}>
+        <header className={styles.header}>
           <h1 className={styles.title}>Make an Outfit</h1>
-          <div className={styles.actions}>
-            <span className={styles.readyText}>
-              {selectedItemCount} item{selectedItemCount === 1 ? "" : "s"} ready
-            </span>
-            <Button
-              type="button"
-              onClick={handleOpenSaveModal}
-              variant="primary"
-              size="lg"
-              disabled={selectedItemCount === 0}
-            >
-              Save the Outfit
-            </Button>
-          </div>
-        </div>
+        </header>
 
-        <div className={styles.rows}>
-          {visibleCategories.map((categoryName, index) => (
-            <OutfitCategoryRow
-              key={categoryName}
-              index={index}
-              categoryName={categoryName}
-              closetItems={groupedCategories[categoryName] || []}
-              isSelected={Boolean(selectedItemsByCategory[categoryName])}
-              isFocused={Boolean(focusedItemsByCategory[categoryName])}
-              canRemove={index >= INITIAL_CATEGORY_COUNT}
-              onFocusedItemChange={handleFocusedItemChange}
-              onToggleSelectedItem={handleToggleSelectedItem}
-              onRemoveCategory={handleRemoveCategory}
-              reorderCategories={reorderCategories}
+        <div className={styles.builderLayout}>
+          <div className={styles.sidebarPane}>
+            <ClosetSidebar
+              categoryNames={categoryNames}
+              categoriesByName={groupedCategories}
+              onAddItem={handleAddItem}
+              onDragItemStart={handleDragItemStart}
             />
-          ))}
-          <div className={styles.addButtonRow}>
-            {remainingCategories.length > 0 && (
-              <button
-                type="button"
-                onClick={handleAddCategory}
-                className={styles.addButton}
-              >
-                +
-              </button>
-            )}
+          </div>
+
+          <div className={styles.stagePane}>
+            <OutfitActionsBar
+              totalItems={canvasItems.length}
+              isSaving={
+                createOutfitMutation.isPending ||
+                uploadOutfitImageMutation.isPending
+              }
+              onSave={handleOpenSaveModal}
+              onClearCanvas={handleClearCanvas}
+              errorMessage={canvasError}
+            />
+            <OutfitCanvas
+              canvasItems={canvasItems}
+              selectedItemId={selectedItemId}
+              onSelectItem={setSelectedItemId}
+              onClearSelection={clearSelection}
+              onUpdateItem={updateCanvasItem}
+              onRemoveItem={removeCanvasItem}
+              onStageSizeChange={setStageSize}
+              onDropItem={handleAddItem}
+              snapshotRequestId={snapshotRequestId}
+              onSnapshotReady={(snapshot) => {
+                setCanvasSnapshot(snapshot);
+                setSnapshotError(
+                  snapshot
+                    ? ""
+                    : "Snapshot preview unavailable. This usually means the S3 image response is missing the CORS headers needed for canvas export."
+                );
+              }}
+            />
           </div>
         </div>
       </div>
@@ -228,7 +242,13 @@ export default function OutfitGeneratorPage() {
       <SaveOutfitModal
         open={isSaveModalOpen}
         onClose={handleCloseSaveModal}
-        selectedItems={orderedSelectedItems}
+        canvasItems={canvasItems}
+        canvasSnapshot={canvasSnapshot}
+        snapshotError={snapshotError}
+        onSubmit={handleSubmitOutfit}
+        isSaving={
+          createOutfitMutation.isPending || uploadOutfitImageMutation.isPending
+        }
       />
     </main>
   );

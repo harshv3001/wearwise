@@ -13,7 +13,7 @@ function padItems(closetItems) {
   if (closetItems.length === 0) return closetItems;
   if (closetItems.length === 1) return [BLANK_ITEM, closetItems[0], BLANK_ITEM];
   if (closetItems.length === 2)
-    return [closetItems[0], closetItems[1], BLANK_ITEM];
+    return [BLANK_ITEM, closetItems[0], closetItems[1]];
   return closetItems;
 }
 
@@ -25,6 +25,10 @@ export default function Carousel({
   disableRemoval,
   hideTitle,
   hideHeader,
+  onItemClick,
+  onItemDragStart,
+  enableCarouselDrag = true,
+  getItemHref = (closetItem) => `/closet/${closetItem?.id}`,
 }) {
   const paddedItems = useMemo(() => padItems(closetItems), [closetItems]);
   const isSingleItem = closetItems.length === 1;
@@ -37,7 +41,7 @@ export default function Carousel({
     swiped: false,
   });
 
-  const startIndex = isSingleItem ? 1 : 0;
+  const startIndex = isSingleItem || shouldUseDirectionalSwipe ? 1 : 0;
   const [selectedSnap, setSelectedSnap] = useState(startIndex);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
@@ -45,7 +49,7 @@ export default function Carousel({
       loop: shouldEnableFullLoop,
       align: "center",
       startIndex,
-      watchDrag: shouldEnableFullLoop,
+      watchDrag: shouldEnableFullLoop && enableCarouselDrag,
     },
     [ClassNames()]
   );
@@ -174,18 +178,44 @@ export default function Carousel({
             }`}
           />
         ) : (
-          <Link
-            className={determineSlideInnerClassName(index)}
-            href={`/closet/${closetItem?.id}`}
-          >
-            <ImageWithFallback
-              imageUrl={closetItem?.image_url}
-              alt={closetItem?.name}
-              fallbackText={closetItem?.name}
-              imgClassName={styles.outfitItemBox}
-            />
-            <div className="font-bold">{closetItem?.name}</div>
-          </Link>
+          (() => {
+            const href =
+              typeof getItemHref === "function"
+                ? getItemHref(closetItem)
+                : null;
+            const slideClassName = determineSlideInnerClassName(index);
+            const slideContent = (
+              <>
+                <ImageWithFallback
+                  imageUrl={closetItem?.image_url}
+                  alt={closetItem?.name}
+                  fallbackText={closetItem?.name}
+                  imgClassName={styles.outfitItemBox}
+                />
+                <div className={styles.closetItemName}>{closetItem?.name}</div>
+              </>
+            );
+
+            if (href) {
+              return (
+                <Link className={slideClassName} href={href}>
+                  {slideContent}
+                </Link>
+              );
+            }
+
+            return (
+              <button
+                type="button"
+                className={slideClassName}
+                onClick={() => onItemClick?.(closetItem)}
+                draggable={Boolean(onItemDragStart)}
+                onDragStart={(event) => onItemDragStart?.(event, closetItem)}
+              >
+                {slideContent}
+              </button>
+            );
+          })()
         )}
       </div>
     ));

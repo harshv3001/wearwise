@@ -4,7 +4,8 @@
   margin: auto;
   max-height: 180px;
 
-  button {
+  .button_container button,
+  .carousel_header button {
     border-radius: 50%;
     transition: background-color 0.15s ease-in color 0.2s ease-in;
     color: #888282;
@@ -24,11 +25,13 @@
   opacity: 25%;
   z-index: 1;
 
-  & > a.view-left {
+  & > a.view-left,
+  & > button.view-left {
     transform: perspective(500px) translate3d(60%, 0, -60px);
   }
 
-  & > a.view-right {
+  & > a.view-right,
+  & > button.view-right {
     transform: perspective(500px) translate3d(-60%, 0, -60px);
   }
 }
@@ -37,7 +40,8 @@
   opacity: 100%;
   z-index: 2;
 
-  & > a {
+  & > a,
+  & > button {
     transform: translate3d(0, 0, 0);
     z-index: 2;
   }

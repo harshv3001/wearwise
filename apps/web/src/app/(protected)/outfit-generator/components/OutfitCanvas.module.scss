@@ -1,0 +1,25 @@
+.section {
+  display: flex;
+  min-height: 0;
+  width: 100%;
+  flex: 1;
+}
+
+.stageShell {
+  position: relative;
+  height: 74vh;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #d48979;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 14px 14px 34px rgba(190, 169, 160, 0.22);
+}
+
+.stageOverlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: var(--ww-color-white);
+}

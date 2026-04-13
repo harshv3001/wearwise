@@ -1,0 +1,37 @@
+.wrapper {
+  margin-left: auto;
+  display: flex;
+  width: 100%;
+  max-width: 460px;
+  align-items: center;
+  gap: 12px;
+}
+
+.error {
+  width: 100%;
+  border-radius: 14px;
+  background: #fff1ed;
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #bf6655;
+  box-shadow: 0 8px 18px rgba(196, 173, 165, 0.16);
+}
+
+.count {
+  font-size: 17px;
+  color: #7a6b68;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.button {
+  min-width: 0;
+  padding-left: 28px;
+  padding-right: 28px;
+}

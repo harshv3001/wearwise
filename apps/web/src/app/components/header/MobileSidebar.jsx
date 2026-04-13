@@ -4,7 +4,7 @@ import styles from "./Header.module.scss";
 import HeaderNav from "./HeaderNav";
 import Backdrop from "../ui/Backdrop/Backdrop";
 
-export default function MobileSidebar({ open, onClose }) {
+export default function MobileSidebar({ open, onClose, children }) {
   return (
     <>
       <Backdrop open={open} onClick={onClose} />
@@ -24,7 +24,8 @@ export default function MobileSidebar({ open, onClose }) {
         </div>
 
         <div className={styles.drawerBody}>
-          <HeaderNav onNavigate={onClose} />
+          {/* <HeaderNav onNavigate={onClose} /> */}
+          {children}
         </div>
       </aside>
     </>

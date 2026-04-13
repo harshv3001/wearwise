@@ -1,0 +1,29 @@
+.sidebar {
+  display: flex;
+  height: 82vh;
+  width: 100%;
+  flex-direction: column;
+  border-radius: 20px;
+  background: #fff4f1;
+  padding: 15px 10px;
+  box-shadow: 0 14px 34px rgba(224, 184, 173, 0.18);
+  border: 1px solid #d48979;
+}
+
+.title {
+  margin: 0 0 20px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: #d48979;
+  border-bottom: 1px solid;
+  padding-bottom: 10px;
+}
+
+.content {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: visible;
+  padding: 0 2px;
+}
