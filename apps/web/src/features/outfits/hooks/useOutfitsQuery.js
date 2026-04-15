@@ -13,7 +13,7 @@ export function useOutfitsQuery() {
 
 export function useSingleOutfitQuery(outfitId) {
   return useQuery({
-    queryKey: ["outfits", outfitId],
+    queryKey: ["outfit", outfitId],
     queryFn: () => getOutfitByIdApi(outfitId),
     enabled: !!outfitId,
     staleTime: 1000 * 60 * 5,
