@@ -8,8 +8,11 @@ export function useUploadOutfitImageMutation() {
 
   return useMutation({
     mutationFn: ({ outfitId, formData }) => uploadOutfitImageApi(outfitId, formData),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["outfits"] });
+      queryClient.invalidateQueries({
+        queryKey: ["outfits", variables.outfitId],
+      });
     },
   });
 }

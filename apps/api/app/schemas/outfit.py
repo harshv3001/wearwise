@@ -33,6 +33,19 @@ class OutfitBase(BaseModel):
     notes: Optional[str] = Field(default=None, max_length=500)
 
 
+class OutfitReadBase(OutfitBase):
+    id: UUID
+    image_url: Optional[str] = None
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+
+class PaginationMeta(BaseModel):
+    limit: int
+    offset: int
+    total: int
+
+
 class OutfitCreate(OutfitBase):
     items: List[OutfitItemCreate] = Field(default_factory=list)
 
@@ -46,26 +59,14 @@ class OutfitUpdate(BaseModel):
     items: Optional[List[OutfitItemCreate]] = None
 
 
-class OutfitOut(OutfitBase):
-    id: UUID
-    image_url: Optional[str] = None
-    created_at: datetime
-    updated_at: Optional[datetime] = None
+class OutfitOut(OutfitReadBase):
     items: List[OutfitItemOut] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
 
 
-class OutfitListItem(BaseModel):
-    id: UUID
-    name: str
-    occasion: Optional[str] = None
-    season: Optional[str] = None
-    is_favorite: bool
-    image_url: Optional[str] = None
-    created_at: datetime
-    updated_at: Optional[datetime] = None
+class OutfitListItem(OutfitReadBase):
     item_count: int
     preview_items: List[OutfitItemOut] = Field(default_factory=list)
 
@@ -73,11 +74,8 @@ class OutfitListItem(BaseModel):
         from_attributes = True
 
 
-class OutfitListResponse(BaseModel):
+class OutfitListResponse(PaginationMeta):
     items: List[OutfitListItem]
-    limit: int
-    offset: int
-    total: int
 
 
 class OutfitItemDetailOut(OutfitItemBase):
@@ -88,11 +86,7 @@ class OutfitItemDetailOut(OutfitItemBase):
         from_attributes = True
 
 
-class OutfitDetailOut(OutfitBase):
-    id: UUID
-    image_url: Optional[str] = None
-    created_at: datetime
-    updated_at: Optional[datetime] = None
+class OutfitDetailOut(OutfitReadBase):
     items: List[OutfitItemDetailOut] = Field(default_factory=list)
 
     class Config:

@@ -13,6 +13,8 @@ from app.schemas.outfit import (
     OutfitOut,
     OutfitUpdate,
     OutfitItemCreate,
+    OutfitItemOut,
+    OutfitItemDetailOut,
     OutfitListResponse,
     OutfitDetailOut,
 )
@@ -66,6 +68,61 @@ def _get_outfit_or_404(db: Session, outfit_id: UUID, user_id: UUID) -> outfit_mo
     return outfit
 
 
+def _serialize_closet_item(closet_item: closet_items_models.ClosetItem):
+    return {
+        "id": closet_item.id,
+        "user_id": closet_item.user_id,
+        "name": closet_item.name,
+        "category": closet_item.category,
+        "color": closet_item.color,
+        "season": closet_item.season,
+        "brand": closet_item.brand,
+        "price": closet_item.price,
+        "notes": closet_item.notes,
+        "store": closet_item.store,
+        "material": closet_item.material,
+        "date_acquired": closet_item.date_acquired,
+        "times_worn": closet_item.times_worn,
+        "image_url": build_image_url(closet_item.image_path),
+        "created_at": closet_item.created_at,
+        "updated_at": closet_item.updated_at,
+    }
+
+
+def _serialize_outfit_items(items) -> List[OutfitItemOut]:
+    serialized_items = []
+    for item in items:
+        serialized_items.append(
+            OutfitItemOut(
+                closet_item_id=item.closet_item_id,
+                position=item.position,
+                layer=item.layer,
+                note=item.note,
+                outfit_id=item.outfit_id,
+                image_url=build_image_url(
+                    item.closet_item.image_path if getattr(item, "closet_item", None) else None
+                ),
+            )
+        )
+    return serialized_items
+
+
+def _serialize_outfit_detail_items(items) -> List[OutfitItemDetailOut]:
+    serialized_items = []
+    for item in items:
+        serialized_items.append(
+            OutfitItemDetailOut(
+                closet_item_id=item.closet_item_id,
+                position=item.position,
+                layer=item.layer,
+                note=item.note,
+                outfit_id=item.outfit_id,
+                closet_item=_serialize_closet_item(item.closet_item),
+            )
+        )
+    return serialized_items
+
+
 def _serialize_outfit(outfit: outfit_models.Outfit, items) -> OutfitOut:
     return OutfitOut(
         id=outfit.id,
@@ -77,7 +134,7 @@ def _serialize_outfit(outfit: outfit_models.Outfit, items) -> OutfitOut:
         image_url=build_image_url(outfit.image_path),
         created_at=outfit.created_at,
         updated_at=outfit.updated_at,
-        items=items,
+        items=_serialize_outfit_items(items),
     )
 
 
@@ -92,7 +149,7 @@ def _serialize_outfit_detail(outfit: outfit_models.Outfit, items) -> OutfitDetai
         image_url=build_image_url(outfit.image_path),
         created_at=outfit.created_at,
         updated_at=outfit.updated_at,
-        items=items,
+        items=_serialize_outfit_detail_items(items),
     )
 
 
@@ -124,8 +181,18 @@ def create_outfit(
     db.commit()
     db.refresh(outfit)
 
-    outfit.outfit_items
-    return _serialize_outfit(outfit, outfit.outfit_items)
+    outfit_items = (
+        db.query(outfit_models.OutfitItem)
+        .options(joinedload(outfit_models.OutfitItem.closet_item))
+        .filter(outfit_models.OutfitItem.outfit_id == outfit.id)
+        .order_by(
+            outfit_models.OutfitItem.position.asc(),
+            outfit_models.OutfitItem.layer.asc(),
+        )
+        .all()
+    )
+
+    return _serialize_outfit(outfit, outfit_items)
 
 
 @router.get("/", response_model=OutfitListResponse)
@@ -288,6 +355,7 @@ def update_outfit(
 
     outfit_items = (
         db.query(outfit_models.OutfitItem)
+        .options(joinedload(outfit_models.OutfitItem.closet_item))
         .filter(outfit_models.OutfitItem.outfit_id == outfit.id)
         .order_by(
             outfit_models.OutfitItem.position.asc(),

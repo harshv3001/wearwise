@@ -5,16 +5,11 @@ import { useSingleOutfitQuery } from "../../../../features/outfits/hooks/useOutf
 import OutfitDetails from "../../../../features/outfits/components/OutfitDetails";
 
 const OutfitDetailsPage = () => {
-  // const { id: selectedOutfitId } = params;
   const params = useParams();
   const selectedOutfitId = params.id;
   const { data: singleOutfit } = useSingleOutfitQuery(selectedOutfitId);
-  return (
-    <main style={{ padding: 24 }}>
-      <h1>Outfit Details</h1>
-      <OutfitDetails outfit={singleOutfit} />
-    </main>
-  );
+
+  return <OutfitDetails outfit={singleOutfit} />;
 };
 
 export default OutfitDetailsPage;

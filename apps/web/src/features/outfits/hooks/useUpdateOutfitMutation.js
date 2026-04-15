@@ -11,7 +11,7 @@ export function useUpdateOutfitMutation() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["outfits"] });
       queryClient.invalidateQueries({
-        queryKey: ["outfit", variables.outfitId],
+        queryKey: ["outfits", variables.outfitId],
       });
     },
   });

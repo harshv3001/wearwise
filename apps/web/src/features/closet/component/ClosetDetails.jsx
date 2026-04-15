@@ -2,9 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Button from "@/app/components/ui/Button";
-import Input from "@/app/components/ui/Input/Input";
-import SelectInput from "@/app/components/ui/SelectInput/SelectInput";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
+import EditableDetailField from "@/app/components/ui/EditableDetailField/EditableDetailField";
 import { useUpdateClosetItemMutation } from "../hooks/useUpdateClosetItemMutation";
 import { useUploadItemImageMutation } from "../hooks/useUploadItemImageMutations";
 import styles from "./ClosetDetails.module.scss";
@@ -97,68 +96,6 @@ function normalizePayload(formData) {
         ? 0
         : Number(formData.times_worn),
   };
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function Field({
-  isEditing,
-  label,
-  name,
-  value,
-  onChange,
-  type = "text",
-  placeholder = "",
-}) {
-  return (
-    <Input
-      label={label}
-      name={name}
-      type={type}
-      value={value}
-      onChange={onChange}
-      readOnly={!isEditing}
-      placeholder={placeholder}
-      inputClassName={isEditing ? styles.editableInput : styles.displayInput}
-      className={styles.field}
-    />
-  );
-}
-
-function renderField({ field, isEditing, value, onChange }) {
-  if (isEditing && field.type === "select") {
-    return (
-      <SelectInput
-        key={field.key}
-        label={field.label}
-        name={field.key}
-        value={value}
-        onChange={onChange}
-        options={field.options}
-        placeholder={`Select ${field.label.toLowerCase()}`}
-        className={styles.field}
-        selectClassName={styles.editableInput}
-      />
-    );
-  }
-
-  const displayValue = isEditing
-    ? value ?? ""
-    : field.format
-    ? field.format(value)
-    : formatDisplayValue(value);
-
-  return (
-    <Field
-      key={field.key}
-      isEditing={isEditing}
-      label={field.label}
-      name={field.key}
-      type={isEditing ? field.type : "text"}
-      value={displayValue}
-      onChange={onChange}
-    />
-  );
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -327,14 +264,18 @@ export default function ClosetDetails({ item }) {
 
         <div className={styles.formColumn}>
           <div className={styles.formGrid}>
-            {DETAIL_SECTIONS.map((field) =>
-              renderField({
-                field,
-                isEditing,
-                value: formData[field.key],
-                onChange: (e) => handleChange(field.key, e.target.value),
-              })
-            )}
+            {DETAIL_SECTIONS.map((field) => (
+              <EditableDetailField
+                key={field.key}
+                field={field}
+                isEditing={isEditing}
+                value={formData[field.key]}
+                onChange={(e) => handleChange(field.key, e.target.value)}
+                className={styles.field}
+                displayInputClassName={styles.displayInput}
+                editableInputClassName={styles.editableInput}
+              />
+            ))}
           </div>
         </div>
       </div>
