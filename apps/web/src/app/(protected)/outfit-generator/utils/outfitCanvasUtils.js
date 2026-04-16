@@ -1,3 +1,5 @@
+import { toAppImageUrl } from "@/lib/imageUrl";
+
 const DEFAULT_ITEM_WIDTH = 168;
 const DEFAULT_ITEM_HEIGHT = 168;
 const MAX_INITIAL_SIZE = 200;
@@ -72,7 +74,7 @@ export function createCanvasItemFromClosetItem(
         ? crypto.randomUUID()
         : `canvas-item-${Date.now()}-${insertionIndex}`,
     closetItemId: closetItem.id,
-    imageUrl: closetItem.image_url || "",
+    imageUrl: toAppImageUrl(closetItem.image_url || ""),
     name: closetItem.name || "Closet item",
     category: closetItem.category || "uncategorized",
     x:
@@ -96,6 +98,40 @@ export function createCanvasItemFromClosetItem(
   return clampItemPosition(nextItem, stageSize);
 }
 
+export function buildCanvasItemsFromOutfit(outfit) {
+  const layoutByClosetItemId = new Map(
+    (outfit?.canvas_layout || []).map((entry) => [entry.closet_item_id, entry])
+  );
+
+  return normalizeCanvasItemOrder(
+    [...(outfit?.items || [])]
+      .sort((left, right) => (left.position || 0) - (right.position || 0))
+      .map((item, index) => {
+        const closetItem = item.closet_item || {};
+        const layout = layoutByClosetItemId.get(item.closet_item_id);
+        const fallbackOffset = 18 * (index % 6);
+
+        return {
+          instanceId: `canvas-item-${item.closet_item_id}`,
+          closetItemId: item.closet_item_id,
+          imageUrl: toAppImageUrl(item.image_url || closetItem.image_url || ""),
+          name: closetItem.name || "Closet item",
+          category: closetItem.category || "uncategorized",
+          x: layout?.x ?? 48 + fallbackOffset,
+          y: layout?.y ?? 48 + fallbackOffset,
+          width: layout?.width ?? DEFAULT_ITEM_WIDTH,
+          height: layout?.height ?? DEFAULT_ITEM_HEIGHT,
+          rotation: layout?.rotation ?? 0,
+          zIndex: item.layer ?? layout?.position ?? item.position ?? index + 1,
+          scaleX: layout?.scale_x ?? 1,
+          scaleY: layout?.scale_y ?? 1,
+          isLocked: false,
+          createdAt: index + 1,
+        };
+      })
+  );
+}
+
 export function buildOutfitSavePayload(formValues, canvasItems) {
   const orderedItems = normalizeCanvasItemOrder(canvasItems);
 
@@ -105,12 +141,23 @@ export function buildOutfitSavePayload(formValues, canvasItems) {
       occasion: formValues.occasion || null,
       season: formValues.season || null,
       notes: formValues.notes.trim() || null,
-      is_favorite: false,
+      is_favorite: Boolean(formValues.is_favorite),
       items: orderedItems.map((item, index) => ({
         closet_item_id: item.closetItemId,
         position: index + 1,
         layer: item.zIndex,
         note: null,
+      })),
+      canvas_layout: orderedItems.map((item, index) => ({
+        closet_item_id: item.closetItemId,
+        position: index + 1,
+        x: Math.round(item.x),
+        y: Math.round(item.y),
+        width: Math.round(item.width),
+        height: Math.round(item.height),
+        rotation: Math.round(item.rotation * 100) / 100,
+        scale_x: item.scaleX,
+        scale_y: item.scaleY,
       })),
     },
     builderSnapshot: {

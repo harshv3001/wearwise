@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./ImageWithFallback.module.scss";
+import { toAppImageUrl } from "../../../../lib/imageUrl";
 
 export default function ImageWithFallback({
   imageUrl,
@@ -10,11 +11,12 @@ export default function ImageWithFallback({
   imgClassName = "",
 }) {
   const [imgError, setImgError] = useState(false);
+  const resolvedImageUrl = toAppImageUrl(imageUrl);
 
-  if (imageUrl && !imgError) {
+  if (resolvedImageUrl && !imgError) {
     return (
       <img
-        src={imageUrl}
+        src={resolvedImageUrl}
         alt={alt}
         className={`${styles.image} ${imgClassName} ${className}`}
         referrerPolicy="no-referrer"

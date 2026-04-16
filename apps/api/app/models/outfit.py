@@ -4,6 +4,7 @@ from sqlalchemy import (
     Column, Integer, String, DateTime, Boolean,
     ForeignKey, text
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.database import Base
@@ -34,6 +35,7 @@ class Outfit(Base):
     is_favorite = Column(Boolean, nullable=False, server_default=text("false"))
     notes = Column(String, nullable=True)
     image_path = Column(String, nullable=True)
+    canvas_layout = Column(JSONB, nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=text("now()"))

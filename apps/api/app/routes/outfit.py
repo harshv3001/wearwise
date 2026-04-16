@@ -57,6 +57,37 @@ def _validate_closet_items_belong_to_user(
         )
 
 
+def _validate_canvas_layout(items: List[OutfitItemCreate], canvas_layout) -> None:
+    if not canvas_layout:
+        return
+
+    item_ids = [item.closet_item_id for item in items]
+    item_id_set = set(item_ids)
+
+    if len(item_ids) != len(item_id_set):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Duplicate closet_item_id in items.",
+        )
+
+    layout_ids = [entry.closet_item_id for entry in canvas_layout]
+
+    if len(layout_ids) != len(set(layout_ids)):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Duplicate closet_item_id in canvas_layout.",
+        )
+
+    missing_from_layout = [item_id for item_id in item_ids if item_id not in set(layout_ids)]
+    extra_in_layout = [layout_id for layout_id in layout_ids if layout_id not in item_id_set]
+
+    if missing_from_layout or extra_in_layout:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="canvas_layout must contain exactly the same closet_item_id values as items.",
+        )
+
+
 def _get_outfit_or_404(db: Session, outfit_id: UUID, user_id: UUID) -> outfit_models.Outfit:
     outfit = (
         db.query(outfit_models.Outfit)
@@ -66,6 +97,10 @@ def _get_outfit_or_404(db: Session, outfit_id: UUID, user_id: UUID) -> outfit_mo
     if not outfit:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Outfit not found")
     return outfit
+
+
+def _serialize_canvas_layout(canvas_layout):
+    return canvas_layout or []
 
 
 def _serialize_closet_item(closet_item: closet_items_models.ClosetItem):
@@ -132,6 +167,7 @@ def _serialize_outfit(outfit: outfit_models.Outfit, items) -> OutfitOut:
         is_favorite=outfit.is_favorite,
         notes=outfit.notes,
         image_url=build_image_url(outfit.image_path),
+        canvas_layout=_serialize_canvas_layout(outfit.canvas_layout),
         created_at=outfit.created_at,
         updated_at=outfit.updated_at,
         items=_serialize_outfit_items(items),
@@ -147,6 +183,7 @@ def _serialize_outfit_detail(outfit: outfit_models.Outfit, items) -> OutfitDetai
         is_favorite=outfit.is_favorite,
         notes=outfit.notes,
         image_url=build_image_url(outfit.image_path),
+        canvas_layout=_serialize_canvas_layout(outfit.canvas_layout),
         created_at=outfit.created_at,
         updated_at=outfit.updated_at,
         items=_serialize_outfit_detail_items(items),
@@ -160,9 +197,11 @@ def create_outfit(
     current_user: user_models.User = Depends(get_current_user),
 ):
     _validate_closet_items_belong_to_user(db, current_user.id, payload.items)
+    _validate_canvas_layout(payload.items, payload.canvas_layout)
 
     outfit = outfit_models.Outfit(
-        user_id=current_user.id, **payload.model_dump(exclude={"items"})
+        user_id=current_user.id,
+        **payload.model_dump(exclude={"items"}, mode="json")
     )
     db.add(outfit)
     db.flush()
@@ -280,6 +319,7 @@ def list_outfits(
                 "season": outfit.season,
                 "is_favorite": outfit.is_favorite,
                 "image_url": build_image_url(outfit.image_path),
+                "canvas_layout": _serialize_canvas_layout(outfit.canvas_layout),
                 "created_at": outfit.created_at,
                 "updated_at": outfit.updated_at,
                 "item_count": counts_by_outfit.get(outfit.id, 0),
@@ -312,7 +352,7 @@ def get_outfit(
     return _serialize_outfit_detail(outfit, outfit_items)
 
 
-@router.patch("/{outfit_id}", response_model=OutfitOut)
+@router.patch("/{outfit_id}", response_model=OutfitDetailOut)
 def update_outfit(
     outfit_id: UUID,
     payload: OutfitUpdate,
@@ -320,6 +360,18 @@ def update_outfit(
     current_user: user_models.User = Depends(get_current_user),
 ):
     outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
+
+    next_items = payload.items
+    if next_items is None:
+        next_items = [
+            OutfitItemCreate(
+                closet_item_id=item.closet_item_id,
+                position=item.position,
+                layer=item.layer,
+                note=item.note,
+            )
+            for item in outfit.outfit_items
+        ]
 
     if payload.name is not None:
         outfit.name = payload.name
@@ -350,6 +402,12 @@ def update_outfit(
                 )
             )
 
+    if payload.canvas_layout is not None:
+        _validate_canvas_layout(next_items, payload.canvas_layout)
+        outfit.canvas_layout = [
+            entry.model_dump(mode="json") for entry in payload.canvas_layout
+        ]
+
     db.commit()
     db.refresh(outfit)
 
@@ -364,7 +422,7 @@ def update_outfit(
         .all()
     )
 
-    return _serialize_outfit(outfit, outfit_items)
+    return _serialize_outfit_detail(outfit, outfit_items)
 
 
 @router.post("/{outfit_id}/image", response_model=OutfitDetailOut)

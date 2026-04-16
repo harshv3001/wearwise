@@ -171,8 +171,6 @@ export default function ProfilePage() {
     [identities]
   );
 
-  console.log("hasPassword", hasPassword);
-
   return (
     <main className={styles.page}>
       {isLoading || identitiesLoading ? (

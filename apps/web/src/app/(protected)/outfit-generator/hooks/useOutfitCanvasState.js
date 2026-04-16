@@ -62,6 +62,13 @@ export function useOutfitCanvasState() {
     insertionCountRef.current = 0;
   }, []);
 
+  const replaceCanvasItems = useCallback((nextItems) => {
+    const normalizedItems = normalizeCanvasItemOrder(nextItems || []);
+    setCanvasItems(normalizedItems);
+    setSelectedItemId(null);
+    insertionCountRef.current = normalizedItems.length;
+  }, []);
+
   const clearSelection = useCallback(() => {
     setSelectedItemId(null);
   }, []);
@@ -127,6 +134,7 @@ export function useOutfitCanvasState() {
     removeSelectedItem,
     reorderSelectedItem,
     clearCanvasItems,
+    replaceCanvasItems,
     clearSelection,
   };
 }

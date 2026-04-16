@@ -5,6 +5,22 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
+class OutfitCanvasLayoutBase(BaseModel):
+    closet_item_id: UUID
+    position: int = Field(default=0, ge=0)
+    x: float
+    y: float
+    width: float = Field(gt=0)
+    height: float = Field(gt=0)
+    rotation: float = 0
+    scale_x: float = Field(default=1, gt=0)
+    scale_y: float = Field(default=1, gt=0)
+
+
+class OutfitCanvasLayoutEntry(OutfitCanvasLayoutBase):
+    pass
+
+
 class OutfitItemBase(BaseModel):
     closet_item_id: UUID
     position: int = Field(default=0, ge=0)
@@ -36,6 +52,7 @@ class OutfitBase(BaseModel):
 class OutfitReadBase(OutfitBase):
     id: UUID
     image_url: Optional[str] = None
+    canvas_layout: List[OutfitCanvasLayoutEntry] = Field(default_factory=list)
     created_at: datetime
     updated_at: Optional[datetime] = None
 
@@ -48,6 +65,7 @@ class PaginationMeta(BaseModel):
 
 class OutfitCreate(OutfitBase):
     items: List[OutfitItemCreate] = Field(default_factory=list)
+    canvas_layout: List[OutfitCanvasLayoutEntry] = Field(default_factory=list)
 
 
 class OutfitUpdate(BaseModel):
@@ -57,6 +75,7 @@ class OutfitUpdate(BaseModel):
     is_favorite: Optional[bool] = None
     notes: Optional[str] = Field(default=None, max_length=500)
     items: Optional[List[OutfitItemCreate]] = None
+    canvas_layout: Optional[List[OutfitCanvasLayoutEntry]] = None
 
 
 class OutfitOut(OutfitReadBase):

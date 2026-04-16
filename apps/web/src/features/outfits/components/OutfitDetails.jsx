@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Button from "@/app/components/ui/Button";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 import EditableDetailField from "@/app/components/ui/EditableDetailField/EditableDetailField";
@@ -84,6 +85,7 @@ function formatTitle(name) {
 }
 
 export default function OutfitDetails({ outfit }) {
+  const router = useRouter();
   const updateOutfitMutation = useUpdateOutfitMutation();
   const uploadOutfitImageMutation = useUploadOutfitImageMutation();
   const fileInputRef = useRef(null);
@@ -208,6 +210,15 @@ export default function OutfitDetails({ outfit }) {
         </div>
 
         <div className={styles.headerActions}>
+          <Button
+            type="button"
+            variant="tertiary"
+            size="sm"
+            onClick={() => router.push(`/outfit-generator/edit/${outfit.id}`)}
+            className={styles.actionButton}
+          >
+            Edit Canvas
+          </Button>
           {isEditing ? (
             <>
               <Button

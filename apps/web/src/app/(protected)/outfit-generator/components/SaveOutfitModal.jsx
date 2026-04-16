@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Modal from "../../../components/ui/Modal/Modal.jsx";
 import Button from "../../../components/ui/Button.jsx";
 import Input from "../../../components/ui/Input/Input.jsx";
@@ -33,8 +33,11 @@ export default function SaveOutfitModal({
   snapshotError,
   onSubmit,
   isSaving,
+  initialValues = INITIAL_SAVE_FORM_DATA,
+  title = "Save Outfit",
+  submitLabel = "Save Outfit",
 }) {
-  const [saveFormData, setSaveFormData] = useState(INITIAL_SAVE_FORM_DATA);
+  const [saveFormData, setSaveFormData] = useState(initialValues);
   const [saveFormErrors, setSaveFormErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
 
@@ -43,8 +46,16 @@ export default function SaveOutfitModal({
     [canvasItems]
   );
 
+  useEffect(() => {
+    if (open) {
+      setSaveFormData(initialValues);
+      setSaveFormErrors({});
+      setSubmitError("");
+    }
+  }, [initialValues, open]);
+
   const resetSaveFlow = () => {
-    setSaveFormData(INITIAL_SAVE_FORM_DATA);
+    setSaveFormData(initialValues);
     setSaveFormErrors({});
     setSubmitError("");
     onClose();
@@ -101,7 +112,7 @@ export default function SaveOutfitModal({
     <Modal
       open={open}
       onClose={handleRequestClose}
-      title="Save Outfit"
+      title={title}
       className={styles.modalLarge}
     >
       <div className={styles.content}>
@@ -243,7 +254,7 @@ export default function SaveOutfitModal({
             onClick={handleSubmitOutfit}
             disabled={isSaving || orderedItems.length === 0}
           >
-            {isSaving ? "Saving..." : "Save Outfit"}
+            {isSaving ? "Saving..." : submitLabel}
           </Button>
         </div>
       </div>

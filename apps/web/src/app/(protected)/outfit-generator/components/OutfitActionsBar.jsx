@@ -9,6 +9,8 @@ export default function OutfitActionsBar({
   onSave,
   onClearCanvas,
   errorMessage,
+  saveLabel = "Save Outfit",
+  clearLabel = "Refresh",
 }) {
   return (
     <div className={styles.wrapper}>
@@ -27,7 +29,7 @@ export default function OutfitActionsBar({
           disabled={totalItems === 0 || isSaving}
           onClick={onClearCanvas}
         >
-          Refresh
+          {clearLabel}
         </Button>
 
         <Button
@@ -38,7 +40,7 @@ export default function OutfitActionsBar({
           disabled={totalItems === 0 || isSaving}
           onClick={onSave}
         >
-          {isSaving ? "Saving..." : "Save Outfit"}
+          {isSaving ? "Saving..." : saveLabel}
         </Button>
       </div>
     </div>

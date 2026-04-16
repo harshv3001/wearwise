@@ -4,16 +4,30 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateOutfitApi } from "../api/outfitApi";
 
 function mergeOutfitIntoListItem(previousItem, updatedOutfit) {
+  const previewItems = Array.isArray(updatedOutfit.items)
+    ? updatedOutfit.items.map((item, index) => ({
+        closet_item_id: item.closet_item_id,
+        position: item.position ?? index + 1,
+        layer: item.layer ?? index + 1,
+        outfit_id: updatedOutfit.id,
+        note: item.note ?? null,
+        image_url: item.image_url || item.closet_item?.image_url || null,
+      }))
+    : previousItem?.preview_items ?? [];
+
   return {
     ...previousItem,
     ...updatedOutfit,
-    item_count: previousItem?.item_count ?? updatedOutfit?.items?.length ?? 0,
-    preview_items: previousItem?.preview_items ?? [],
+    item_count: previewItems.length,
+    preview_items: previewItems,
   };
 }
 
 function updateDetailCache(previousOutfit, updatedOutfit) {
-  if (!previousOutfit) {
+  if (
+    !previousOutfit ||
+    updatedOutfit?.items?.every((item) => Boolean(item?.closet_item))
+  ) {
     return updatedOutfit;
   }
 

@@ -9,6 +9,7 @@ import os
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
 from fastapi import HTTPException, UploadFile, status
+from app.config import settings
 
 #checking CI/CD pipeline
 
@@ -98,4 +99,4 @@ def build_image_url(image_path: str | None) -> str | None:
     if not image_path:
         return None
 
-    return f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{image_path}"
+    return f"{settings.API_BASE_URL}/media/{image_path}"

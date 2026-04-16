@@ -7,30 +7,14 @@ import styles from "./ReportOutfitModal.module.scss";
 import ReportOutfitStepDate from "./ReportOutfitStepDate";
 import ReportOutfitStepSelectOutfit from "./ReportOutfitStepSelectOutfit";
 import Button from "../../../app/components/ui/Button";
-import { useCreateOutfitMutation } from "../hooks/useCreateOutfitMutation";
-import { useUpdateOutfitMutation } from "../hooks/useUpdateOutfitMutation";
 import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
 import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
 import { useClosetItemsQuery } from "../../closet/hooks/useClosetItemsQuery";
-import { useSingleOutfitQuery } from "../hooks/useOutfitsQuery";
-
-const initialFormData = {
-  name: "",
-  occasion: "",
-  season: "",
-  notes: "",
-  isFavorite: false,
-};
 
 export default function ReportOutfitModal({ open, onClose }) {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
-  // const [selectedSource, setSelectedSource] = useState("closet");
   const [selectedOutfitId, setSelectedOutfitId] = useState(null);
-  const [formData, setFormData] = useState(initialFormData);
-  // const [errors, setErrors] = useState({ name: false });
-  const createOutfitMutation = useCreateOutfitMutation();
-  const updateOutfitMutation = useUpdateOutfitMutation();
   const createReportMutation = useCreateReportMutation();
   const { data: outfits, isLoading, error } = useOutfitsQuery();
 
@@ -61,46 +45,7 @@ export default function ReportOutfitModal({ open, onClose }) {
     }
   };
 
-  // const handleUpdate = async (outfitId) => {
-  //   try {
-  //     const result = await updateOutfitMutation.mutateAsync({
-  //       outfitId,
-  //       payload: {
-  //         name: "Updated Summer Outfit",
-  //         notes: "Changed notes",
-  //       },
-  //     });
-
-  //     console.log("outfit updated:", result);
-  //   } catch (error) {
-  //     console.error("update outfit failed:", error);
-  //   }
-  // };
-
   const handleSubmit = async () => {
-    // if (formData.name.trim() === "") {
-    //   setErrors({ name: true });
-    //   return;
-    // }
-
-    // try {
-    //   const result = await createOutfitMutation.mutateAsync({
-    //     name: "Casual Summer Look",
-    //     notes: "White tee with jeans",
-    //     occasion: "casual",
-    //     season: "summer",
-    //     is_favorite: false,
-    //     items: [
-    //       { closet_item_id: 1, position: 1, note: "top" },
-    //       { closet_item_id: 2, position: 2, note: "bottom" },
-    //     ],
-    //   });
-
-    //   console.log("outfit created:", result);
-    // } catch (error) {
-    //   console.error("create outfit failed:", error);
-    // }
-
     if (selectedOutfitId) {
       const selectedOutfit = outfits?.items?.find(
         (outfitItem) => outfitItem?.id === selectedOutfitId
@@ -180,12 +125,7 @@ export default function ReportOutfitModal({ open, onClose }) {
 
           <div>
             {step < 2 ? (
-              <Button
-                onClick={handleNext}
-                // disabled={isNextDisabled}
-                variant="secondary"
-                size="sm"
-              >
+              <Button onClick={handleNext} variant="secondary" size="sm">
                 Next
               </Button>
             ) : (
@@ -193,13 +133,6 @@ export default function ReportOutfitModal({ open, onClose }) {
                 <Button onClick={handleSubmit} variant="primary" size="sm">
                   Report Outfit
                 </Button>
-                {/* <Button
-                  onClick={() => handleUpdate(1)}
-                  variant="primary"
-                  size="sm"
-                >
-                  Change Outfit
-                </Button> */}
               </div>
             )}
           </div>
