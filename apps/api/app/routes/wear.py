@@ -110,32 +110,64 @@ def wear_outfit(
     current_user: user_models.User = Depends(get_current_user),
 ):
     date_worn = payload.date_worn or date_type.today()
-    outfit_payload = payload.outfit
-
-    _validate_closet_items_belong_to_user(db, current_user.id, outfit_payload.items)
 
     try:
-        # 1) Create Outfit
-        outfit = outfit_models.Outfit(
-            user_id=current_user.id,
-            **outfit_payload.model_dump(exclude={"items"}),
-        )
-        db.add(outfit)
-        db.flush()
-
-        # 2) Create OutfitItems
-        for it in outfit_payload.items:
-            db.add(
-                outfit_models.OutfitItem(
-                    outfit_id=outfit.id,
-                    closet_item_id=it.closet_item_id,
-                    position=it.position,
-                    layer=it.layer,
-                    note=it.note,
-                )
+        if payload.outfit_id and payload.outfit:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Provide either outfit_id or outfit, not both.",
             )
 
-        # 3) Create WearLog
+        if payload.outfit_id:
+            outfit = (
+                db.query(outfit_models.Outfit)
+                .filter(
+                    outfit_models.Outfit.id == payload.outfit_id,
+                    outfit_models.Outfit.user_id == current_user.id,
+                )
+                .first()
+            )
+            if not outfit:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Outfit not found",
+                )
+            ids = _get_outfit_item_ids(db, outfit.id)
+            if not ids:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Outfit must contain at least one closet item.",
+                )
+        elif payload.outfit:
+            outfit_payload = payload.outfit
+            _validate_closet_items_belong_to_user(db, current_user.id, outfit_payload.items)
+
+            # Create a new outfit only when the request sends a full outfit payload.
+            outfit = outfit_models.Outfit(
+                user_id=current_user.id,
+                **outfit_payload.model_dump(exclude={"items"}),
+            )
+            db.add(outfit)
+            db.flush()
+
+            for it in outfit_payload.items:
+                db.add(
+                    outfit_models.OutfitItem(
+                        outfit_id=outfit.id,
+                        closet_item_id=it.closet_item_id,
+                        position=it.position,
+                        layer=it.layer,
+                        note=it.note,
+                    )
+                )
+            ids = [i.closet_item_id for i in outfit_payload.items]
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Either outfit_id or outfit is required.",
+            )
+
+        # Create WearLog
         wear_log_in = WearLogCreate(
             outfit_id=outfit.id,
             date_worn=date_worn,
@@ -145,8 +177,7 @@ def wear_outfit(
         db.add(wear_log)
         db.flush()
 
-        # 4) Increment times_worn
-        ids = [i.closet_item_id for i in outfit_payload.items]
+        # Increment times_worn for the outfit that was actually worn.
         _inc_times_worn(db, current_user.id, ids, delta=1)
 
         db.commit()

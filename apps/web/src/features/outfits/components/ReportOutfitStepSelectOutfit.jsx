@@ -49,14 +49,7 @@ export default function ReportOutfitStepSelectOutfit({
 
     const payload = {
       date_worn: selectedDate,
-      outfit: {
-        ...selectedOutfit,
-        items: (selectedOutfit?.preview_items || []).map((item, index) => ({
-          closet_item_id: item?.id,
-          position: index,
-          layer: index + 1,
-        })),
-      },
+      outfit_id: selectedOutfit.id,
     };
 
     try {
@@ -84,7 +77,14 @@ export default function ReportOutfitStepSelectOutfit({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <form
+      id="report-outfit-form"
+      className="flex flex-col gap-6"
+      onSubmit={(event) => {
+        event.preventDefault();
+        handleSubmit();
+      }}
+    >
       <div className="flex items-center justify-between mx-16">
         <div>
           <span className="font-bold">Date selected:</span> {selectedDate}
@@ -163,20 +163,7 @@ export default function ReportOutfitStepSelectOutfit({
           </div>
         ))}
 
-        <div className="flex justify-end mt-4">
-          <Button
-            type="button"
-            variant="primary"
-            size="sm"
-            onClick={handleSubmit}
-            disabled={createReportMutation.isPending}
-          >
-            {createReportMutation.isPending
-              ? "Reporting..."
-              : "Report Outfit"}
-          </Button>
-        </div>
       </div>
-    </div>
+    </form>
   );
 }

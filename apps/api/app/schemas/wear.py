@@ -11,8 +11,11 @@ class WearCreate(BaseModel):
     date_worn: Optional[date] = None
     notes: Optional[str] = Field(default=None, max_length=500)
 
-    # Outfit generator selection
-    outfit: OutfitCreate
+    # Use outfit_id to report an existing saved outfit.
+    outfit_id: Optional[UUID] = None
+
+    # Use outfit to create and report a brand-new outfit in one request.
+    outfit: Optional[OutfitCreate] = None
 
 
 class WearOut(BaseModel):

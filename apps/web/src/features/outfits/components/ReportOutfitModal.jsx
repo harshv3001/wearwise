@@ -82,11 +82,25 @@ export default function ReportOutfitModal({ open, onClose }) {
 
           <div>
             {step < 2 ? (
-              <Button onClick={handleNext} variant="secondary" size="sm">
+              <Button
+                key="next-step-button"
+                type="button"
+                onClick={handleNext}
+                variant="secondary"
+                size="sm"
+              >
                 Next
               </Button>
             ) : (
-              <div />
+              <Button
+                key="submit-report-button"
+                type="submit"
+                form="report-outfit-form"
+                variant="primary"
+                size="sm"
+              >
+                Report Outfit
+              </Button>
             )}
           </div>
         </div>
