@@ -45,3 +45,13 @@ class ClosetItemOut(ClosetItemBase):
 
     class Config:
         from_attributes = True
+
+
+class ClosetItemSummaryOut(BaseModel):
+    id: UUID
+    name: str
+    category: str
+    image_url: Optional[str] = None
+
+    class Config:
+        from_attributes = True

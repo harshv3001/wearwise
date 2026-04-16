@@ -1,4 +1,4 @@
-from app.schemas.closet_items import ClosetItemOut
+from app.schemas.closet_items import ClosetItemOut, ClosetItemSummaryOut
 from typing import Optional, List
 from uuid import UUID
 from pydantic import BaseModel, Field
@@ -87,7 +87,7 @@ class OutfitOut(OutfitReadBase):
 
 class OutfitListItem(OutfitReadBase):
     item_count: int
-    preview_items: List[OutfitItemOut] = Field(default_factory=list)
+    preview_items: List[ClosetItemSummaryOut] = Field(default_factory=list)
 
     class Config:
         from_attributes = True

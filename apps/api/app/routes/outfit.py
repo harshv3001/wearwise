@@ -18,6 +18,7 @@ from app.schemas.outfit import (
     OutfitListResponse,
     OutfitDetailOut,
 )
+from app.schemas.closet_items import ClosetItemSummaryOut
 from app.utils import save_upload_file, build_image_url, delete_upload_file
 
 router = APIRouter(prefix="/outfits", tags=["Outfits"])
@@ -190,6 +191,15 @@ def _serialize_outfit_detail(outfit: outfit_models.Outfit, items) -> OutfitDetai
     )
 
 
+def _serialize_preview_closet_item(row) -> ClosetItemSummaryOut:
+    return ClosetItemSummaryOut(
+        id=row.closet_item_id,
+        name=row.name,
+        category=row.category or "Uncategorized",
+        image_url=build_image_url(row.image_path),
+    )
+
+
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=OutfitOut)
 def create_outfit(
     payload: OutfitCreate,
@@ -280,9 +290,8 @@ def list_outfits(
             db.query(
                 outfit_models.OutfitItem.outfit_id,
                 outfit_models.OutfitItem.closet_item_id,
-                outfit_models.OutfitItem.position,
-                outfit_models.OutfitItem.layer,
-                outfit_models.OutfitItem.note,
+                closet_items_models.ClosetItem.name,
+                closet_items_models.ClosetItem.category,
                 closet_items_models.ClosetItem.image_path,
             )
             .join(
@@ -298,16 +307,7 @@ def list_outfits(
             .all()
         )
         for row in rows:
-            previews_by_outfit[row.outfit_id].append(
-                {
-                    "closet_item_id": row.closet_item_id,
-                    "position": row.position,
-                    "layer": row.layer,
-                    "outfit_id": row.outfit_id,
-                    "note": row.note,
-                    "image_url": build_image_url(row.image_path),
-                }
-            )
+            previews_by_outfit[row.outfit_id].append(_serialize_preview_closet_item(row))
 
     items = []
     for outfit in outfits:

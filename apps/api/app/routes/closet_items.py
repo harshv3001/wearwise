@@ -5,7 +5,12 @@ from sqlalchemy.orm import Session
 from sqlalchemy import asc, desc
 
 from app.database import get_db
-from app.schemas.closet_items import ClosetItemCreate, ClosetItemOut, ClosetItemUpdate
+from app.schemas.closet_items import (
+    ClosetItemCreate,
+    ClosetItemOut,
+    ClosetItemSummaryOut,
+    ClosetItemUpdate,
+)
 from app.models import user as user_models
 from app.models import closet_items as closet_items_models
 from app.oauth2 import get_current_user
@@ -44,6 +49,17 @@ def _serialize_closet_item(item: closet_items_models.ClosetItem) -> ClosetItemOu
     )
 
 
+def _serialize_closet_item_summary(
+    item: closet_items_models.ClosetItem,
+) -> ClosetItemSummaryOut:
+    return ClosetItemSummaryOut(
+        id=item.id,
+        name=item.name,
+        category=_normalize_category(item.category) or "Uncategorized",
+        image_url=build_image_url(item.image_path),
+    )
+
+
 @router.post("/", response_model=ClosetItemOut, status_code=status.HTTP_201_CREATED)
 def create_item(
     payload: ClosetItemCreate,
@@ -62,7 +78,7 @@ def create_item(
     return _serialize_closet_item(item)
 
 
-@router.get("/", response_model=List[ClosetItemOut])
+@router.get("/", response_model=List[ClosetItemSummaryOut])
 def list_items(
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
@@ -127,7 +143,7 @@ def list_items(
         )
 
     items = query.offset(offset).limit(limit).all()
-    return [_serialize_closet_item(item) for item in items]
+    return [_serialize_closet_item_summary(item) for item in items]
 
 
 @router.get("/{item_id}", response_model=ClosetItemOut)

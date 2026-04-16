@@ -5,12 +5,10 @@ import { updateOutfitApi } from "../api/outfitApi";
 
 function mergeOutfitIntoListItem(previousItem, updatedOutfit) {
   const previewItems = Array.isArray(updatedOutfit.items)
-    ? updatedOutfit.items.map((item, index) => ({
-        closet_item_id: item.closet_item_id,
-        position: item.position ?? index + 1,
-        layer: item.layer ?? index + 1,
-        outfit_id: updatedOutfit.id,
-        note: item.note ?? null,
+    ? updatedOutfit.items.map((item) => ({
+        id: item.closet_item?.id || item.closet_item_id,
+        name: item.closet_item?.name || "",
+        category: item.closet_item?.category || "Uncategorized",
         image_url: item.image_url || item.closet_item?.image_url || null,
       }))
     : previousItem?.preview_items ?? [];

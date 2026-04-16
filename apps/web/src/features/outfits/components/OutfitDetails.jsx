@@ -7,26 +7,17 @@ import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFa
 import EditableDetailField from "@/app/components/ui/EditableDetailField/EditableDetailField";
 import { useUpdateOutfitMutation } from "../hooks/useUpdateOutfitMutation";
 import { useUploadOutfitImageMutation } from "../hooks/useUploadOutfitImageMutation";
-import { SEASON_OPTIONS } from "../../../lib/static-data";
+import {
+  SEASON_OPTIONS,
+  OCCASION_OPTIONS,
+  FAVORITE_OPTIONS,
+} from "../../../lib/static-data";
 import {
   formatCapitalizedValue,
   formatDate,
   formatDisplayValue,
 } from "../../../lib/helperFunctions";
 import styles from "./OutfitDetails.module.scss";
-
-const OCCASION_OPTIONS = [
-  { value: "casual", label: "Casual" },
-  { value: "formal", label: "Formal" },
-  { value: "work", label: "Work" },
-  { value: "party", label: "Party" },
-  { value: "travel", label: "Travel" },
-];
-
-const FAVORITE_OPTIONS = [
-  { value: "true", label: "Yes" },
-  { value: "false", label: "No" },
-];
 
 const DETAIL_FIELDS = [
   { key: "name", label: "Outfit Name", type: "text" },
@@ -317,7 +308,7 @@ export default function OutfitDetails({ outfit }) {
                         className={styles.selectedImageFrame}
                         imgClassName={styles.selectedImage}
                       />
-                      <div className="flex justify-between">
+                      <div className="flex justify-between m-2">
                         <div className={styles.selectedText}>
                           <div className={styles.selectedName}>
                             {formatDisplayValue(

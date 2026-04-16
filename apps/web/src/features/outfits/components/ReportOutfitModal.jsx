@@ -7,22 +7,10 @@ import styles from "./ReportOutfitModal.module.scss";
 import ReportOutfitStepDate from "./ReportOutfitStepDate";
 import ReportOutfitStepSelectOutfit from "./ReportOutfitStepSelectOutfit";
 import Button from "../../../app/components/ui/Button";
-import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
-import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
-import { useClosetItemsQuery } from "../../closet/hooks/useClosetItemsQuery";
 
 export default function ReportOutfitModal({ open, onClose }) {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
-  const [selectedOutfitId, setSelectedOutfitId] = useState(null);
-  const createReportMutation = useCreateReportMutation();
-  const { data: outfits, isLoading, error } = useOutfitsQuery({
-    enabled: open,
-  });
-
-  const { data: closetItems } = useClosetItemsQuery("", {
-    enabled: open,
-  });
 
   const isStepOneValid = !!selectedDate;
 
@@ -32,8 +20,7 @@ export default function ReportOutfitModal({ open, onClose }) {
 
   const handleClose = () => {
     setStep(1);
-
-    setSelectedOutfitId(null);
+    setSelectedDate("");
     onClose();
   };
 
@@ -46,37 +33,6 @@ export default function ReportOutfitModal({ open, onClose }) {
   const handlePrev = () => {
     if (step > 1) {
       setStep((prev) => prev - 1);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (selectedOutfitId) {
-      const selectedOutfit = outfits?.items?.find(
-        (outfitItem) => outfitItem?.id === selectedOutfitId
-      );
-
-      const updatedSelectedOutfit = {
-        ...selectedOutfit,
-        items: selectedOutfit?.preview_items,
-      };
-
-      try {
-        const payload = {
-          date_worn: selectedDate,
-          outfit: updatedSelectedOutfit,
-        };
-
-        const result = await createReportMutation.mutateAsync(payload);
-
-        if (result.wear_log_id) {
-          alert("Outfit reported successfully!");
-          handleClose();
-        }
-      } catch (error) {
-        console.error("report outfit failed:", error);
-      }
-    } else {
-      alert("Please select an outfit to report");
     }
   };
 
@@ -107,11 +63,8 @@ export default function ReportOutfitModal({ open, onClose }) {
 
           {step === 2 && (
             <ReportOutfitStepSelectOutfit
-              selectedOutfitId={selectedOutfitId}
-              setSelectedOutfitId={setSelectedOutfitId}
               selectedDate={selectedDate}
-              closetItems={closetItems}
-              outfits={outfits}
+              onSuccess={handleClose}
             />
           )}
         </div>
@@ -133,11 +86,7 @@ export default function ReportOutfitModal({ open, onClose }) {
                 Next
               </Button>
             ) : (
-              <div className="flex gap-6">
-                <Button onClick={handleSubmit} variant="primary" size="sm">
-                  Report Outfit
-                </Button>
-              </div>
+              <div />
             )}
           </div>
         </div>

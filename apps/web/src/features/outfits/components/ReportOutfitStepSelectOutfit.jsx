@@ -1,22 +1,22 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import styles from "./ReportOutfitModal.module.scss";
 import Button from "../../../app/components/ui/Button";
 import OutfitItemsCarousel from "./OutfitItemsCarousel";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-
-import { ClassNames } from "@emotion/react";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
+import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
+import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
 
 export default function ReportOutfitStepSelectOutfit({
-  closetItems = [],
-  outfits,
   selectedDate,
-  setSelectedOutfitId,
-  selectedOutfitId,
+  onSuccess,
 }) {
+  const [selectedOutfitId, setSelectedOutfitId] = useState(null);
+  const createReportMutation = useCreateReportMutation();
+  const { data: outfits, isLoading, error } = useOutfitsQuery();
+
   const previewOutfits = useMemo(() => {
     return (outfits?.items || []).map((outfit) => ({
       id: outfit?.id,
@@ -24,24 +24,64 @@ export default function ReportOutfitStepSelectOutfit({
       occasion: outfit?.occasion,
       season: outfit?.season,
       image_url: outfit?.image_url,
-      items: closetItems
-        .filter((closetItem) =>
-          outfit?.preview_items.find(
-            (previewItem) => previewItem?.closet_item_id === closetItem?.id
-          )
-        )
-        .map((closetItem) => ({
-          id: closetItem?.id,
-          name: closetItem?.name,
-          category: closetItem?.category,
-          image_url: closetItem?.image_url,
-        })),
+      items: outfit?.preview_items || [],
     }));
-  }, [outfits, closetItems]);
+  }, [outfits]);
 
   const handleViewOutfitDetails = (outfitId) => {
     return `/outfit-details/${outfitId}`;
   };
+
+  const handleSubmit = async () => {
+    if (!selectedOutfitId) {
+      alert("Please select an outfit to report");
+      return;
+    }
+
+    const selectedOutfit = outfits?.items?.find(
+      (outfitItem) => outfitItem?.id === selectedOutfitId
+    );
+
+    if (!selectedOutfit) {
+      alert("Selected outfit could not be found");
+      return;
+    }
+
+    const payload = {
+      date_worn: selectedDate,
+      outfit: {
+        ...selectedOutfit,
+        items: (selectedOutfit?.preview_items || []).map((item, index) => ({
+          closet_item_id: item?.id,
+          position: index,
+          layer: index + 1,
+        })),
+      },
+    };
+
+    try {
+      const result = await createReportMutation.mutateAsync(payload);
+
+      if (result.wear_log_id) {
+        alert("Outfit reported successfully!");
+        onSuccess?.();
+      }
+    } catch (submitError) {
+      console.error("report outfit failed:", submitError);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="py-8 text-center">Loading outfits...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="py-8 text-center">
+        Could not load saved outfits right now.
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -122,6 +162,20 @@ export default function ReportOutfitStepSelectOutfit({
             </div>
           </div>
         ))}
+
+        <div className="flex justify-end mt-4">
+          <Button
+            type="button"
+            variant="primary"
+            size="sm"
+            onClick={handleSubmit}
+            disabled={createReportMutation.isPending}
+          >
+            {createReportMutation.isPending
+              ? "Reporting..."
+              : "Report Outfit"}
+          </Button>
+        </div>
       </div>
     </div>
   );
