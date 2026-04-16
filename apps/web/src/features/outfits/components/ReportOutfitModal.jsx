@@ -16,9 +16,13 @@ export default function ReportOutfitModal({ open, onClose }) {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedOutfitId, setSelectedOutfitId] = useState(null);
   const createReportMutation = useCreateReportMutation();
-  const { data: outfits, isLoading, error } = useOutfitsQuery();
+  const { data: outfits, isLoading, error } = useOutfitsQuery({
+    enabled: open,
+  });
 
-  const { data: closetItems } = useClosetItemsQuery("");
+  const { data: closetItems } = useClosetItemsQuery("", {
+    enabled: open,
+  });
 
   const isStepOneValid = !!selectedDate;
 

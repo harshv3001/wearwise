@@ -6,15 +6,11 @@ import Button from "../../components/ui/Button";
 import CategorySummaryCard from "../../../features/category-summary/component/CategorySummaryCard";
 import ReportOutfitModal from "../../../features/outfits/components/ReportOutfitModal";
 import CreateClosetItem from "../../../features/closet/component/CreateClosetItem.jsx";
-import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
 import { useCurrentUser } from "../../../features/auth/hooks/useCurrentUser";
 import { useWeather } from "../../../features/weather/hooks/useWeather";
 import WeatherCard from "../../../features/weather/components/WeatherCard";
 
 export default function DashboardPage() {
-  const [category, setCategory] = useState("");
-
-  const { data: closetItems, isLoading, error } = useClosetItemsQuery(category);
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const weatherQuery = useWeather(user?.latitude, user?.longitude);
 
