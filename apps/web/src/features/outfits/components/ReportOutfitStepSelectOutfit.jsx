@@ -9,6 +9,11 @@ import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFa
 import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
 import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
 import ReportOutfitSelectionSkeleton from "./ReportOutfitSelectionSkeleton";
+import {
+  showErrorToast,
+  showSuccessToast,
+  showWarningToast,
+} from "../../../lib/toast";
 
 export default function ReportOutfitStepSelectOutfit({
   selectedDate,
@@ -44,7 +49,7 @@ export default function ReportOutfitStepSelectOutfit({
 
   const handleSubmit = async () => {
     if (!selectedOutfitId) {
-      alert("Please select an outfit to report");
+      showWarningToast("Please select an outfit to report.");
       return;
     }
 
@@ -53,7 +58,7 @@ export default function ReportOutfitStepSelectOutfit({
     );
 
     if (!selectedOutfit) {
-      alert("Selected outfit could not be found");
+      showErrorToast("The selected outfit could not be found.");
       return;
     }
 
@@ -66,11 +71,15 @@ export default function ReportOutfitStepSelectOutfit({
       const result = await createReportMutation.mutateAsync(payload);
 
       if (result.wear_log_id) {
-        alert("Outfit reported successfully!");
+        showSuccessToast("Outfit reported successfully.");
         onSuccess?.();
       }
     } catch (submitError) {
-      console.error("report outfit failed:", submitError);
+      showErrorToast(
+        submitError?.response?.data?.detail ||
+          submitError?.message ||
+          "Could not report this outfit."
+      );
     }
   };
 

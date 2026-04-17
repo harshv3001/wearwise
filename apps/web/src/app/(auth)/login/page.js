@@ -13,6 +13,7 @@ import {
 import { setToken } from "../../../lib/auth";
 import { getApiErrorMessage } from "../../../lib/apiError";
 import Button from "@/app/components/ui/Button";
+import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,14 +23,18 @@ export default function LoginPage() {
     mutationFn: loginApi,
     onSuccess: (data) => {
       const token = data?.access_token || data?.token;
-      if (!token) return alert("Login succeeded but token missing.");
+      if (!token) {
+        showErrorToast("Login succeeded but no token was returned.");
+        return;
+      }
       setToken(token);
       if (data?.user) {
         queryClient.setQueryData(currentUserQueryKey, data.user);
       }
+      showSuccessToast("Signed in successfully.");
       router.replace("/dashboard");
     },
-    onError: (err) => alert(getApiErrorMessage(err, "Login failed")),
+    onError: (err) => showErrorToast(getApiErrorMessage(err, "Login failed")),
   });
 
   const handleSubmit = (values) => loginMut.mutate(values);
@@ -37,12 +42,12 @@ export default function LoginPage() {
     try {
       const data = await startOAuthApi(provider, "login");
       if (!data?.authorization_url) {
-        alert("Unable to start social login right now.");
+        showErrorToast("Unable to start social login right now.");
         return;
       }
       window.location.assign(data.authorization_url);
     } catch (err) {
-      alert(getApiErrorMessage(err, `Could not start ${provider} login`));
+      showErrorToast(getApiErrorMessage(err, `Could not start ${provider} login`));
     }
   };
 

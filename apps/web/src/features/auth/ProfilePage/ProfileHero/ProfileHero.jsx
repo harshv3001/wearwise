@@ -6,6 +6,7 @@ import ImageWithFallback from "../../../../app/components/ui/ImageWithFallback/I
 import { getUserFullName, getUserInitials } from "../profileHelpers";
 import styles from "./ProfileHero.module.scss";
 import { useUploadProfileImageMutation } from "../../hooks/useUploadProfileImageMutation";
+import { showErrorToast, showSuccessToast } from "../../../../lib/toast";
 
 export default function ProfileHero({
   user,
@@ -36,8 +37,13 @@ export default function ProfileHero({
 
       try {
         await uploadProfileImageMutation.mutateAsync(uploadData);
+        showSuccessToast(
+          user?.image_url
+            ? "Profile photo updated successfully."
+            : "Profile photo uploaded successfully."
+        );
       } catch (error) {
-        setSaveError(
+        showErrorToast(
           error?.response?.data?.detail ||
             "We couldn't upload your photo. Please try again."
         );

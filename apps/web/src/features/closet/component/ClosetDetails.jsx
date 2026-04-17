@@ -13,6 +13,7 @@ import {
   formatDate,
   formatDisplayValue,
 } from "../../../lib/helperFunctions";
+import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 
 // ─── Pure helpers (no closure over component state) ───────────────────────────
 
@@ -135,8 +136,17 @@ export default function ClosetDetails({ item }) {
       return;
     }
 
-    await updateClosetItemMutation.mutateAsync({ itemId: item.id, payload });
-    setIsEditing(false);
+    try {
+      await updateClosetItemMutation.mutateAsync({ itemId: item.id, payload });
+      setIsEditing(false);
+      showSuccessToast("Closet item updated successfully.");
+    } catch (error) {
+      showErrorToast(
+        error?.response?.data?.detail ||
+          error?.message ||
+          "Could not update this closet item."
+      );
+    }
   }, [item, formData, originalPayload, updateClosetItemMutation]);
 
   const handleImageChange = useCallback(
@@ -150,10 +160,21 @@ export default function ClosetDetails({ item }) {
       const imageFormData = new FormData();
       imageFormData.append("file", selectedFile);
 
-      await uploadItemImageMutation.mutateAsync({
-        itemId: item.id,
-        formData: imageFormData,
-      });
+      try {
+        await uploadItemImageMutation.mutateAsync({
+          itemId: item.id,
+          formData: imageFormData,
+        });
+        showSuccessToast(
+          item?.image_url ? "Closet image updated successfully." : "Closet image uploaded successfully."
+        );
+      } catch (error) {
+        showErrorToast(
+          error?.response?.data?.detail ||
+            error?.message ||
+            "Could not update this closet image."
+        );
+      }
 
       event.target.value = "";
     },

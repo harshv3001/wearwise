@@ -9,6 +9,7 @@ import { useRef, useState } from "react";
 import { useCreateClosetItemMutation } from "../hooks/useCreateClosetItemMutation";
 import { useUploadItemImageMutation } from "../hooks/useUploadItemImageMutations";
 import { SEASON_OPTIONS } from "../../../lib/static-data";
+import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 
 const initialFormData = {
   name: "",
@@ -80,10 +81,14 @@ export default function CreateClosetItem({ open, onClose }) {
         });
       }
 
-      alert("Closet item created successfully!");
+      showSuccessToast("Closet item created successfully.");
       handleClose();
     } catch (error) {
-      console.error("Failed to create closet item:", error);
+      showErrorToast(
+        error?.response?.data?.detail ||
+          error?.message ||
+          "Could not create this closet item."
+      );
     }
   };
 

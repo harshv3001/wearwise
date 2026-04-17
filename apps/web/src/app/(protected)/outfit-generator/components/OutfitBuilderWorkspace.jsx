@@ -19,6 +19,7 @@ import {
   buildOutfitSnapshotFilename,
   dataUrlToFile,
 } from "../utils/outfitCanvasUtils.js";
+import { showSuccessToast } from "../../../../lib/toast.js";
 import styles from "../page.module.scss";
 
 const OutfitCanvas = dynamic(() => import("./OutfitCanvas.jsx"), {
@@ -211,6 +212,10 @@ export default function OutfitBuilderWorkspace({
             });
           }
         }
+
+        showSuccessToast(
+          isEditMode ? "Outfit updated successfully." : "Outfit saved successfully."
+        );
       } catch (error) {
         throw new Error(
           error?.response?.data?.detail ||

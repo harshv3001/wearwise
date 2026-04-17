@@ -11,6 +11,11 @@ import {
   EMPTY_PASSWORD_FORM,
 } from "../profileHelpers";
 import { hasValidationErrors } from "../../../../lib/helperFunctions";
+import {
+  showErrorToast,
+  showInfoToast,
+  showSuccessToast,
+} from "../../../../lib/toast";
 import styles from "./AccountSecurityCard.module.scss";
 
 export default function AccountSecurityCard({ hasPassword }) {
@@ -57,8 +62,9 @@ export default function AccountSecurityCard({ hasPassword }) {
       await changePasswordMutation.mutateAsync(passwordForm);
       setPasswordForm(EMPTY_PASSWORD_FORM);
       setPasswordErrors({});
-      setPasswordMessage("Password updated successfully.");
+      setPasswordMessage("");
       setIsChangingPassword(false);
+      showSuccessToast("Password updated successfully.");
     } catch (error) {
       const detail =
         error?.response?.data?.detail ||
@@ -78,6 +84,11 @@ export default function AccountSecurityCard({ hasPassword }) {
       }
 
       setPasswordMessage(
+        typeof detail === "string"
+          ? detail
+          : "We couldn't update your password. Please try again."
+      );
+      showErrorToast(
         typeof detail === "string"
           ? detail
           : "We couldn't update your password. Please try again."
@@ -189,7 +200,10 @@ export default function AccountSecurityCard({ hasPassword }) {
             type="button"
             variant="primary"
             size="sm"
-            onClick={() => logoutUser()}
+            onClick={() => {
+              showInfoToast("Signed out successfully.");
+              logoutUser();
+            }}
           >
             Sign Out
           </Button>

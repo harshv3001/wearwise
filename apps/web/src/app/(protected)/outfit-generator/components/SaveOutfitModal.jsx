@@ -9,6 +9,7 @@ import ImageWithFallback from "../../../components/ui/ImageWithFallback/ImageWit
 import Skeleton from "../../../components/ui/Skeleton/Skeleton.jsx";
 import { SEASON_OPTIONS } from "../../../../lib/static-data.js";
 import { formatCapitalizedValue } from "../../../../lib/helperFunctions.js";
+import { showErrorToast } from "../../../../lib/toast.js";
 import styles from "./SaveOutfitModal.module.scss";
 
 const INITIAL_SAVE_FORM_DATA = {
@@ -110,6 +111,9 @@ export default function SaveOutfitModal({
         resetSaveFlow();
       }
     } catch (error) {
+      showErrorToast(
+        error?.message || "Could not save the outfit. Please try again."
+      );
       setSubmitError(
         error?.message || "Could not save the outfit. Please try again."
       );

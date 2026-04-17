@@ -17,6 +17,7 @@ import {
   formatDate,
   formatDisplayValue,
 } from "../../../lib/helperFunctions";
+import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 import styles from "./OutfitDetails.module.scss";
 
 const DETAIL_FIELDS = [
@@ -149,12 +150,14 @@ export default function OutfitDetails({ outfit }) {
 
       setIsEditing(false);
       setSubmitError("");
+      showSuccessToast("Outfit updated successfully.");
     } catch (error) {
-      setSubmitError(
+      const detail =
         error?.response?.data?.detail ||
-          error?.message ||
-          "Could not update this outfit."
-      );
+        error?.message ||
+        "Could not update this outfit.";
+      setSubmitError("");
+      showErrorToast(detail);
     }
   }, [formData, originalFormData, outfit, updateOutfitMutation]);
 
@@ -175,12 +178,18 @@ export default function OutfitDetails({ outfit }) {
           formData: imageFormData,
         });
         setSubmitError("");
-      } catch (error) {
-        setSubmitError(
-          error?.response?.data?.detail ||
-            error?.message ||
-            "Could not update the outfit image."
+        showSuccessToast(
+          outfit?.image_url
+            ? "Outfit image updated successfully."
+            : "Outfit image uploaded successfully."
         );
+      } catch (error) {
+        const detail =
+          error?.response?.data?.detail ||
+          error?.message ||
+          "Could not update the outfit image.";
+        setSubmitError("");
+        showErrorToast(detail);
       } finally {
         event.target.value = "";
       }
