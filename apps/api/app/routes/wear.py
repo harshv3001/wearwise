@@ -9,7 +9,6 @@ from app.database import get_db
 from app.oauth2 import get_current_user
 
 from app.models import (
-    user as user_models,
     outfit as outfit_models,
     closet_items as closet_items_models,
     wear_log as wear_log_models,
@@ -18,6 +17,7 @@ from app.models import (
 from app.schemas.wear import WearCreate, WearOut
 from app.schemas.wear_log import WearLogCreate, WearLogOut, WearLogUpdate
 from app.schemas.outfit import OutfitItemCreate
+from src.users.models import User
 
 
 router = APIRouter(prefix="/wear", tags=["Wear"])
@@ -107,7 +107,7 @@ def _inc_times_worn(db: Session, user_id: UUID, closet_item_ids: List[UUID], del
 def wear_outfit(
     payload: WearCreate,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     date_worn = payload.date_worn or date_type.today()
 
@@ -198,7 +198,7 @@ def wear_outfit(
 @router.get("/", response_model=dict)
 def list_wear_logs(
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     date_from: Optional[date_type] = None,
     date_to: Optional[date_type] = None,
     limit: int = Query(default=30, ge=1, le=200),
@@ -241,7 +241,7 @@ def list_wear_logs(
 def get_wear_log(
     wear_log_id: UUID,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     wl = _get_wearlog_or_404(db, wear_log_id, current_user.id)
     return wl
@@ -252,7 +252,7 @@ def update_wear_log(
     wear_log_id: UUID,
     payload: WearLogUpdate,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     wl = _get_wearlog_or_404(db, wear_log_id, current_user.id)
 
@@ -270,7 +270,7 @@ def update_wear_log(
 def delete_wear_log(
     wear_log_id: UUID,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     wl = _get_wearlog_or_404(db, wear_log_id, current_user.id)
 

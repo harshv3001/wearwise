@@ -11,10 +11,10 @@ from app.schemas.closet_items import (
     ClosetItemSummaryOut,
     ClosetItemUpdate,
 )
-from app.models import user as user_models
 from app.models import closet_items as closet_items_models
 from app.oauth2 import get_current_user
 from app.utils import save_upload_file, build_image_url, delete_upload_file
+from src.users.models import User
 
 router = APIRouter(prefix="/closet-items", tags=["Closet Items"])
 
@@ -64,7 +64,7 @@ def _serialize_closet_item_summary(
 def create_item(
     payload: ClosetItemCreate,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     payload_data = payload.model_dump()
     payload_data["category"] = _normalize_category(payload_data.get("category"))
@@ -81,7 +81,7 @@ def create_item(
 @router.get("/", response_model=List[ClosetItemSummaryOut])
 def list_items(
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     category: Optional[str] = Query(default=None),
     color: Optional[str] = Query(default=None),
     season: Optional[str] = Query(default=None),
@@ -150,7 +150,7 @@ def list_items(
 def get_item(
     item_id: UUID,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     closet_item = closet_items_models.ClosetItem
     item = (
@@ -171,7 +171,7 @@ def update_item(
     item_id: UUID,
     payload: ClosetItemUpdate,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     closet_item = closet_items_models.ClosetItem
     qset = db.query(closet_item).filter(
@@ -200,7 +200,7 @@ def upload_closet_item_image(
     item_id: UUID,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     closet_item = closet_items_models.ClosetItem
     item = (
@@ -231,7 +231,7 @@ def upload_closet_item_image(
 def delete_item(
     item_id: UUID,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     closet_item = closet_items_models.ClosetItem
     qset = db.query(closet_item).filter(

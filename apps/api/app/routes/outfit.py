@@ -7,7 +7,7 @@ from sqlalchemy import func
 
 from app.database import get_db
 from app.oauth2 import get_current_user
-from app.models import user as user_models, outfit as outfit_models, closet_items as closet_items_models
+from app.models import outfit as outfit_models, closet_items as closet_items_models
 from app.schemas.outfit import (
     OutfitCreate,
     OutfitOut,
@@ -20,6 +20,7 @@ from app.schemas.outfit import (
 )
 from app.schemas.closet_items import ClosetItemSummaryOut
 from app.utils import save_upload_file, build_image_url, delete_upload_file
+from src.users.models import User
 
 router = APIRouter(prefix="/outfits", tags=["Outfits"])
 
@@ -204,7 +205,7 @@ def _serialize_preview_closet_item(row) -> ClosetItemSummaryOut:
 def create_outfit(
     payload: OutfitCreate,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     _validate_closet_items_belong_to_user(db, current_user.id, payload.items)
     _validate_canvas_layout(payload.items, payload.canvas_layout)
@@ -247,7 +248,7 @@ def create_outfit(
 @router.get("/", response_model=OutfitListResponse)
 def list_outfits(
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     occasion: Optional[str] = None,
     season: Optional[str] = None,
     favorite: Optional[bool] = None,
@@ -334,7 +335,7 @@ def list_outfits(
 def get_outfit(
     outfit_id: UUID,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
 
@@ -357,7 +358,7 @@ def update_outfit(
     outfit_id: UUID,
     payload: OutfitUpdate,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
 
@@ -430,7 +431,7 @@ def upload_outfit_image(
     outfit_id: UUID,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
 
@@ -461,7 +462,7 @@ def upload_outfit_image(
 def delete_outfit(
     outfit_id: UUID,
     db: Session = Depends(get_db),
-    current_user: user_models.User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     outfit = _get_outfit_or_404(db, outfit_id, current_user.id)
 

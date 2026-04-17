@@ -13,8 +13,8 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.models.auth_provider_account import AuthProviderAccount
-from app.models.user import User
+from src.auth.models import AuthProviderAccount
+from src.users.models import User
 
 
 def _utcnow() -> datetime:
