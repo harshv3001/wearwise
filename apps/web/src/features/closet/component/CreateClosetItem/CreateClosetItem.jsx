@@ -1,15 +1,15 @@
 "use client";
 
 import Button from "@/app/components/ui/Button";
-import Input from "../../../app/components/ui/Input/Input";
-import SelectInput from "../../../app/components/ui/SelectInput/SelectInput";
-import Modal from "../../../app/components/ui/Modal/Modal";
+import Input from "../../../../app/components/ui/Input/Input";
+import SelectInput from "../../../../app/components/ui/SelectInput/SelectInput";
+import Modal from "../../../../app/components/ui/Modal/Modal";
 import styles from "./CreateClosetItem.module.scss";
 import { useRef, useState } from "react";
-import { useCreateClosetItemMutation } from "../hooks/useCreateClosetItemMutation";
-import { useUploadItemImageMutation } from "../hooks/useUploadItemImageMutations";
-import { SEASON_OPTIONS } from "../../../lib/static-data";
-import { showErrorToast, showSuccessToast } from "../../../lib/toast";
+import { useCreateClosetItemMutation } from "../../hooks/useCreateClosetItemMutation";
+import { useUploadItemImageMutation } from "../../hooks/useUploadItemImageMutations";
+import { SEASON_OPTIONS } from "../../../../lib/static-data";
+import { showErrorToast, showSuccessToast } from "../../../../lib/toast";
 
 const initialFormData = {
   name: "",

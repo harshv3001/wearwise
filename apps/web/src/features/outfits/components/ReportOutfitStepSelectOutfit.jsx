@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import styles from "./ReportOutfitModal.module.scss";
+import styles from "./ReportOutfitModal/ReportOutfitModal.module.scss";
 import Button from "../../../app/components/ui/Button";
 import OutfitItemsCarousel from "./OutfitItemsCarousel";
 import Link from "next/link";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
 import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
-import ReportOutfitSelectionSkeleton from "./ReportOutfitSelectionSkeleton";
+import ReportOutfitSelectionSkeleton from "./ReportOutfitSelectionSkeleton/ReportOutfitSelectionSkeleton";
 import {
   showErrorToast,
   showSuccessToast,
@@ -181,7 +181,6 @@ export default function ReportOutfitStepSelectOutfit({
             </div>
           </div>
         ))}
-
       </div>
     </form>
   );

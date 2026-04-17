@@ -4,16 +4,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Button from "@/app/components/ui/Button";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 import EditableDetailField from "@/app/components/ui/EditableDetailField/EditableDetailField";
-import { useUpdateClosetItemMutation } from "../hooks/useUpdateClosetItemMutation";
-import { useUploadItemImageMutation } from "../hooks/useUploadItemImageMutations";
+import { useUpdateClosetItemMutation } from "../../hooks/useUpdateClosetItemMutation";
+import { useUploadItemImageMutation } from "../../hooks/useUploadItemImageMutations";
 import styles from "./ClosetDetails.module.scss";
-import { SEASON_OPTIONS } from "../../../lib/static-data";
+import { SEASON_OPTIONS } from "../../../../lib/static-data";
 import {
   formatCurrency,
   formatDate,
   formatDisplayValue,
-} from "../../../lib/helperFunctions";
-import { showErrorToast, showSuccessToast } from "../../../lib/toast";
+} from "../../../../lib/helperFunctions";
+import { showErrorToast, showSuccessToast } from "../../../../lib/toast";
 
 // ─── Pure helpers (no closure over component state) ───────────────────────────
 

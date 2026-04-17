@@ -4,7 +4,7 @@ import ClassNames from "embla-carousel-class-names";
 import Link from "next/link";
 
 import styles from "./Carousel.module.scss";
-import "./CarouselCardVisibility.scss";
+import "../CarouselCardVisibility.scss";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 
 const BLANK_ITEM = { id: "__blank__", name: "", image: null, isBlank: true };

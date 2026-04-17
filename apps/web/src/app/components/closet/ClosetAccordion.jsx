@@ -1,7 +1,7 @@
 "use client";
 
 import Accordion from "../ui/Accordion/Accordion";
-import Carousel from "@/features/carousel/component/Carousel";
+import Carousel from "@/features/carousel/component/Carousel/Carousel";
 
 export default function ClosetAccordion({
   categoryNames = [],

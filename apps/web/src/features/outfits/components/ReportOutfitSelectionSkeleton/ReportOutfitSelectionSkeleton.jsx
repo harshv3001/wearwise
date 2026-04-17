@@ -2,7 +2,7 @@
 
 import Skeleton from "@/app/components/ui/Skeleton/Skeleton";
 import styles from "./ReportOutfitSelectionSkeleton.module.scss";
-import modalStyles from "./ReportOutfitModal.module.scss";
+import modalStyles from "../ReportOutfitModal/ReportOutfitModal.module.scss";
 
 function OutfitRowSkeleton({ index }) {
   return (

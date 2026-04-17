@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 
-import Modal from "../../../app/components/ui/Modal/Modal";
+import Modal from "../../../../app/components/ui/Modal/Modal";
 import styles from "./ReportOutfitModal.module.scss";
-import ReportOutfitStepDate from "./ReportOutfitStepDate";
-import ReportOutfitStepSelectOutfit from "./ReportOutfitStepSelectOutfit";
-import Button from "../../../app/components/ui/Button";
+import ReportOutfitStepDate from "../ReportOutfitStepDate";
+import ReportOutfitStepSelectOutfit from "../ReportOutfitStepSelectOutfit";
+import Button from "../../../../app/components/ui/Button";
 
 export default function ReportOutfitModal({ open, onClose }) {
   const [step, setStep] = useState(1);

@@ -5,19 +5,19 @@ import { useRouter } from "next/navigation";
 import Button from "@/app/components/ui/Button";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 import EditableDetailField from "@/app/components/ui/EditableDetailField/EditableDetailField";
-import { useUpdateOutfitMutation } from "../hooks/useUpdateOutfitMutation";
-import { useUploadOutfitImageMutation } from "../hooks/useUploadOutfitImageMutation";
+import { useUpdateOutfitMutation } from "../../hooks/useUpdateOutfitMutation";
+import { useUploadOutfitImageMutation } from "../../hooks/useUploadOutfitImageMutation";
 import {
   SEASON_OPTIONS,
   OCCASION_OPTIONS,
   FAVORITE_OPTIONS,
-} from "../../../lib/static-data";
+} from "../../../../lib/static-data";
 import {
   formatCapitalizedValue,
   formatDate,
   formatDisplayValue,
-} from "../../../lib/helperFunctions";
-import { showErrorToast, showSuccessToast } from "../../../lib/toast";
+} from "../../../../lib/helperFunctions";
+import { showErrorToast, showSuccessToast } from "../../../../lib/toast";
 import styles from "./OutfitDetails.module.scss";
 
 const DETAIL_FIELDS = [

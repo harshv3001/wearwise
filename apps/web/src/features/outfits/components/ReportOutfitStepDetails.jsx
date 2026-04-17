@@ -4,7 +4,6 @@ import Input from "../../../app/components/ui/Input/Input";
 import SelectInput from "../../../app/components/ui/SelectInput/SelectInput";
 import Button from "../../../app/components/ui/Button";
 import Link from "next/link";
-import styles from "./ReportOutfitModal.module.scss";
 
 export default function ReportOutfitStepDetails({
   formData,

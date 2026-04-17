@@ -2,8 +2,8 @@
 
 import { useParams } from "next/navigation";
 import { useSingleOutfitQuery } from "../../../../features/outfits/hooks/useOutfitsQuery";
-import OutfitDetails from "../../../../features/outfits/components/OutfitDetails";
-import OutfitDetailsSkeleton from "../../../../features/outfits/components/OutfitDetailsSkeleton";
+import OutfitDetails from "../../../../features/outfits/components/OutfitDetails/OutfitDetails";
+import OutfitDetailsSkeleton from "../../../../features/outfits/components/OutfitDetailsSkeleton/OutfitDetailsSkeleton";
 
 const OutfitDetailsPage = () => {
   const params = useParams();

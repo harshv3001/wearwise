@@ -1,8 +1,8 @@
 "use client";
 
-import Card from "../../../app/components/ui/Card/Card";
+import Card from "../../../../app/components/ui/Card/Card";
 import styles from "./WeatherCard.module.scss";
-import WeatherCardSkeleton from "./WeatherCardSkeleton";
+import WeatherCardSkeleton from "../WeatherCardSkeleton";
 
 function formatTemperature(value) {
   return typeof value === "number" ? `${Math.round(value)}°C` : "N/A";
