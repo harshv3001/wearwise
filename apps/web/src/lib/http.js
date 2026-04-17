@@ -6,6 +6,14 @@ const baseURL = process.env.NEXT_PUBLIC_API_URL; // http://localhost:8000 OR htt
 
 let refreshPromise = null;
 
+function getUnauthorizedRedirectTarget() {
+  if (typeof window !== "undefined" && window.location.pathname === "/") {
+    return "/";
+  }
+
+  return "/login";
+}
+
 export const http = axios.create({
   baseURL,
   withCredentials: true,
@@ -71,12 +79,12 @@ http.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${nextToken}`;
         return http(originalRequest);
       } catch (refreshError) {
-        logoutUser();
+        logoutUser(getUnauthorizedRedirectTarget());
         return Promise.reject(refreshError);
       }
     }
 
-    if (status === 401) logoutUser();
+    if (status === 401) logoutUser(getUnauthorizedRedirectTarget());
     return Promise.reject(error);
   }
 );

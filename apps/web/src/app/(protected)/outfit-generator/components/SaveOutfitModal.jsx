@@ -36,6 +36,7 @@ export default function SaveOutfitModal({
   initialValues = INITIAL_SAVE_FORM_DATA,
   title = "Save Outfit",
   submitLabel = "Save Outfit",
+  onSuccess,
 }) {
   const [saveFormData, setSaveFormData] = useState(initialValues);
   const [saveFormErrors, setSaveFormErrors] = useState({});
@@ -100,7 +101,11 @@ export default function SaveOutfitModal({
 
     try {
       await onSubmit(saveFormData);
-      resetSaveFlow();
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        resetSaveFlow();
+      }
     } catch (error) {
       setSubmitError(
         error?.message || "Could not save the outfit. Please try again."

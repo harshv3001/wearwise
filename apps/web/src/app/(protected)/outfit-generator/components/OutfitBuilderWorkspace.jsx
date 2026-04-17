@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Button from "@/app/components/ui/Button.jsx";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery.js";
@@ -52,7 +51,6 @@ export default function OutfitBuilderWorkspace({
   initialOutfit = null,
   isInitialLoading = false,
 }) {
-  const router = useRouter();
   const isEditMode = mode === "edit";
   const hydratedOutfitIdRef = useRef(null);
   const { data: allClosetItems, isLoading: isClosetLoading } =
@@ -212,10 +210,6 @@ export default function OutfitBuilderWorkspace({
             });
           }
         }
-
-        if (savedOutfitId) {
-          router.push(`/outfit-details/${savedOutfitId}`);
-        }
       } catch (error) {
         throw new Error(
           error?.response?.data?.detail ||
@@ -230,7 +224,6 @@ export default function OutfitBuilderWorkspace({
       createOutfitMutation,
       initialOutfit?.id,
       isEditMode,
-      router,
       updateOutfitMutation,
       uploadOutfitImageMutation,
     ]
@@ -324,6 +317,7 @@ export default function OutfitBuilderWorkspace({
         initialValues={metadataDefaults}
         title={isEditMode ? "Update Outfit Canvas" : "Save Outfit"}
         submitLabel={isEditMode ? "Update Outfit" : "Save Outfit"}
+        onSuccess={isEditMode ? () => setIsSaveModalOpen(false) : handleClearCanvas}
       />
     </main>
   );
