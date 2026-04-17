@@ -5,11 +5,12 @@ import Button from "../../components/ui/Button.jsx";
 import CreateClosetItem from "../../../features/closet/component/CreateClosetItem.jsx";
 import ClosetAccordion from "@/app/components/closet/ClosetAccordion.jsx";
 import { groupClosetItemsByCategory } from "@/app/components/closet/closetCategoryUtils.js";
+import ClosetPageSkeleton from "@/features/closet/component/ClosetPageSkeleton.jsx";
 
 export default function ClosetPage() {
   const [openItemModal, setOpenItemModal] = useState(false);
 
-  const { data: allClosetItems } = useClosetItemsQuery();
+  const { data: allClosetItems, isLoading } = useClosetItemsQuery();
 
   const categories = useMemo(
     () => groupClosetItemsByCategory(allClosetItems || []),
@@ -39,7 +40,9 @@ export default function ClosetPage() {
         </Button>
       </div>
 
-      {allClosetItems ? (
+      {isLoading ? (
+        <ClosetPageSkeleton />
+      ) : allClosetItems ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-[90vw] mx-auto">
           {columns.map((column, columnIndex) => (
             <div key={columnIndex} className="flex flex-col gap-6">

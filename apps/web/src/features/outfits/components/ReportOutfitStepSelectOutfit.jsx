@@ -8,6 +8,7 @@ import Link from "next/link";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
 import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
+import ReportOutfitSelectionSkeleton from "./ReportOutfitSelectionSkeleton";
 
 export default function ReportOutfitStepSelectOutfit({
   selectedDate,
@@ -74,7 +75,7 @@ export default function ReportOutfitStepSelectOutfit({
   };
 
   if (isLoading) {
-    return <div className="py-8 text-center">Loading outfits...</div>;
+    return <ReportOutfitSelectionSkeleton />;
   }
 
   if (error) {

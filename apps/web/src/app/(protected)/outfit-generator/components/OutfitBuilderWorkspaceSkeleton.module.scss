@@ -1,0 +1,28 @@
+.title {
+  margin: 0 auto;
+}
+
+.sidebar {
+  width: 360px;
+  flex-shrink: 0;
+}
+
+.sidebarCard,
+.actionsBar,
+.canvas {
+  border-radius: 1.75rem;
+}
+
+.actionsBar {
+  width: 100%;
+}
+
+.canvas {
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    display: none;
+  }
+}

@@ -11,6 +11,7 @@ import { groupClosetItemsByCategory } from "@/app/components/closet/closetCatego
 import SaveOutfitModal from "./SaveOutfitModal.jsx";
 import ClosetSidebar from "./ClosetSidebar.jsx";
 import OutfitActionsBar from "./OutfitActionsBar.jsx";
+import OutfitBuilderWorkspaceSkeleton from "./OutfitBuilderWorkspaceSkeleton.jsx";
 import { useOutfitCanvasState } from "../hooks/useOutfitCanvasState.js";
 import {
   buildCanvasItemsFromOutfit,
@@ -230,7 +231,7 @@ export default function OutfitBuilderWorkspace({
   );
 
   if (isClosetLoading || isInitialLoading) {
-    return <main className="p-6">Loading...</main>;
+    return <OutfitBuilderWorkspaceSkeleton />;
   }
 
   return (
@@ -317,7 +318,9 @@ export default function OutfitBuilderWorkspace({
         initialValues={metadataDefaults}
         title={isEditMode ? "Update Outfit Canvas" : "Save Outfit"}
         submitLabel={isEditMode ? "Update Outfit" : "Save Outfit"}
-        onSuccess={isEditMode ? () => setIsSaveModalOpen(false) : handleClearCanvas}
+        onSuccess={
+          isEditMode ? () => setIsSaveModalOpen(false) : handleClearCanvas
+        }
       />
     </main>
   );

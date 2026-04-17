@@ -1,0 +1,57 @@
+.layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 2rem;
+  width: min(90vw, 1360px);
+  margin: 0 auto;
+}
+
+.accordionCard {
+  border: 1px solid #e8d4ce;
+  border-radius: 0.5rem;
+  background: #fffaf8;
+  overflow: hidden;
+}
+
+.accordionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: #ffc9c4;
+}
+
+.accordionBody {
+  padding: 1rem;
+}
+
+.carouselRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.carouselCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.carouselImage {
+  width: 100%;
+  border-radius: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .carouselRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

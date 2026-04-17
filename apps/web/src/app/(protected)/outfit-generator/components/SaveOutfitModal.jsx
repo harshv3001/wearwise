@@ -6,6 +6,7 @@ import Button from "../../../components/ui/Button.jsx";
 import Input from "../../../components/ui/Input/Input.jsx";
 import SelectInput from "../../../components/ui/SelectInput/SelectInput.jsx";
 import ImageWithFallback from "../../../components/ui/ImageWithFallback/ImageWithFallback.jsx";
+import Skeleton from "../../../components/ui/Skeleton/Skeleton.jsx";
 import { SEASON_OPTIONS } from "../../../../lib/static-data.js";
 import { formatCapitalizedValue } from "../../../../lib/helperFunctions.js";
 import styles from "./SaveOutfitModal.module.scss";
@@ -46,6 +47,8 @@ export default function SaveOutfitModal({
     () => [...canvasItems].sort((left, right) => left.zIndex - right.zIndex),
     [canvasItems]
   );
+  const showSnapshotSkeleton =
+    open && orderedItems.length > 0 && !canvasSnapshot && !snapshotError;
 
   useEffect(() => {
     if (open) {
@@ -227,6 +230,12 @@ export default function SaveOutfitModal({
                 fallbackText="Outfit snapshot"
                 className={styles.previewImageFrame}
                 imgClassName={styles.previewImage}
+              />
+            ) : showSnapshotSkeleton ? (
+              <Skeleton
+                className={styles.previewImageFrame}
+                height={320}
+                width="100%"
               />
             ) : (
               <>

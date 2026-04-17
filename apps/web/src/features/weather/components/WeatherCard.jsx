@@ -2,6 +2,7 @@
 
 import Card from "../../../app/components/ui/Card/Card";
 import styles from "./WeatherCard.module.scss";
+import WeatherCardSkeleton from "./WeatherCardSkeleton";
 
 function formatTemperature(value) {
   return typeof value === "number" ? `${Math.round(value)}°C` : "N/A";
@@ -42,7 +43,7 @@ export default function WeatherCard({
       {!hasCoordinates ? (
         <p className={styles.empty}>Add your location to see weather.</p>
       ) : isLoading ? (
-        <p className={styles.loading}>Loading current weather...</p>
+        <WeatherCardSkeleton />
       ) : isError || !weather ? (
         <p className={styles.error}>
           Weather is unavailable right now. Please try again shortly.
