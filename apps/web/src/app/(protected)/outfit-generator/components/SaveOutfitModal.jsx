@@ -253,8 +253,10 @@ export default function SaveOutfitModal({
             size="md"
             onClick={handleSubmitOutfit}
             disabled={isSaving || orderedItems.length === 0}
+            loading={isSaving}
+            loadingText="Saving outfit..."
           >
-            {isSaving ? "Saving..." : submitLabel}
+            {submitLabel}
           </Button>
         </div>
       </div>

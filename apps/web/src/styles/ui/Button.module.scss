@@ -1,5 +1,9 @@
 .button {
+  position: relative;
   min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.12);
   border-radius: 0.5rem;
@@ -12,6 +16,31 @@
     cursor: not-allowed;
     box-shadow: none;
   }
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.contentHidden {
+  visibility: hidden;
+}
+
+.loading {
+  cursor: progress;
+}
+
+.loadingContent {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
 }
 
 .default {

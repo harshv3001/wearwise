@@ -151,11 +151,10 @@ export default function AccountSecurityCard({ hasPassword }) {
                     variant="primary"
                     size="sm"
                     onClick={handleSubmitPasswordChange}
-                    disabled={changePasswordMutation.isPending}
+                    loading={changePasswordMutation.isPending}
+                    loadingText="Updating password..."
                   >
-                    {changePasswordMutation.isPending
-                      ? "Updating..."
-                      : "Update Password"}
+                    Update Password
                   </Button>
                 </div>
               </div>

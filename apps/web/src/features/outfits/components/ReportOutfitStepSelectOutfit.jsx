@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./ReportOutfitModal.module.scss";
 import Button from "../../../app/components/ui/Button";
 import OutfitItemsCarousel from "./OutfitItemsCarousel";
@@ -12,6 +12,7 @@ import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutat
 export default function ReportOutfitStepSelectOutfit({
   selectedDate,
   onSuccess,
+  onPendingChange,
 }) {
   const [selectedOutfitId, setSelectedOutfitId] = useState(null);
   const createReportMutation = useCreateReportMutation();
@@ -27,6 +28,14 @@ export default function ReportOutfitStepSelectOutfit({
       items: outfit?.preview_items || [],
     }));
   }, [outfits]);
+
+  useEffect(() => {
+    onPendingChange?.(createReportMutation.isPending);
+
+    return () => {
+      onPendingChange?.(false);
+    };
+  }, [createReportMutation.isPending, onPendingChange]);
 
   const handleViewOutfitDetails = (outfitId) => {
     return `/outfit-details/${outfitId}`;

@@ -91,13 +91,12 @@ export default function ProfileHero({
                 variant="secondary"
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={uploadProfileImageMutation.isPending}
+                loading={uploadProfileImageMutation.isPending}
+                loadingText={
+                  user?.image_url ? "Updating photo..." : "Uploading photo..."
+                }
               >
-                {uploadProfileImageMutation.isPending
-                  ? "Uploading..."
-                  : user?.image_url
-                  ? "Change Photo"
-                  : "Upload Photo"}
+                {user?.image_url ? "Change Photo" : "Upload Photo"}
               </Button>
             )}
             <div className={styles.editActions}>
@@ -114,9 +113,10 @@ export default function ProfileHero({
                 variant="primary"
                 size="sm"
                 onClick={onSave}
-                disabled={isSaving}
+                loading={isSaving}
+                loadingText="Saving changes..."
               >
-                {isSaving ? "Saving..." : "Save Changes"}
+                Save Changes
               </Button>
             </div>
           </>

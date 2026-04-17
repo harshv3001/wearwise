@@ -182,10 +182,11 @@ export default function ClosetDetails({ item }) {
                 variant="primary"
                 size="sm"
                 onClick={handleSubmit}
-                disabled={updateClosetItemMutation.isPending}
+                loading={updateClosetItemMutation.isPending}
+                loadingText="Saving..."
                 className={styles.actionButton}
               >
-                {updateClosetItemMutation.isPending ? "Saving..." : "Save"}
+                Save
               </Button>
             </>
           ) : (
@@ -230,14 +231,13 @@ export default function ClosetDetails({ item }) {
             variant="secondary"
             size="sm"
             onClick={() => fileInputRef.current?.click()}
-            disabled={uploadItemImageMutation.isPending}
+            loading={uploadItemImageMutation.isPending}
+            loadingText={
+              item?.image_url ? "Updating image..." : "Uploading image..."
+            }
             className={styles.changeImageButton}
           >
-            {uploadItemImageMutation.isPending
-              ? "Updating Image..."
-              : item?.image_url
-              ? "Change Image"
-              : "Add Image"}
+            {item?.image_url ? "Change Image" : "Add Image"}
           </Button>
 
           <div className={styles.metaList}>

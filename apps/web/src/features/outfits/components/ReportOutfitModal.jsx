@@ -11,6 +11,7 @@ import Button from "../../../app/components/ui/Button";
 export default function ReportOutfitModal({ open, onClose }) {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
 
   const isStepOneValid = !!selectedDate;
 
@@ -21,6 +22,7 @@ export default function ReportOutfitModal({ open, onClose }) {
   const handleClose = () => {
     setStep(1);
     setSelectedDate("");
+    setIsSubmittingReport(false);
     onClose();
   };
 
@@ -65,6 +67,7 @@ export default function ReportOutfitModal({ open, onClose }) {
             <ReportOutfitStepSelectOutfit
               selectedDate={selectedDate}
               onSuccess={handleClose}
+              onPendingChange={setIsSubmittingReport}
             />
           )}
         </div>
@@ -72,7 +75,12 @@ export default function ReportOutfitModal({ open, onClose }) {
         <div className="flex items-center justify-between">
           <div>
             {step > 1 ? (
-              <Button onClick={handlePrev} variant="secondary" size="sm">
+              <Button
+                onClick={handlePrev}
+                variant="secondary"
+                size="sm"
+                disabled={isSubmittingReport}
+              >
                 Prev
               </Button>
             ) : (
@@ -98,6 +106,8 @@ export default function ReportOutfitModal({ open, onClose }) {
                 form="report-outfit-form"
                 variant="primary"
                 size="sm"
+                loading={isSubmittingReport}
+                loadingText="Reporting outfit..."
               >
                 Report Outfit
               </Button>

@@ -226,10 +226,11 @@ export default function OutfitDetails({ outfit }) {
                 variant="primary"
                 size="sm"
                 onClick={handleSubmit}
-                disabled={updateOutfitMutation.isPending}
+                loading={updateOutfitMutation.isPending}
+                loadingText="Saving..."
                 className={styles.actionButton}
               >
-                {updateOutfitMutation.isPending ? "Saving..." : "Save"}
+                Save
               </Button>
             </>
           ) : (

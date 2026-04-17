@@ -84,10 +84,11 @@ export default function StepTwoReg({
           className="w-full sm:w-auto"
           variant="primary"
           type="submit"
-          disabled={loading}
+          loading={loading}
+          loadingText="Creating account..."
         >
           <span className="flex items-center gap-2">
-            <span>{loading ? "Creating account..." : "Get Started"}</span>
+            <span>Get Started</span>
             <span
               className="material-symbols-outlined leading-none"
               style={{ fontSize: "18px" }}

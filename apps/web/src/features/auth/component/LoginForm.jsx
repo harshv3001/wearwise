@@ -72,11 +72,12 @@ export default function LoginForm({ onSubmit, loading }) {
         <Button
           className="w-full"
           variant="primary"
-          disabled={loading}
+          loading={loading}
+          loadingText="Signing in..."
           type="submit"
         >
           <span className="flex items-center gap-2">
-            <span> {loading ? "Signing in..." : "Sign in"}</span>
+            <span>Sign in</span>
             <span
               className="material-symbols-outlined  leading-none"
               style={{ fontSize: "18px" }}

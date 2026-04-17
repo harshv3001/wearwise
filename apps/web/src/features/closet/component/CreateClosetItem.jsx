@@ -34,6 +34,7 @@ export default function CreateClosetItem({ open, onClose }) {
   const [errors, setErrors] = useState({});
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
+  const isSubmitting = createItemMutation.isPending || isUploadingImage;
 
   const onChange = (field, value) => {
     setFormData((prev) => ({
@@ -229,11 +230,10 @@ export default function CreateClosetItem({ open, onClose }) {
               variant="primary"
               size="lg"
               onClick={handleSubmit}
-              disabled={createItemMutation.isPending || isUploadingImage}
+              loading={isSubmitting}
+              loadingText={isUploadingImage ? "Uploading image..." : "Saving item..."}
             >
-              {createItemMutation.isPending || isUploadingImage
-                ? "Saving..."
-                : "Add to Closet"}
+              Add to Closet
             </Button>
           </div>
         </div>

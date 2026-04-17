@@ -39,8 +39,10 @@ export default function OutfitActionsBar({
           className={styles.button}
           disabled={totalItems === 0 || isSaving}
           onClick={onSave}
+          loading={isSaving}
+          loadingText="Saving outfit..."
         >
-          {isSaving ? "Saving..." : saveLabel}
+          {saveLabel}
         </Button>
       </div>
     </div>
