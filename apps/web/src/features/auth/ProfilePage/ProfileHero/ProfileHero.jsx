@@ -6,6 +6,7 @@ import ImageWithFallback from "../../../../app/components/ui/ImageWithFallback/I
 import { getUserFullName, getUserInitials } from "../profileHelpers";
 import styles from "./ProfileHero.module.scss";
 import { useUploadProfileImageMutation } from "../../hooks/useUploadProfileImageMutation";
+import { showErrorToast, showSuccessToast } from "../../../../lib/toast";
 
 export default function ProfileHero({
   user,
@@ -36,8 +37,13 @@ export default function ProfileHero({
 
       try {
         await uploadProfileImageMutation.mutateAsync(uploadData);
+        showSuccessToast(
+          user?.image_url
+            ? "Profile photo updated successfully."
+            : "Profile photo uploaded successfully."
+        );
       } catch (error) {
-        setSaveError(
+        showErrorToast(
           error?.response?.data?.detail ||
             "We couldn't upload your photo. Please try again."
         );
@@ -91,13 +97,12 @@ export default function ProfileHero({
                 variant="secondary"
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={uploadProfileImageMutation.isPending}
+                loading={uploadProfileImageMutation.isPending}
+                loadingText={
+                  user?.image_url ? "Updating photo..." : "Uploading photo..."
+                }
               >
-                {uploadProfileImageMutation.isPending
-                  ? "Uploading..."
-                  : user?.image_url
-                  ? "Change Photo"
-                  : "Upload Photo"}
+                {user?.image_url ? "Change Photo" : "Upload Photo"}
               </Button>
             )}
             <div className={styles.editActions}>
@@ -114,9 +119,10 @@ export default function ProfileHero({
                 variant="primary"
                 size="sm"
                 onClick={onSave}
-                disabled={isSaving}
+                loading={isSaving}
+                loadingText="Saving changes..."
               >
-                {isSaving ? "Saving..." : "Save Changes"}
+                Save Changes
               </Button>
             </div>
           </>

@@ -20,6 +20,14 @@ export function formatDisplayValue(value, fallback = "-") {
   return String(value);
 }
 
+export function formatCapitalizedValue(value, fallback = "-") {
+  if (value === null || value === undefined || value === "") return fallback;
+
+  return String(value)
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 export function isValidEmail(value) {
   return /^\S+@\S+\.\S+$/.test((value || "").trim());
 }

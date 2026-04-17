@@ -10,6 +10,7 @@ import {
 } from "../../../features/auth/api/authApi";
 import { setToken } from "../../../lib/auth";
 import { getApiErrorMessage } from "../../../lib/apiError";
+import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 
 export default function OAuthCallbackPage() {
   const router = useRouter();
@@ -25,13 +26,13 @@ export default function OAuthCallbackPage() {
     const oauthError = searchParams.get("oauth_error");
 
     if (oauthError) {
-      alert(`Social login failed: ${oauthError}`);
+      showErrorToast(`Social login failed: ${oauthError}`);
       router.replace("/login");
       return;
     }
 
     if (!code) {
-      alert("Social login could not be completed.");
+      showErrorToast("Social login could not be completed.");
       router.replace("/login");
       return;
     }
@@ -48,10 +49,11 @@ export default function OAuthCallbackPage() {
           queryClient.setQueryData(currentUserQueryKey, data.user);
         }
 
+        showSuccessToast("Signed in successfully.");
         router.replace("/dashboard");
       })
       .catch((err) => {
-        alert(getApiErrorMessage(err, "Social login failed"));
+        showErrorToast(getApiErrorMessage(err, "Social login failed"));
         router.replace("/login");
       });
   }, [queryClient, router, searchParams]);

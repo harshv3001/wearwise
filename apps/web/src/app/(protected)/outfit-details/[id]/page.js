@@ -3,18 +3,18 @@
 import { useParams } from "next/navigation";
 import { useSingleOutfitQuery } from "../../../../features/outfits/hooks/useOutfitsQuery";
 import OutfitDetails from "../../../../features/outfits/components/OutfitDetails";
+import OutfitDetailsSkeleton from "../../../../features/outfits/components/OutfitDetailsSkeleton";
 
 const OutfitDetailsPage = () => {
-  // const { id: selectedOutfitId } = params;
   const params = useParams();
   const selectedOutfitId = params.id;
-  const { data: singleOutfit } = useSingleOutfitQuery(selectedOutfitId);
-  return (
-    <main style={{ padding: 24 }}>
-      <h1>Outfit Details</h1>
-      <OutfitDetails outfit={singleOutfit} />
-    </main>
-  );
+  const { data: singleOutfit, isLoading } = useSingleOutfitQuery(selectedOutfitId);
+
+  if (isLoading) {
+    return <OutfitDetailsSkeleton />;
+  }
+
+  return <OutfitDetails outfit={singleOutfit} />;
 };
 
 export default OutfitDetailsPage;

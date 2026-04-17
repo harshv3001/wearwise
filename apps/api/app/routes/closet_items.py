@@ -5,7 +5,12 @@ from sqlalchemy.orm import Session
 from sqlalchemy import asc, desc
 
 from app.database import get_db
-from app.schemas.closet_items import ClosetItemCreate, ClosetItemOut, ClosetItemUpdate
+from app.schemas.closet_items import (
+    ClosetItemCreate,
+    ClosetItemOut,
+    ClosetItemSummaryOut,
+    ClosetItemUpdate,
+)
 from app.models import user as user_models
 from app.models import closet_items as closet_items_models
 from app.oauth2 import get_current_user
@@ -13,12 +18,22 @@ from app.utils import save_upload_file, build_image_url, delete_upload_file
 
 router = APIRouter(prefix="/closet-items", tags=["Closet Items"])
 
+def _normalize_category(value: Optional[str]) -> Optional[str]:
+    if value is None:
+        return None
+
+    trimmed = " ".join(str(value).strip().split())
+    if not trimmed:
+        return None
+
+    return trimmed.title()
+
 def _serialize_closet_item(item: closet_items_models.ClosetItem) -> ClosetItemOut:
     return ClosetItemOut(
         id=item.id,
         user_id=item.user_id,
         name=item.name,
-        category=item.category,
+        category=_normalize_category(item.category),
         color=item.color,
         season=item.season,
         brand=item.brand,
@@ -34,14 +49,28 @@ def _serialize_closet_item(item: closet_items_models.ClosetItem) -> ClosetItemOu
     )
 
 
+def _serialize_closet_item_summary(
+    item: closet_items_models.ClosetItem,
+) -> ClosetItemSummaryOut:
+    return ClosetItemSummaryOut(
+        id=item.id,
+        name=item.name,
+        category=_normalize_category(item.category) or "Uncategorized",
+        image_url=build_image_url(item.image_path),
+    )
+
+
 @router.post("/", response_model=ClosetItemOut, status_code=status.HTTP_201_CREATED)
 def create_item(
     payload: ClosetItemCreate,
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
 ):
+    payload_data = payload.model_dump()
+    payload_data["category"] = _normalize_category(payload_data.get("category"))
+
     item = closet_items_models.ClosetItem(
-        user_id=current_user.id, **payload.model_dump()
+        user_id=current_user.id, **payload_data
     )
     db.add(item)
     db.commit()
@@ -49,7 +78,7 @@ def create_item(
     return _serialize_closet_item(item)
 
 
-@router.get("/", response_model=List[ClosetItemOut])
+@router.get("/", response_model=List[ClosetItemSummaryOut])
 def list_items(
     db: Session = Depends(get_db),
     current_user: user_models.User = Depends(get_current_user),
@@ -70,7 +99,8 @@ def list_items(
     query = db.query(closet_item).filter(closet_item.user_id == current_user.id)
 
     if category:
-        query = query.filter(closet_item.category == category)
+        normalized_category = _normalize_category(category)
+        query = query.filter(closet_item.category == normalized_category)
     if color:
         query = query.filter(closet_item.color == color)
     if season:
@@ -113,7 +143,7 @@ def list_items(
         )
 
     items = query.offset(offset).limit(limit).all()
-    return [_serialize_closet_item(item) for item in items]
+    return [_serialize_closet_item_summary(item) for item in items]
 
 
 @router.get("/{item_id}", response_model=ClosetItemOut)
@@ -155,6 +185,9 @@ def update_item(
     update_data = payload.model_dump(exclude_unset=True)
     if not update_data:
         return _serialize_closet_item(item)
+
+    if "category" in update_data:
+        update_data["category"] = _normalize_category(update_data["category"])
 
     qset.update(update_data, synchronize_session=False)
     db.commit()

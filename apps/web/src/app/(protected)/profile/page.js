@@ -26,6 +26,7 @@ import {
   getAuthIdentitiesApi,
 } from "@/features/auth/api/authApi";
 import { useQuery } from "@tanstack/react-query";
+import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 
 export default function ProfilePage() {
   const { data: user, isLoading } = useCurrentUser();
@@ -96,6 +97,7 @@ export default function ProfilePage() {
       const diffPayload = computeProfileDiff(originalPayload, currentPayload);
       await updateProfileMutation.mutateAsync(diffPayload);
       setIsEditing(false);
+      showSuccessToast("Profile updated successfully.");
     } catch (error) {
       const detail =
         error?.response?.data?.detail ||
@@ -111,6 +113,11 @@ export default function ProfilePage() {
       }
 
       setSaveError(
+        typeof detail === "string"
+          ? detail
+          : "We couldn't save your changes. Please try again."
+      );
+      showErrorToast(
         typeof detail === "string"
           ? detail
           : "We couldn't save your changes. Please try again."
@@ -170,8 +177,6 @@ export default function ProfilePage() {
     () => Boolean(identities?.has_password),
     [identities]
   );
-
-  console.log("hasPassword", hasPassword);
 
   return (
     <main className={styles.page}>

@@ -1,8 +1,11 @@
 .carousel {
-  width: 380px;
+  width: 340px;
   box-sizing: border-box;
+  margin: auto;
+  max-height: 180px;
 
-  button {
+  .button_container button,
+  .carousel_header button {
     border-radius: 50%;
     transition: background-color 0.15s ease-in color 0.2s ease-in;
     color: #888282;
@@ -11,23 +14,25 @@
       top: 2px;
     }
     &:hover {
-      background-color: #EEE0F0;
+      background-color: #eee0f0;
       color: #333030;
       cursor: pointer;
     }
-  } 
+  }
 }
 
 .carousel div.is-in-view {
   opacity: 25%;
   z-index: 1;
 
-  & > a.view-left {
-    transform: perspective(500px) translate3d(60%,0,-60px);
+  & > a.view-left,
+  & > button.view-left {
+    transform: perspective(500px) translate3d(60%, 0, -60px);
   }
 
-  & > a.view-right {
-    transform: perspective(500px) translate3d(-60%,0,-60px);
+  & > a.view-right,
+  & > button.view-right {
+    transform: perspective(500px) translate3d(-60%, 0, -60px);
   }
 }
 
@@ -35,9 +40,9 @@
   opacity: 100%;
   z-index: 2;
 
-  & > a {
-    transform: translate3d(0,0,0);
+  & > a,
+  & > button {
+    transform: translate3d(0, 0, 0);
     z-index: 2;
   }
 }
-

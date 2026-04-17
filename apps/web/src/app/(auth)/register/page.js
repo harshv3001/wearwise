@@ -13,6 +13,11 @@ import {
 import { setToken } from "../../../lib/auth";
 import { getApiErrorMessage } from "../../../lib/apiError";
 import Button from "@/app/components/ui/Button";
+import {
+  showErrorToast,
+  showSuccessToast,
+  showWarningToast,
+} from "../../../lib/toast";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -37,7 +42,9 @@ export default function RegisterPage() {
 
       const token = data?.access_token || data?.token;
       if (!token) {
-        alert("Registered, but token missing. Please login manually.");
+        showWarningToast(
+          "Registered, but no token was returned. Please sign in manually."
+        );
         router.replace("/login");
         return;
       }
@@ -46,9 +53,10 @@ export default function RegisterPage() {
       if (data?.user) {
         queryClient.setQueryData(currentUserQueryKey, data.user);
       }
+      showSuccessToast("Account created successfully.");
       router.replace("/dashboard");
     } catch (err) {
-      alert(getApiErrorMessage(err, "Registration failed"));
+      showErrorToast(getApiErrorMessage(err, "Registration failed"));
     }
   };
 
@@ -56,12 +64,12 @@ export default function RegisterPage() {
     try {
       const data = await startOAuthApi(provider, "login");
       if (!data?.authorization_url) {
-        alert("Unable to start social signup right now.");
+        showErrorToast("Unable to start social signup right now.");
         return;
       }
       window.location.assign(data.authorization_url);
     } catch (err) {
-      alert(getApiErrorMessage(err, `Could not start ${provider} signup`));
+      showErrorToast(getApiErrorMessage(err, `Could not start ${provider} signup`));
     }
   };
 

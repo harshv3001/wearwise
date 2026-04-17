@@ -25,6 +25,14 @@ export const STYLE_OPTIONS = [
   { label: "Other", value: "other" },
 ];
 
+export const OCCASION_OPTIONS = [
+  { value: "casual", label: "Casual" },
+  { value: "formal", label: "Formal" },
+  { value: "work", label: "Work" },
+  { value: "party", label: "Party" },
+  { value: "travel", label: "Travel" },
+];
+
 export const COLOR_OPTIONS = [
   {
     label: "Black",
@@ -103,6 +111,11 @@ export const GENDER_OPTIONS = [
   { label: "Woman", value: "female" },
   { label: "Other", value: "other" },
   { label: "Prefer not to say", value: "prefer_not_to_say" },
+];
+
+export const FAVORITE_OPTIONS = [
+  { value: "true", label: "Yes" },
+  { value: "false", label: "No" },
 ];
 
 export const STATIC_AI_SETTINGS = {

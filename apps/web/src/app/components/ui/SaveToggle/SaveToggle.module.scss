@@ -1,0 +1,57 @@
+.toggle {
+  min-width: 120px;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1px solid #d9c9c4;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #6f5b56;
+  transition: border-color 160ms ease, background-color 160ms ease,
+    color 160ms ease, opacity 160ms ease;
+}
+
+.toggle:hover:not(:disabled) {
+  border-color: #c3a29a;
+  background: #fff4f1;
+}
+
+.toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.selected {
+  border-color: #1f7a67;
+  background: #dff7ee;
+  color: #134c40;
+}
+
+.selected:hover:not(:disabled) {
+  border-color: #1f7a67;
+  background: #dff7ee;
+}
+
+.label {
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.indicator {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #cdb9b2;
+  border-radius: 999px;
+  background: #fff8f6;
+  color: transparent;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.indicatorSelected {
+  border-color: #1f7a67;
+  background: #1f7a67;
+  color: #ffffff;
+}

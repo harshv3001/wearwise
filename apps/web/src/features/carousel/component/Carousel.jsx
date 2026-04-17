@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import ClassNames from "embla-carousel-class-names";
 import Link from "next/link";
@@ -13,7 +13,7 @@ function padItems(closetItems) {
   if (closetItems.length === 0) return closetItems;
   if (closetItems.length === 1) return [BLANK_ITEM, closetItems[0], BLANK_ITEM];
   if (closetItems.length === 2)
-    return [closetItems[0], closetItems[1], BLANK_ITEM];
+    return [BLANK_ITEM, closetItems[0], closetItems[1]];
   return closetItems;
 }
 
@@ -24,33 +24,51 @@ export default function Carousel({
   parentSetSelectedCallback,
   disableRemoval,
   hideTitle,
+  hideHeader,
+  onItemClick,
+  onItemDragStart,
+  enableCarouselDrag = true,
+  getItemHref = (closetItem) => `/closet/${closetItem?.id}`,
 }) {
-  const paddedItems = padItems(closetItems);
+  const paddedItems = useMemo(() => padItems(closetItems), [closetItems]);
   const isSingleItem = closetItems.length === 1;
+  const shouldEnableFullLoop = closetItems.length > 2;
+  const shouldUseDirectionalSwipe = closetItems.length === 2;
+  const parentSetSelectedCallbackRef = useRef(parentSetSelectedCallback);
+  const pointerStateRef = useRef({
+    pointerId: null,
+    startX: null,
+    swiped: false,
+  });
 
-  const startIndex = isSingleItem ? 1 : 0;
+  const startIndex = isSingleItem || shouldUseDirectionalSwipe ? 1 : 0;
   const [selectedSnap, setSelectedSnap] = useState(startIndex);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
-      loop: true,
+      loop: shouldEnableFullLoop,
       align: "center",
       startIndex,
+      watchDrag: shouldEnableFullLoop && enableCarouselDrag,
     },
     [ClassNames()]
   );
+
+  useEffect(() => {
+    parentSetSelectedCallbackRef.current = parentSetSelectedCallback;
+  }, [parentSetSelectedCallback]);
 
   const onSelect = useCallback(() => {
     if (!emblaApi || !paddedItems.length) return;
 
     const snap = emblaApi.selectedScrollSnap();
-    setSelectedSnap(snap);
+    setSelectedSnap((prev) => (prev === snap ? prev : snap));
 
     const selectedItem = paddedItems[snap];
     if (selectedItem && !selectedItem.isBlank) {
-      parentSetSelectedCallback(selectedItem.id);
+      parentSetSelectedCallbackRef.current(selectedItem);
     }
-  }, [emblaApi, paddedItems, parentSetSelectedCallback]);
+  }, [emblaApi, paddedItems]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -69,6 +87,69 @@ export default function Carousel({
     selectedSnap === paddedItems.length - 1 ? 0 : selectedSnap + 1;
   const isPrevBlank = paddedItems[prevIndex]?.isBlank ?? false;
   const isNextBlank = paddedItems[nextIndex]?.isBlank ?? false;
+
+  const handleViewportPointerDown = useCallback(
+    (event) => {
+      if (!shouldUseDirectionalSwipe) return;
+      pointerStateRef.current = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        swiped: false,
+      };
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    },
+    [shouldUseDirectionalSwipe]
+  );
+
+  const handleViewportPointerMove = useCallback(
+    (event) => {
+      if (!shouldUseDirectionalSwipe) return;
+
+      const { pointerId, startX, swiped } = pointerStateRef.current;
+      if (pointerId !== event.pointerId || startX === null || swiped) return;
+
+      const deltaX = event.clientX - startX;
+      if (Math.abs(deltaX) < 30) return;
+
+      if (deltaX > 0) {
+        if (!isPrevBlank) {
+          emblaApi?.scrollPrev();
+        }
+      } else if (!isNextBlank) {
+        emblaApi?.scrollNext();
+      }
+
+      pointerStateRef.current = {
+        pointerId,
+        startX,
+        swiped: true,
+      };
+    },
+    [emblaApi, isNextBlank, isPrevBlank, shouldUseDirectionalSwipe]
+  );
+
+  const handleViewportPointerUp = useCallback(
+    (event) => {
+      if (!shouldUseDirectionalSwipe) return;
+      if (pointerStateRef.current.pointerId === event.pointerId) {
+        event.currentTarget.releasePointerCapture?.(event.pointerId);
+      }
+      pointerStateRef.current = {
+        pointerId: null,
+        startX: null,
+        swiped: false,
+      };
+    },
+    [shouldUseDirectionalSwipe]
+  );
+
+  const resetDirectionalSwipe = useCallback(() => {
+    pointerStateRef.current = {
+      pointerId: null,
+      startX: null,
+      swiped: false,
+    };
+  }, []);
 
   const determineSlideInnerClassName = useCallback(
     (index) => {
@@ -97,37 +178,75 @@ export default function Carousel({
             }`}
           />
         ) : (
-          <Link
-            className={determineSlideInnerClassName(index)}
-            href={`/closet/${closetItem?.id}`}
-          >
-            <ImageWithFallback
-              imageUrl={closetItem?.image_url}
-              alt={closetItem?.name}
-              fallbackText={closetItem?.name}
-              imgClassName={styles.outfitItemBox}
-            />
-            <div className="font-bold">{closetItem?.name}</div>
-          </Link>
+          (() => {
+            const href =
+              typeof getItemHref === "function"
+                ? getItemHref(closetItem)
+                : null;
+            const slideClassName = determineSlideInnerClassName(index);
+            const slideContent = (
+              <>
+                <ImageWithFallback
+                  imageUrl={closetItem?.image_url}
+                  alt={closetItem?.name}
+                  fallbackText={closetItem?.name}
+                  imgClassName={styles.outfitItemBox}
+                />
+                <div className={styles.closetItemName}>{closetItem?.name}</div>
+              </>
+            );
+
+            if (href) {
+              return (
+                <Link className={slideClassName} href={href}>
+                  {slideContent}
+                </Link>
+              );
+            }
+
+            return (
+              <button
+                type="button"
+                className={slideClassName}
+                onClick={() => onItemClick?.(closetItem)}
+                draggable={Boolean(onItemDragStart)}
+                onDragStart={(event) => onItemDragStart?.(event, closetItem)}
+              >
+                {slideContent}
+              </button>
+            );
+          })()
         )}
       </div>
     ));
 
+  const showHeader = !hideHeader && (!hideTitle || !disableRemoval);
+
   return (
     <div className="carousel">
-      <div className={styles.carousel_header}>
-        {!hideTitle ? <h4>{categoryName}</h4> : null}
+      {showHeader && (
+        <div className={styles.carousel_header}>
+          {!hideTitle ? <h4>{categoryName}</h4> : null}
 
-        {!disableRemoval ? (
-          <button onClick={removalCallback} type="button">
-            <span className="material-symbols-outlined" aria-hidden="true">
-              remove
-            </span>
-          </button>
-        ) : null}
-      </div>
+          {!disableRemoval ? (
+            <button onClick={removalCallback} type="button">
+              <span className="material-symbols-outlined" aria-hidden="true">
+                remove
+              </span>
+            </button>
+          ) : null}
+        </div>
+      )}
 
-      <div className={styles.embla__viewport} ref={emblaRef}>
+      <div
+        className={styles.embla__viewport}
+        ref={emblaRef}
+        onPointerDown={handleViewportPointerDown}
+        onPointerMove={handleViewportPointerMove}
+        onPointerUp={handleViewportPointerUp}
+        onPointerCancel={resetDirectionalSwipe}
+        onPointerLeave={resetDirectionalSwipe}
+      >
         <div className={styles.embla__container}>{renderSlides()}</div>
       </div>
 

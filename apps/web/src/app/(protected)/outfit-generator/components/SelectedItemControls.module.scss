@@ -1,0 +1,46 @@
+.empty,
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  border-radius: 20px;
+  padding: 12px 16px;
+}
+
+.empty {
+  border: 1px dashed #e7d2cb;
+  background: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  color: #866a64;
+  box-shadow: 0 10px 24px rgba(201, 161, 149, 0.12);
+  backdrop-filter: blur(6px);
+}
+
+.controls {
+  border: 1px solid #edd7d0;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 30px rgba(205, 165, 150, 0.18);
+}
+
+.meta {
+  min-width: 0;
+  padding-right: 8px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #c28978;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b3835;
+}

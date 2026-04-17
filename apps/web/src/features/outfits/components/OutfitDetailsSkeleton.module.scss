@@ -1,0 +1,146 @@
+.page {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px 0 40px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid var(--ww-border-secondary);
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.headerActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.detailsCard {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #ead9d5;
+  border-radius: 28px;
+  background: #fffaf8;
+}
+
+.fieldsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bodyGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.selectedCard {
+  padding: 20px;
+  border: 1px solid #ead9d5;
+  border-radius: 28px;
+  background: #ffffff;
+}
+
+.selectedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.selectedList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.itemRow {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid #ead9d5;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.itemImage {
+  border-radius: 12px;
+}
+
+.itemText {
+  min-width: 0;
+}
+
+.itemMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.previewFrame {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 350px;
+  padding: 24px;
+  border: 1px dashed #d4b7af;
+  border-radius: 24px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 248, 246, 0.94),
+    rgba(250, 238, 233, 0.88)
+  );
+}
+
+.previewImage {
+  border-radius: 18px;
+}
+
+@media (max-width: 900px) {
+  .fieldsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .fieldsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .itemRow {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .itemMeta {
+    grid-column: 2;
+    align-items: flex-start;
+  }
+}

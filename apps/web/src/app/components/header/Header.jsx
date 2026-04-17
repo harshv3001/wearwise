@@ -57,7 +57,9 @@ export default function Header() {
         </div>
       </header>
 
-      <MobileSidebar open={open} onClose={close} />
+      <MobileSidebar open={open} onClose={close}>
+        <HeaderNav onNavigate={close} />
+      </MobileSidebar>
     </>
   );
 }

@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from .routes import auth, closet_items, locations, outfit, wear, weather
+from .routes import auth, closet_items, locations, media, outfit, wear, weather
 
 from . import models
 
@@ -38,6 +38,7 @@ app.include_router(locations.router)
 app.include_router(weather.router)
 app.include_router(closet_items.router)
 app.include_router(outfit.router)
+app.include_router(media.router)
 app.include_router(wear.router)
 
 

@@ -85,6 +85,12 @@
   color: #2a211a;
 }
 
+.skeletonStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
 .empty,
 .error,
 .loading {

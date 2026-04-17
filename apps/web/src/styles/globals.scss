@@ -180,3 +180,65 @@ body {
 ::-webkit-scrollbar-track {
   background-color: #fafafa;
 }
+
+:root {
+  --toastify-color-success: #2d8a5f;
+  --toastify-color-error: #cf5c45;
+  --toastify-color-warning: #d28b26;
+  --toastify-color-info: #5a7ca8;
+  --toastify-text-color-light: #3c2d2a;
+  --toastify-toast-bd-radius: 18px;
+  --toastify-font-family: system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  --toastify-toast-width: 360px;
+}
+
+.Toastify__toast-container {
+  width: min(300px, calc(100vw - 24px));
+  z-index: 1200;
+}
+
+.Toastify__toast-container--top-right,
+.Toastify__toast-container--top-left,
+.Toastify__toast-container--top-center {
+  top: calc(70px + 14px);
+}
+
+.ww-toast {
+  background: rgba(255, 255, 255, 0.96) !important;
+  color: #3c2d2a !important;
+  border: 1px solid rgba(76, 51, 44, 0.08);
+  box-shadow: 0 14px 28px rgba(67, 45, 41, 0.16);
+  backdrop-filter: blur(10px);
+  padding: 12px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  font-weight: 500;
+  width: 100%;
+}
+
+.ww-toast-body {
+}
+
+.ww-toast-progress {
+  opacity: 0.9;
+}
+
+.ww-toast .Toastify__close-button,
+.Toastify__close-button--light {
+  color: #7f5f58;
+  opacity: 0.7;
+}
+
+.ww-toast .Toastify__close-button:hover,
+.Toastify__close-button--light:hover {
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .Toastify__toast-container--top-right,
+  .Toastify__toast-container--top-left,
+  .Toastify__toast-container--top-center {
+    top: calc(70px + 10px);
+  }
+}

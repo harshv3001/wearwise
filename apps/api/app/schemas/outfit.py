@@ -1,13 +1,30 @@
-from app.schemas.closet_items import ClosetItemOut
+from app.schemas.closet_items import ClosetItemOut, ClosetItemSummaryOut
 from typing import Optional, List
 from uuid import UUID
 from pydantic import BaseModel, Field
 from datetime import datetime
 
 
+class OutfitCanvasLayoutBase(BaseModel):
+    closet_item_id: UUID
+    position: int = Field(default=0, ge=0)
+    x: float
+    y: float
+    width: float = Field(gt=0)
+    height: float = Field(gt=0)
+    rotation: float = 0
+    scale_x: float = Field(default=1, gt=0)
+    scale_y: float = Field(default=1, gt=0)
+
+
+class OutfitCanvasLayoutEntry(OutfitCanvasLayoutBase):
+    pass
+
+
 class OutfitItemBase(BaseModel):
     closet_item_id: UUID
     position: int = Field(default=0, ge=0)
+    layer: int = Field(default=1, ge=1)
     note: Optional[str] = Field(default=None, max_length=255)
 
 
@@ -32,8 +49,23 @@ class OutfitBase(BaseModel):
     notes: Optional[str] = Field(default=None, max_length=500)
 
 
+class OutfitReadBase(OutfitBase):
+    id: UUID
+    image_url: Optional[str] = None
+    canvas_layout: List[OutfitCanvasLayoutEntry] = Field(default_factory=list)
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+
+class PaginationMeta(BaseModel):
+    limit: int
+    offset: int
+    total: int
+
+
 class OutfitCreate(OutfitBase):
     items: List[OutfitItemCreate] = Field(default_factory=list)
+    canvas_layout: List[OutfitCanvasLayoutEntry] = Field(default_factory=list)
 
 
 class OutfitUpdate(BaseModel):
@@ -43,40 +75,26 @@ class OutfitUpdate(BaseModel):
     is_favorite: Optional[bool] = None
     notes: Optional[str] = Field(default=None, max_length=500)
     items: Optional[List[OutfitItemCreate]] = None
+    canvas_layout: Optional[List[OutfitCanvasLayoutEntry]] = None
 
 
-class OutfitOut(OutfitBase):
-    id: UUID
-    image_url: Optional[str] = None
-    created_at: datetime
-    updated_at: Optional[datetime] = None
+class OutfitOut(OutfitReadBase):
     items: List[OutfitItemOut] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
 
 
-class OutfitListItem(BaseModel):
-    id: UUID
-    name: str
-    occasion: Optional[str] = None
-    season: Optional[str] = None
-    is_favorite: bool
-    image_url: Optional[str] = None
-    created_at: datetime
-    updated_at: Optional[datetime] = None
+class OutfitListItem(OutfitReadBase):
     item_count: int
-    preview_items: List[OutfitItemOut] = Field(default_factory=list)
+    preview_items: List[ClosetItemSummaryOut] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
 
 
-class OutfitListResponse(BaseModel):
+class OutfitListResponse(PaginationMeta):
     items: List[OutfitListItem]
-    limit: int
-    offset: int
-    total: int
 
 
 class OutfitItemDetailOut(OutfitItemBase):
@@ -87,11 +105,7 @@ class OutfitItemDetailOut(OutfitItemBase):
         from_attributes = True
 
 
-class OutfitDetailOut(OutfitBase):
-    id: UUID
-    image_url: Optional[str] = None
-    created_at: datetime
-    updated_at: Optional[datetime] = None
+class OutfitDetailOut(OutfitReadBase):
     items: List[OutfitItemDetailOut] = Field(default_factory=list)
 
     class Config:

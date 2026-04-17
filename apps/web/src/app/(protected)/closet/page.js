@@ -1,32 +1,21 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
-import Carousel from "../../../features/carousel/component/Carousel.jsx";
-import Accordion from "../../components/ui/Accordion/Accordion.jsx";
 import Button from "../../components/ui/Button.jsx";
 import CreateClosetItem from "../../../features/closet/component/CreateClosetItem.jsx";
+import ClosetAccordion from "@/app/components/closet/ClosetAccordion.jsx";
+import { groupClosetItemsByCategory } from "@/app/components/closet/closetCategoryUtils.js";
+import ClosetPageSkeleton from "@/features/closet/component/ClosetPageSkeleton.jsx";
 
 export default function ClosetPage() {
-  const [categories, setCategories] = useState({});
   const [openItemModal, setOpenItemModal] = useState(false);
 
-  const { data: allClosetItems } = useClosetItemsQuery();
+  const { data: allClosetItems, isLoading } = useClosetItemsQuery();
 
-  useEffect(() => {
-    if (!allClosetItems) return;
-
-    const closetData = {};
-    allClosetItems.forEach((ci) => {
-      if (!closetData[ci.category]) {
-        closetData[ci.category] = [ci];
-      } else {
-        closetData[ci.category].push(ci);
-      }
-    });
-
-    setCategories(closetData);
-  }, [allClosetItems]);
-
+  const categories = useMemo(
+    () => groupClosetItemsByCategory(allClosetItems || []),
+    [allClosetItems]
+  );
   const categoryNames = Object.keys(categories);
 
   const columnCount = 2;
@@ -51,28 +40,17 @@ export default function ClosetPage() {
         </Button>
       </div>
 
-      {allClosetItems ? (
+      {isLoading ? (
+        <ClosetPageSkeleton />
+      ) : allClosetItems ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-[90vw] mx-auto">
           {columns.map((column, columnIndex) => (
             <div key={columnIndex} className="flex flex-col gap-6">
-              {column.map((categoryName, i) => {
-                const props = {
-                  categoryName,
-                  closetItems: categories[categoryName],
-                  parentSetSelectedCallback: () => {},
-                  removalCallback: () => {},
-                };
-
-                return (
-                  <Accordion
-                    key={categoryName}
-                    title={categoryName}
-                    startOpened={columnIndex === 0 && i === 0}
-                  >
-                    <Carousel disableRemoval hideTitle {...props} />
-                  </Accordion>
-                );
-              })}
+              <ClosetAccordion
+                categoryNames={column}
+                categoriesByName={categories}
+                defaultOpenCategory={columnIndex === 0 ? column[0] : undefined}
+              />
             </div>
           ))}
         </div>

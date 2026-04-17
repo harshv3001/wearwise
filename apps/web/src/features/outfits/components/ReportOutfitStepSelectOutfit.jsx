@@ -1,22 +1,29 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./ReportOutfitModal.module.scss";
 import Button from "../../../app/components/ui/Button";
 import OutfitItemsCarousel from "./OutfitItemsCarousel";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-
-import { ClassNames } from "@emotion/react";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
+import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
+import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
+import ReportOutfitSelectionSkeleton from "./ReportOutfitSelectionSkeleton";
+import {
+  showErrorToast,
+  showSuccessToast,
+  showWarningToast,
+} from "../../../lib/toast";
 
 export default function ReportOutfitStepSelectOutfit({
-  closetItems = [],
-  outfits,
   selectedDate,
-  setSelectedOutfitId,
-  selectedOutfitId,
+  onSuccess,
+  onPendingChange,
 }) {
+  const [selectedOutfitId, setSelectedOutfitId] = useState(null);
+  const createReportMutation = useCreateReportMutation();
+  const { data: outfits, isLoading, error } = useOutfitsQuery();
+
   const previewOutfits = useMemo(() => {
     return (outfits?.items || []).map((outfit) => ({
       id: outfit?.id,
@@ -24,26 +31,79 @@ export default function ReportOutfitStepSelectOutfit({
       occasion: outfit?.occasion,
       season: outfit?.season,
       image_url: outfit?.image_url,
-      items: closetItems
-        .filter((closetItem) =>
-          outfit?.preview_items.find(
-            (previewItem) => previewItem?.closet_item_id === closetItem?.id
-          )
-        )
-        .map((closetItem) => ({
-          id: closetItem?.id,
-          name: closetItem?.name,
-          category: closetItem?.category,
-          image_url: closetItem?.image_url,
-        })),
+      items: outfit?.preview_items || [],
     }));
-  }, [outfits, closetItems]);
-  const handleViewOutfitDetails = () => {
-    // Implement navigation to outfit details page or open a modal with outfit details
+  }, [outfits]);
+
+  useEffect(() => {
+    onPendingChange?.(createReportMutation.isPending);
+
+    return () => {
+      onPendingChange?.(false);
+    };
+  }, [createReportMutation.isPending, onPendingChange]);
+
+  const handleViewOutfitDetails = (outfitId) => {
+    return `/outfit-details/${outfitId}`;
   };
 
+  const handleSubmit = async () => {
+    if (!selectedOutfitId) {
+      showWarningToast("Please select an outfit to report.");
+      return;
+    }
+
+    const selectedOutfit = outfits?.items?.find(
+      (outfitItem) => outfitItem?.id === selectedOutfitId
+    );
+
+    if (!selectedOutfit) {
+      showErrorToast("The selected outfit could not be found.");
+      return;
+    }
+
+    const payload = {
+      date_worn: selectedDate,
+      outfit_id: selectedOutfit.id,
+    };
+
+    try {
+      const result = await createReportMutation.mutateAsync(payload);
+
+      if (result.wear_log_id) {
+        showSuccessToast("Outfit reported successfully.");
+        onSuccess?.();
+      }
+    } catch (submitError) {
+      showErrorToast(
+        submitError?.response?.data?.detail ||
+          submitError?.message ||
+          "Could not report this outfit."
+      );
+    }
+  };
+
+  if (isLoading) {
+    return <ReportOutfitSelectionSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="py-8 text-center">
+        Could not load saved outfits right now.
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col gap-6">
+    <form
+      id="report-outfit-form"
+      className="flex flex-col gap-6"
+      onSubmit={(event) => {
+        event.preventDefault();
+        handleSubmit();
+      }}
+    >
       <div className="flex items-center justify-between mx-16">
         <div>
           <span className="font-bold">Date selected:</span> {selectedDate}
@@ -67,12 +127,14 @@ export default function ReportOutfitStepSelectOutfit({
             key={`outfit-${outfitIndex}-${outfit?.id}`}
           >
             <div className={styles.outfitPreviewCard}>
-              <ImageWithFallback
-                imageUrl={outfit?.image_url}
-                alt={outfit?.name}
-                fallbackText={outfit?.name}
-                imgClassName={styles.outfitPreviewImage}
-              />
+              <div className={styles.outfitPreviewImageFrame}>
+                <ImageWithFallback
+                  imageUrl={outfit?.image_url}
+                  alt={outfit?.name}
+                  fallbackText={outfit?.name}
+                  className={styles.outfitPreviewImage}
+                />
+              </div>
               <div className="text-center">{outfit?.name}</div>
             </div>
 
@@ -106,7 +168,10 @@ export default function ReportOutfitStepSelectOutfit({
                     Select this outfit
                   </Button>
 
-                  <Link href={`/outfit-details/${outfit.id}`} target="_blank">
+                  <Link
+                    href={handleViewOutfitDetails(outfit.id)}
+                    target="_blank"
+                  >
                     <Button type="button" variant="primary" size="md">
                       View details
                     </Button>
@@ -116,7 +181,8 @@ export default function ReportOutfitStepSelectOutfit({
             </div>
           </div>
         ))}
+
       </div>
-    </div>
+    </form>
   );
 }

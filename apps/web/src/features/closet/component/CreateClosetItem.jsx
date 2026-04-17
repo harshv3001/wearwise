@@ -9,6 +9,7 @@ import { useRef, useState } from "react";
 import { useCreateClosetItemMutation } from "../hooks/useCreateClosetItemMutation";
 import { useUploadItemImageMutation } from "../hooks/useUploadItemImageMutations";
 import { SEASON_OPTIONS } from "../../../lib/static-data";
+import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 
 const initialFormData = {
   name: "",
@@ -34,6 +35,7 @@ export default function CreateClosetItem({ open, onClose }) {
   const [errors, setErrors] = useState({});
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
+  const isSubmitting = createItemMutation.isPending || isUploadingImage;
 
   const onChange = (field, value) => {
     setFormData((prev) => ({
@@ -79,10 +81,14 @@ export default function CreateClosetItem({ open, onClose }) {
         });
       }
 
-      alert("Closet item created successfully!");
+      showSuccessToast("Closet item created successfully.");
       handleClose();
     } catch (error) {
-      console.error("Failed to create closet item:", error);
+      showErrorToast(
+        error?.response?.data?.detail ||
+          error?.message ||
+          "Could not create this closet item."
+      );
     }
   };
 
@@ -229,11 +235,10 @@ export default function CreateClosetItem({ open, onClose }) {
               variant="primary"
               size="lg"
               onClick={handleSubmit}
-              disabled={createItemMutation.isPending || isUploadingImage}
+              loading={isSubmitting}
+              loadingText={isUploadingImage ? "Uploading image..." : "Saving item..."}
             >
-              {createItemMutation.isPending || isUploadingImage
-                ? "Saving..."
-                : "Add to Closet"}
+              Add to Closet
             </Button>
           </div>
         </div>

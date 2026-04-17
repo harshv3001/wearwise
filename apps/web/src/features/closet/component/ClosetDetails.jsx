@@ -2,9 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Button from "@/app/components/ui/Button";
-import Input from "@/app/components/ui/Input/Input";
-import SelectInput from "@/app/components/ui/SelectInput/SelectInput";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
+import EditableDetailField from "@/app/components/ui/EditableDetailField/EditableDetailField";
 import { useUpdateClosetItemMutation } from "../hooks/useUpdateClosetItemMutation";
 import { useUploadItemImageMutation } from "../hooks/useUploadItemImageMutations";
 import styles from "./ClosetDetails.module.scss";
@@ -14,6 +13,7 @@ import {
   formatDate,
   formatDisplayValue,
 } from "../../../lib/helperFunctions";
+import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 
 // ─── Pure helpers (no closure over component state) ───────────────────────────
 
@@ -99,68 +99,6 @@ function normalizePayload(formData) {
   };
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function Field({
-  isEditing,
-  label,
-  name,
-  value,
-  onChange,
-  type = "text",
-  placeholder = "",
-}) {
-  return (
-    <Input
-      label={label}
-      name={name}
-      type={type}
-      value={value}
-      onChange={onChange}
-      readOnly={!isEditing}
-      placeholder={placeholder}
-      inputClassName={isEditing ? styles.editableInput : styles.displayInput}
-      className={styles.field}
-    />
-  );
-}
-
-function renderField({ field, isEditing, value, onChange }) {
-  if (isEditing && field.type === "select") {
-    return (
-      <SelectInput
-        key={field.key}
-        label={field.label}
-        name={field.key}
-        value={value}
-        onChange={onChange}
-        options={field.options}
-        placeholder={`Select ${field.label.toLowerCase()}`}
-        className={styles.field}
-        selectClassName={styles.editableInput}
-      />
-    );
-  }
-
-  const displayValue = isEditing
-    ? value ?? ""
-    : field.format
-    ? field.format(value)
-    : formatDisplayValue(value);
-
-  return (
-    <Field
-      key={field.key}
-      isEditing={isEditing}
-      label={field.label}
-      name={field.key}
-      type={isEditing ? field.type : "text"}
-      value={displayValue}
-      onChange={onChange}
-    />
-  );
-}
-
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function ClosetDetails({ item }) {
@@ -198,8 +136,17 @@ export default function ClosetDetails({ item }) {
       return;
     }
 
-    await updateClosetItemMutation.mutateAsync({ itemId: item.id, payload });
-    setIsEditing(false);
+    try {
+      await updateClosetItemMutation.mutateAsync({ itemId: item.id, payload });
+      setIsEditing(false);
+      showSuccessToast("Closet item updated successfully.");
+    } catch (error) {
+      showErrorToast(
+        error?.response?.data?.detail ||
+          error?.message ||
+          "Could not update this closet item."
+      );
+    }
   }, [item, formData, originalPayload, updateClosetItemMutation]);
 
   const handleImageChange = useCallback(
@@ -213,10 +160,21 @@ export default function ClosetDetails({ item }) {
       const imageFormData = new FormData();
       imageFormData.append("file", selectedFile);
 
-      await uploadItemImageMutation.mutateAsync({
-        itemId: item.id,
-        formData: imageFormData,
-      });
+      try {
+        await uploadItemImageMutation.mutateAsync({
+          itemId: item.id,
+          formData: imageFormData,
+        });
+        showSuccessToast(
+          item?.image_url ? "Closet image updated successfully." : "Closet image uploaded successfully."
+        );
+      } catch (error) {
+        showErrorToast(
+          error?.response?.data?.detail ||
+            error?.message ||
+            "Could not update this closet image."
+        );
+      }
 
       event.target.value = "";
     },
@@ -245,10 +203,11 @@ export default function ClosetDetails({ item }) {
                 variant="primary"
                 size="sm"
                 onClick={handleSubmit}
-                disabled={updateClosetItemMutation.isPending}
+                loading={updateClosetItemMutation.isPending}
+                loadingText="Saving..."
                 className={styles.actionButton}
               >
-                {updateClosetItemMutation.isPending ? "Saving..." : "Save"}
+                Save
               </Button>
             </>
           ) : (
@@ -293,14 +252,13 @@ export default function ClosetDetails({ item }) {
             variant="secondary"
             size="sm"
             onClick={() => fileInputRef.current?.click()}
-            disabled={uploadItemImageMutation.isPending}
+            loading={uploadItemImageMutation.isPending}
+            loadingText={
+              item?.image_url ? "Updating image..." : "Uploading image..."
+            }
             className={styles.changeImageButton}
           >
-            {uploadItemImageMutation.isPending
-              ? "Updating Image..."
-              : item?.image_url
-              ? "Change Image"
-              : "Add Image"}
+            {item?.image_url ? "Change Image" : "Add Image"}
           </Button>
 
           <div className={styles.metaList}>
@@ -327,14 +285,18 @@ export default function ClosetDetails({ item }) {
 
         <div className={styles.formColumn}>
           <div className={styles.formGrid}>
-            {DETAIL_SECTIONS.map((field) =>
-              renderField({
-                field,
-                isEditing,
-                value: formData[field.key],
-                onChange: (e) => handleChange(field.key, e.target.value),
-              })
-            )}
+            {DETAIL_SECTIONS.map((field) => (
+              <EditableDetailField
+                key={field.key}
+                field={field}
+                isEditing={isEditing}
+                value={formData[field.key]}
+                onChange={(e) => handleChange(field.key, e.target.value)}
+                className={styles.field}
+                displayInputClassName={styles.displayInput}
+                editableInputClassName={styles.editableInput}
+              />
+            ))}
           </div>
         </div>
       </div>

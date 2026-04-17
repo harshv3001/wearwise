@@ -7,34 +7,11 @@ import styles from "./ReportOutfitModal.module.scss";
 import ReportOutfitStepDate from "./ReportOutfitStepDate";
 import ReportOutfitStepSelectOutfit from "./ReportOutfitStepSelectOutfit";
 import Button from "../../../app/components/ui/Button";
-import { useCreateOutfitMutation } from "../hooks/useCreateOutfitMutation";
-import { useUpdateOutfitMutation } from "../hooks/useUpdateOutfitMutation";
-import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
-import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
-import { useClosetItemsQuery } from "../../closet/hooks/useClosetItemsQuery";
-import { useSingleOutfitQuery } from "../hooks/useOutfitsQuery";
-
-const initialFormData = {
-  name: "",
-  occasion: "",
-  season: "",
-  notes: "",
-  isFavorite: false,
-};
 
 export default function ReportOutfitModal({ open, onClose }) {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
-  // const [selectedSource, setSelectedSource] = useState("closet");
-  const [selectedOutfitId, setSelectedOutfitId] = useState(null);
-  const [formData, setFormData] = useState(initialFormData);
-  // const [errors, setErrors] = useState({ name: false });
-  const createOutfitMutation = useCreateOutfitMutation();
-  const updateOutfitMutation = useUpdateOutfitMutation();
-  const createReportMutation = useCreateReportMutation();
-  const { data: outfits, isLoading, error } = useOutfitsQuery();
-
-  const { data: closetItems } = useClosetItemsQuery("");
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
 
   const isStepOneValid = !!selectedDate;
 
@@ -44,8 +21,8 @@ export default function ReportOutfitModal({ open, onClose }) {
 
   const handleClose = () => {
     setStep(1);
-
-    setSelectedOutfitId(null);
+    setSelectedDate("");
+    setIsSubmittingReport(false);
     onClose();
   };
 
@@ -58,76 +35,6 @@ export default function ReportOutfitModal({ open, onClose }) {
   const handlePrev = () => {
     if (step > 1) {
       setStep((prev) => prev - 1);
-    }
-  };
-
-  // const handleUpdate = async (outfitId) => {
-  //   try {
-  //     const result = await updateOutfitMutation.mutateAsync({
-  //       outfitId,
-  //       payload: {
-  //         name: "Updated Summer Outfit",
-  //         notes: "Changed notes",
-  //       },
-  //     });
-
-  //     console.log("outfit updated:", result);
-  //   } catch (error) {
-  //     console.error("update outfit failed:", error);
-  //   }
-  // };
-
-  const handleSubmit = async () => {
-    // if (formData.name.trim() === "") {
-    //   setErrors({ name: true });
-    //   return;
-    // }
-
-    // try {
-    //   const result = await createOutfitMutation.mutateAsync({
-    //     name: "Casual Summer Look",
-    //     notes: "White tee with jeans",
-    //     occasion: "casual",
-    //     season: "summer",
-    //     is_favorite: false,
-    //     items: [
-    //       { closet_item_id: 1, position: 1, note: "top" },
-    //       { closet_item_id: 2, position: 2, note: "bottom" },
-    //     ],
-    //   });
-
-    //   console.log("outfit created:", result);
-    // } catch (error) {
-    //   console.error("create outfit failed:", error);
-    // }
-
-    if (selectedOutfitId) {
-      const selectedOutfit = outfits?.items?.find(
-        (outfitItem) => outfitItem?.id === selectedOutfitId
-      );
-
-      const updatedSelectedOutfit = {
-        ...selectedOutfit,
-        items: selectedOutfit?.preview_items,
-      };
-
-      try {
-        const payload = {
-          date_worn: selectedDate,
-          outfit: updatedSelectedOutfit,
-        };
-
-        const result = await createReportMutation.mutateAsync(payload);
-
-        if (result.wear_log_id) {
-          alert("Outfit reported successfully!");
-          handleClose();
-        }
-      } catch (error) {
-        console.error("report outfit failed:", error);
-      }
-    } else {
-      alert("Please select an outfit to report");
     }
   };
 
@@ -158,11 +65,9 @@ export default function ReportOutfitModal({ open, onClose }) {
 
           {step === 2 && (
             <ReportOutfitStepSelectOutfit
-              selectedOutfitId={selectedOutfitId}
-              setSelectedOutfitId={setSelectedOutfitId}
               selectedDate={selectedDate}
-              closetItems={closetItems}
-              outfits={outfits}
+              onSuccess={handleClose}
+              onPendingChange={setIsSubmittingReport}
             />
           )}
         </div>
@@ -170,7 +75,12 @@ export default function ReportOutfitModal({ open, onClose }) {
         <div className="flex items-center justify-between">
           <div>
             {step > 1 ? (
-              <Button onClick={handlePrev} variant="secondary" size="sm">
+              <Button
+                onClick={handlePrev}
+                variant="secondary"
+                size="sm"
+                disabled={isSubmittingReport}
+              >
                 Prev
               </Button>
             ) : (
@@ -181,26 +91,26 @@ export default function ReportOutfitModal({ open, onClose }) {
           <div>
             {step < 2 ? (
               <Button
+                key="next-step-button"
+                type="button"
                 onClick={handleNext}
-                // disabled={isNextDisabled}
                 variant="secondary"
                 size="sm"
               >
                 Next
               </Button>
             ) : (
-              <div className="flex gap-6">
-                <Button onClick={handleSubmit} variant="primary" size="sm">
-                  Report Outfit
-                </Button>
-                {/* <Button
-                  onClick={() => handleUpdate(1)}
-                  variant="primary"
-                  size="sm"
-                >
-                  Change Outfit
-                </Button> */}
-              </div>
+              <Button
+                key="submit-report-button"
+                type="submit"
+                form="report-outfit-form"
+                variant="primary"
+                size="sm"
+                loading={isSubmittingReport}
+                loadingText="Reporting outfit..."
+              >
+                Report Outfit
+              </Button>
             )}
           </div>
         </div>

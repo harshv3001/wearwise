@@ -15,6 +15,15 @@ export async function createOutfitApi(payload) {
   return response.data;
 }
 
+export async function uploadOutfitImageApi(outfitId, formData) {
+  const response = await http.post(`/outfits/${outfitId}/image`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+}
+
 export async function updateOutfitApi(outfitId, payload) {
   const response = await http.patch(`/outfits/${outfitId}`, payload);
   return response.data;
