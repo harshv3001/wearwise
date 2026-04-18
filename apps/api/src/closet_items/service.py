@@ -4,7 +4,8 @@ from uuid import UUID
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
-from app.utils import build_image_url, delete_upload_file, save_upload_file
+from src.media.service import delete_upload_file, save_upload_file
+from src.media.utils import build_image_url
 from src.closet_items import queries as closet_item_queries
 from src.closet_items.constants import ALLOWED_SORT_FIELDS, DEFAULT_SUMMARY_CATEGORY
 from src.closet_items.exceptions import (

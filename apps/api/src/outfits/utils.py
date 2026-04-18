@@ -1,4 +1,4 @@
-from app.utils import build_image_url
+from src.media.utils import build_image_url
 from src.closet_items.constants import DEFAULT_SUMMARY_CATEGORY
 from src.closet_items.models import ClosetItem
 from src.outfits.schemas import (

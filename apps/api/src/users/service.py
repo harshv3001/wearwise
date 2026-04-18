@@ -2,7 +2,8 @@ from fastapi import Response, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app import utils
-from app.utils import build_image_url, delete_upload_file, save_upload_file
+from src.media.service import delete_upload_file, save_upload_file
+from src.media.utils import build_image_url
 from src.auth.schemas import ChangePasswordRequest
 from src.users import queries as user_queries
 from src.users.exceptions import (
