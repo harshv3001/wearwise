@@ -8,7 +8,7 @@ from fastapi import HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 
 from app import utils
-from app.services.oauth import (
+from src.auth.oauth import (
     build_frontend_callback_url,
     create_frontend_exchange_code,
     create_state_token,

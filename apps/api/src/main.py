@@ -4,7 +4,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app import models as _models
 from src.auth.router import router as auth_router
 from src.closet_items.router import router as closet_items_router
 from src.locations.router import router as locations_router

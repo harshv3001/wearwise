@@ -12,8 +12,8 @@ import jwt
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.config import settings
 from src.auth.models import AuthProviderAccount
+from src.config import settings
 from src.users.models import User
 
 

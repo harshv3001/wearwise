@@ -1,1 +1,0 @@
-from src.weather.router import router

@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from app.schemas.closet_items import ClosetItemOut, ClosetItemSummaryOut
+from src.closet_items.schemas import ClosetItemOut, ClosetItemSummaryOut
 
 
 class OutfitCanvasLayoutBase(BaseModel):
