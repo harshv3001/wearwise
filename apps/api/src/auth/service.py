@@ -7,7 +7,6 @@ from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 
-from app import utils
 from src.auth.oauth import (
     build_frontend_callback_url,
     create_frontend_exchange_code,
@@ -26,6 +25,7 @@ from src.auth.exceptions import (
 )
 from src.auth import queries as auth_queries
 from src.config import settings
+from src import utils
 from src.users.models import User
 from src.users import queries as user_queries
 from src.users.utils import (

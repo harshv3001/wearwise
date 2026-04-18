@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/app/components/ui/Button";
+import Button from "@/app/components/ui/Button/Button";
 import Input from "../../../../app/components/ui/Input/Input";
 import SelectInput from "../../../../app/components/ui/SelectInput/SelectInput";
 import Modal from "../../../../app/components/ui/Modal/Modal";
@@ -236,7 +236,9 @@ export default function CreateClosetItem({ open, onClose }) {
               size="lg"
               onClick={handleSubmit}
               loading={isSubmitting}
-              loadingText={isUploadingImage ? "Uploading image..." : "Saving item..."}
+              loadingText={
+                isUploadingImage ? "Uploading image..." : "Saving item..."
+              }
             >
               Add to Closet
             </Button>

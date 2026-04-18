@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef } from "react";
-import Button from "../../../../app/components/ui/Button";
+import Button from "../../../../app/components/ui/Button/Button";
 import ImageWithFallback from "../../../../app/components/ui/ImageWithFallback/ImageWithFallback";
 import { getUserFullName, getUserInitials } from "../profileHelpers";
 import styles from "./ProfileHero.module.scss";

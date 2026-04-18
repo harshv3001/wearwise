@@ -12,7 +12,7 @@ import {
 } from "../../../features/auth/api/authApi";
 import { setToken } from "../../../lib/auth";
 import { getApiErrorMessage } from "../../../lib/apiError";
-import Button from "@/app/components/ui/Button";
+import Button from "@/app/components/ui/Button/Button";
 import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 
 export default function LoginPage() {
@@ -47,7 +47,9 @@ export default function LoginPage() {
       }
       window.location.assign(data.authorization_url);
     } catch (err) {
-      showErrorToast(getApiErrorMessage(err, `Could not start ${provider} login`));
+      showErrorToast(
+        getApiErrorMessage(err, `Could not start ${provider} login`)
+      );
     }
   };
 

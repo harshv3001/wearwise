@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import Button from "../../../app/components/ui/Button";
+import Button from "../../../app/components/ui/Button/Button";
 import LocationFields from "./LocationFields";
 import PreferenceFields from "./PreferenceFields";
 

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Button from "@/app/components/ui/Button";
+import Button from "@/app/components/ui/Button/Button";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 import EditableDetailField from "@/app/components/ui/EditableDetailField/EditableDetailField";
 import { useUpdateOutfitMutation } from "../../hooks/useUpdateOutfitMutation";

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Modal from "../../../components/ui/Modal/Modal.jsx";
-import Button from "../../../components/ui/Button.jsx";
+import Button from "../../../components/ui/Button/Button.jsx";
 import Input from "../../../components/ui/Input/Input.jsx";
 import SelectInput from "../../../components/ui/SelectInput/SelectInput.jsx";
 import ImageWithFallback from "../../../components/ui/ImageWithFallback/ImageWithFallback.jsx";

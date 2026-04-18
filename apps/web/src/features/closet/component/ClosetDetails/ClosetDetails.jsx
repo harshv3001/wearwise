@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Button from "@/app/components/ui/Button";
+import Button from "@/app/components/ui/Button/Button";
 import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
 import EditableDetailField from "@/app/components/ui/EditableDetailField/EditableDetailField";
 import { useUpdateClosetItemMutation } from "../../hooks/useUpdateClosetItemMutation";
@@ -166,7 +166,9 @@ export default function ClosetDetails({ item }) {
           formData: imageFormData,
         });
         showSuccessToast(
-          item?.image_url ? "Closet image updated successfully." : "Closet image uploaded successfully."
+          item?.image_url
+            ? "Closet image updated successfully."
+            : "Closet image uploaded successfully."
         );
       } catch (error) {
         showErrorToast(

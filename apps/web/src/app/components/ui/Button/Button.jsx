@@ -1,7 +1,7 @@
 "use client";
 
-import styles from "../../../styles/ui/Button.module.scss";
-import ButtonSpinner from "./ButtonSpinner/ButtonSpinner";
+import styles from "./Button.module.scss";
+import ButtonSpinner from "../ButtonSpinner/ButtonSpinner";
 
 export default function Button({
   children,
@@ -41,10 +41,7 @@ export default function Button({
       {...rest}
     >
       <span
-        className={[
-          styles.content,
-          loading ? styles.contentHidden : "",
-        ]
+        className={[styles.content, loading ? styles.contentHidden : ""]
           .filter(Boolean)
           .join(" ")}
       >

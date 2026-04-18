@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import Input from "../../../app/components/ui/Input/Input";
-import Button from "../../../app/components/ui/Button";
+import Button from "../../../app/components/ui/Button/Button";
 import RadioGroup from "../../../app/components/ui/RadioGroup/RadioGroup";
 import EyeToggleButton from "../../../app/components/ui/EyeToggleButton/EyeToggleButton";
 

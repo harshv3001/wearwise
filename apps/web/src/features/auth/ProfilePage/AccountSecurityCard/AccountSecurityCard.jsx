@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Button from "../../../../app/components/ui/Button";
+import Button from "../../../../app/components/ui/Button/Button";
 import Input from "../../../../app/components/ui/Input/Input";
 import { useChangePasswordMutation } from "../../hooks/useChangePasswordMutation";
 import { logoutUser } from "../../../../lib/session";

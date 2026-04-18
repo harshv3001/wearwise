@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import Button from "@/app/components/ui/Button.jsx";
+import Button from "@/app/components/ui/Button/Button.jsx";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery.js";
 import { useCreateOutfitMutation } from "@/features/outfits/hooks/useCreateOutfitMutation.js";
 import { useUpdateOutfitMutation } from "@/features/outfits/hooks/useUpdateOutfitMutation.js";
@@ -214,7 +214,9 @@ export default function OutfitBuilderWorkspace({
         }
 
         showSuccessToast(
-          isEditMode ? "Outfit updated successfully." : "Outfit saved successfully."
+          isEditMode
+            ? "Outfit updated successfully."
+            : "Outfit saved successfully."
         );
       } catch (error) {
         throw new Error(

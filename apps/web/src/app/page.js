@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Button from "./components/ui/Button";
+import Button from "./components/ui/Button/Button";
 import { getToken } from "../lib/auth";
 import { useCurrentUser } from "../features/auth/hooks/useCurrentUser";
 
