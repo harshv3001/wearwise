@@ -9,7 +9,6 @@ from app.database import get_db
 from app.oauth2 import get_current_user
 
 from app.models import (
-    outfit as outfit_models,
     wear_log as wear_log_models,
 )
 
@@ -17,6 +16,7 @@ from app.schemas.wear import WearCreate, WearOut
 from app.schemas.wear_log import WearLogCreate, WearLogOut, WearLogUpdate
 from app.schemas.outfit import OutfitItemCreate
 from src.closet_items.models import ClosetItem
+from src.outfits import models as outfit_models
 from src.users.models import User
 
 

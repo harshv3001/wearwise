@@ -5,9 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app import models as _models
-from app.routes import locations, media, outfit, wear, weather
+from app.routes import locations, media, wear, weather
 from src.auth.router import router as auth_router
 from src.closet_items.router import router as closet_items_router
+from src.outfits.router import router as outfits_router
 from src.users.router import router as users_router
 
 app = FastAPI(title="WearWise API")
@@ -40,7 +41,7 @@ app.include_router(users_router)
 app.include_router(locations.router)
 app.include_router(weather.router)
 app.include_router(closet_items_router)
-app.include_router(outfit.router)
+app.include_router(outfits_router)
 app.include_router(media.router)
 app.include_router(wear.router)
 
