@@ -7,7 +7,7 @@ from sqlalchemy import func
 
 from app.database import get_db
 from app.oauth2 import get_current_user
-from app.models import outfit as outfit_models, closet_items as closet_items_models
+from app.models import outfit as outfit_models
 from app.schemas.outfit import (
     OutfitCreate,
     OutfitOut,
@@ -20,6 +20,7 @@ from app.schemas.outfit import (
 )
 from app.schemas.closet_items import ClosetItemSummaryOut
 from app.utils import save_upload_file, build_image_url, delete_upload_file
+from src.closet_items.models import ClosetItem
 from src.users.models import User
 
 router = APIRouter(prefix="/outfits", tags=["Outfits"])
@@ -42,10 +43,10 @@ def _validate_closet_items_belong_to_user(
         )
 
     found = (
-        db.query(closet_items_models.ClosetItem.id)
+        db.query(ClosetItem.id)
         .filter(
-            closet_items_models.ClosetItem.user_id == user_id,
-            closet_items_models.ClosetItem.id.in_(ids),
+            ClosetItem.user_id == user_id,
+            ClosetItem.id.in_(ids),
         )
         .all()
     )
@@ -105,7 +106,7 @@ def _serialize_canvas_layout(canvas_layout):
     return canvas_layout or []
 
 
-def _serialize_closet_item(closet_item: closet_items_models.ClosetItem):
+def _serialize_closet_item(closet_item: ClosetItem):
     return {
         "id": closet_item.id,
         "user_id": closet_item.user_id,
@@ -291,13 +292,13 @@ def list_outfits(
             db.query(
                 outfit_models.OutfitItem.outfit_id,
                 outfit_models.OutfitItem.closet_item_id,
-                closet_items_models.ClosetItem.name,
-                closet_items_models.ClosetItem.category,
-                closet_items_models.ClosetItem.image_path,
+                ClosetItem.name,
+                ClosetItem.category,
+                ClosetItem.image_path,
             )
             .join(
-                closet_items_models.ClosetItem,
-                closet_items_models.ClosetItem.id == outfit_models.OutfitItem.closet_item_id,
+                ClosetItem,
+                ClosetItem.id == outfit_models.OutfitItem.closet_item_id,
             )
             .filter(outfit_models.OutfitItem.outfit_id.in_(outfit_ids))
             .order_by(

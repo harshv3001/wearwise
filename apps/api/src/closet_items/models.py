@@ -1,10 +1,11 @@
 import uuid
 
-from sqlalchemy import Column, Integer, Float, String, ForeignKey, DateTime, Date
+from sqlalchemy import Column, Date, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from app.database import Base
 from sqlalchemy.sql.expression import text
+
+from src.database import Base
 
 
 class ClosetItem(Base):
@@ -17,14 +18,12 @@ class ClosetItem(Base):
         default=uuid.uuid4,
         server_default=text("gen_random_uuid()"),
     )
-
     user_id = Column(
         UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-
     name = Column(String, nullable=False)
     category = Column(String, nullable=False, index=True)
     color = Column(String, nullable=True, index=True)
@@ -34,12 +33,9 @@ class ClosetItem(Base):
     notes = Column(String, nullable=True)
     store = Column(String, nullable=True)
     material = Column(String, nullable=True)
-
     image_path = Column(String, nullable=True)
-
     times_worn = Column(Integer, nullable=False, default=0)
     date_acquired = Column(Date, nullable=True)
-
     created_at = Column(
         DateTime(timezone=True), server_default=text("now()"), nullable=False
     )

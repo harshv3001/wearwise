@@ -10,13 +10,13 @@ from app.oauth2 import get_current_user
 
 from app.models import (
     outfit as outfit_models,
-    closet_items as closet_items_models,
     wear_log as wear_log_models,
 )
 
 from app.schemas.wear import WearCreate, WearOut
 from app.schemas.wear_log import WearLogCreate, WearLogOut, WearLogUpdate
 from app.schemas.outfit import OutfitItemCreate
+from src.closet_items.models import ClosetItem
 from src.users.models import User
 
 
@@ -45,10 +45,10 @@ def _validate_closet_items_belong_to_user(
         )
 
     found = (
-        db.query(closet_items_models.ClosetItem.id)
+        db.query(ClosetItem.id)
         .filter(
-            closet_items_models.ClosetItem.user_id == user_id,
-            closet_items_models.ClosetItem.id.in_(ids),
+            ClosetItem.user_id == user_id,
+            ClosetItem.id.in_(ids),
         )
         .all()
     )
@@ -89,13 +89,13 @@ def _inc_times_worn(db: Session, user_id: UUID, closet_item_ids: List[UUID], del
     # Atomic update (but prevent going below 0 with a small safe-guard by read+write if needed)
     # For simplicity: do atomic update, and rely on correct usage (delete only once).
     (
-        db.query(closet_items_models.ClosetItem)
+        db.query(ClosetItem)
         .filter(
-            closet_items_models.ClosetItem.user_id == user_id,
-            closet_items_models.ClosetItem.id.in_(closet_item_ids),
+            ClosetItem.user_id == user_id,
+            ClosetItem.id.in_(closet_item_ids),
         )
         .update(
-            {closet_items_models.ClosetItem.times_worn: closet_items_models.ClosetItem.times_worn + delta},
+            {ClosetItem.times_worn: ClosetItem.times_worn + delta},
             synchronize_session=False,
         )
     )
