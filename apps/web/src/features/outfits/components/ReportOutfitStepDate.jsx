@@ -1,6 +1,6 @@
 "use client";
 
-import YesNoSwitch from "../../../app/components/ui/YesNoSwitch";
+import YesNoSwitch from "../../../app/components/ui/YesNoSwitch/YesNoSwitch";
 import styles from "./ReportOutfitModal/ReportOutfitModal.module.scss";
 import { useEffect, useState } from "react";
 
