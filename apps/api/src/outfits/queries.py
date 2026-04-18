@@ -1,8 +1,9 @@
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy import func
+from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.sql.functions import count
 
 from src.closet_items.models import ClosetItem
 from src.outfits.models import Outfit, OutfitItem
@@ -58,6 +59,15 @@ def list_outfit_items_with_closet_items(db: Session, *, outfit_id: UUID) -> list
     )
 
 
+def get_outfit_closet_item_ids(db: Session, *, outfit_id: UUID) -> list[UUID]:
+    rows = (
+        db.query(OutfitItem.closet_item_id)
+        .filter(OutfitItem.outfit_id == outfit_id)
+        .all()
+    )
+    return [row[0] for row in rows]
+
+
 def get_outfit_by_id_and_user(db: Session, *, outfit_id: UUID, user_id: UUID) -> Outfit | None:
     return db.query(Outfit).filter(Outfit.id == outfit_id, Outfit.user_id == user_id).first()
 
@@ -86,13 +96,16 @@ def list_outfits_by_user(
 
 
 def get_outfit_item_counts(db: Session, *, outfit_ids: list[UUID]) -> dict[UUID, int]:
-    counts = (
-        db.query(OutfitItem.outfit_id, func.count(OutfitItem.closet_item_id))
-        .filter(OutfitItem.outfit_id.in_(outfit_ids))
+    statement = (
+        select(
+            OutfitItem.outfit_id,
+            count(OutfitItem.closet_item_id).label("item_count"),
+        )
+        .where(OutfitItem.outfit_id.in_(outfit_ids))
         .group_by(OutfitItem.outfit_id)
-        .all()
     )
-    return {outfit_id: int(count) for outfit_id, count in counts}
+    counts = db.execute(statement).all()
+    return {outfit_id: int(item_count) for outfit_id, item_count in counts}
 
 
 def list_outfit_preview_rows(db: Session, *, outfit_ids: list[UUID]):

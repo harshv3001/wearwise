@@ -3,7 +3,8 @@ import uuid
 from sqlalchemy import Column, Date, DateTime, ForeignKey, String, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from app.database import Base
+
+from src.database import Base
 
 
 class WearLog(Base):
@@ -16,25 +17,20 @@ class WearLog(Base):
         default=uuid.uuid4,
         server_default=text("gen_random_uuid()"),
     )
-
     user_id = Column(
         UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-
     outfit_id = Column(
         UUID(as_uuid=True),
         ForeignKey("outfits.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-
     date_worn = Column(Date, nullable=False, index=True)
-
     notes = Column(String, nullable=True)
-
     created_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=text("now()"))
 
