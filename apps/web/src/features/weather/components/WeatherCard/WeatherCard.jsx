@@ -1,6 +1,6 @@
 "use client";
 
-import Card from "../../../../app/components/ui/Card/Card";
+import { Card } from "../../../../app/components/ui/display";
 import styles from "./WeatherCard.module.scss";
 import WeatherCardSkeleton from "../WeatherCardSkeleton";
 

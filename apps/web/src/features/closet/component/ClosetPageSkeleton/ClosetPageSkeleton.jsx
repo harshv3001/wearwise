@@ -1,6 +1,6 @@
 "use client";
 
-import Skeleton from "@/app/components/ui/Skeleton/Skeleton";
+import { Skeleton } from "@/app/components/ui/feedback";
 import styles from "./ClosetPageSkeleton.module.scss";
 
 function SkeletonAccordionCard() {

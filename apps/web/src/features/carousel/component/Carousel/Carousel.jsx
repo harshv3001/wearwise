@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import styles from "./Carousel.module.scss";
 import "../CarouselCardVisibility.scss";
-import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
+import { ImageWithFallback } from "@/app/components/ui/display";
 
 const BLANK_ITEM = { id: "__blank__", name: "", image: null, isBlank: true };
 

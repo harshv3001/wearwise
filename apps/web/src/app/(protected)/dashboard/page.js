@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { categorySummaryData } from "../../../lib/static-data";
-import Button from "../../components/ui/Button/Button";
+import { Button } from "../../components/ui/actions";
 import CategorySummaryCard from "../../../features/category-summary/component/CategorySummaryCard";
 import ReportOutfitModal from "../../../features/outfits/components/ReportOutfitModal/ReportOutfitModal";
 import CreateClosetItem from "../../../features/closet/component/CreateClosetItem/CreateClosetItem.jsx";

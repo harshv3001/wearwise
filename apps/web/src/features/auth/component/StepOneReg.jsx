@@ -1,9 +1,7 @@
 import { useState } from "react";
 
-import Input from "../../../app/components/ui/Input/Input";
-import Button from "../../../app/components/ui/Button/Button";
-import RadioGroup from "../../../app/components/ui/RadioGroup/RadioGroup";
-import EyeToggleButton from "../../../app/components/ui/EyeToggleButton/EyeToggleButton";
+import { Button } from "../../../app/components/ui/actions";
+import { EyeToggleButton, Input, RadioGroup } from "../../../app/components/ui/forms";
 
 import { GENDER_OPTIONS } from "../../../lib/static-data";
 

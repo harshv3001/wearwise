@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Button from "../../../app/components/ui/Button/Button";
-import Input from "../../../app/components/ui/Input/Input";
-import SelectInput from "../../../app/components/ui/SelectInput/SelectInput";
+import { Button } from "../../../app/components/ui/actions";
+import { Input, SelectInput } from "../../../app/components/ui/forms";
 import { useCountriesQuery } from "../hooks/useCountriesQuery";
 import { useStatesQuery } from "../hooks/useStatesQuery";
 import { useCitySearch } from "../hooks/useCitySearch";

@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import styles from "./ReportOutfitModal/ReportOutfitModal.module.scss";
-import Button from "../../../app/components/ui/Button/Button";
+import { Button } from "../../../app/components/ui/actions";
 import OutfitItemsCarousel from "./OutfitItemsCarousel";
 import Link from "next/link";
-import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
+import { ImageWithFallback } from "@/app/components/ui/display";
 import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
 import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
 import ReportOutfitSelectionSkeleton from "./ReportOutfitSelectionSkeleton/ReportOutfitSelectionSkeleton";

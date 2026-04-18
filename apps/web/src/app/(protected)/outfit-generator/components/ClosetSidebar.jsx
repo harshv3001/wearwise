@@ -1,7 +1,7 @@
 "use client";
 
 import ClosetAccordion from "@/app/components/closet/ClosetAccordion.jsx";
-import Drawer from "@/app/components/ui/Drawer/Drawer.jsx";
+import { Drawer } from "@/app/components/ui/overlays";
 import styles from "./ClosetSidebar.module.scss";
 
 export default function ClosetSidebar({

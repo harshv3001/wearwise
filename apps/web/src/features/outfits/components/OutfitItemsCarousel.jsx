@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import styles from "./ReportOutfitModal/ReportOutfitModal.module.scss";
-import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
+import { ImageWithFallback } from "@/app/components/ui/display";
 
 export default function OutfitItemsCarousel({ items = [] }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({

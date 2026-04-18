@@ -1,6 +1,6 @@
 "use client";
 
-import Accordion from "../ui/Accordion/Accordion";
+import { Accordion } from "@/app/components/ui/disclosure";
 import Carousel from "@/features/carousel/component/Carousel/Carousel";
 
 export default function ClosetAccordion({
@@ -41,7 +41,9 @@ export default function ClosetAccordion({
                   carouselProps.onItemDragStart?.(event, item, categoryName)
                 }
                 getItemHref={
-                  shouldDisableItemLinks ? () => null : carouselProps.getItemHref
+                  shouldDisableItemLinks
+                    ? () => null
+                    : carouselProps.getItemHref
                 }
                 removalCallback={() => {}}
                 disableRemoval

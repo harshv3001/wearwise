@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Button from "@/app/components/ui/Button/Button";
-import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback";
-import EditableDetailField from "@/app/components/ui/EditableDetailField/EditableDetailField";
+import { Button } from "@/app/components/ui/actions";
+import { ImageWithFallback } from "@/app/components/ui/display";
+import { EditableDetailField } from "@/app/components/ui/forms";
 import { useUpdateClosetItemMutation } from "../../hooks/useUpdateClosetItemMutation";
 import { useUploadItemImageMutation } from "../../hooks/useUploadItemImageMutations";
 import styles from "./ClosetDetails.module.scss";

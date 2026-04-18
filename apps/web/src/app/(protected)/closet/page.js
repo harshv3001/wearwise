@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
-import Button from "../../components/ui/Button/Button.jsx";
+import { Button } from "../../components/ui/actions";
 import CreateClosetItem from "../../../features/closet/component/CreateClosetItem/CreateClosetItem.jsx";
 import ClosetAccordion from "@/app/components/closet/ClosetAccordion.jsx";
 import { groupClosetItemsByCategory } from "@/app/components/closet/closetCategoryUtils.js";

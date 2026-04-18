@@ -1,4 +1,4 @@
-import CircularProgressWithLabel from "../../../../app/components/ui/CircularProgressWithLabel/CircularProgressWithLabel";
+import { CircularProgressWithLabel } from "../../../../app/components/ui/feedback";
 import { countCompletedProfileDetails } from "../profileHelpers";
 import styles from "./ProfileNotice.module.scss";
 

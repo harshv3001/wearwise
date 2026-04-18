@@ -1,9 +1,8 @@
 "use client";
 
-import Button from "@/app/components/ui/Button/Button";
-import Input from "../../../../app/components/ui/Input/Input";
-import SelectInput from "../../../../app/components/ui/SelectInput/SelectInput";
-import Modal from "../../../../app/components/ui/Modal/Modal";
+import { Button } from "@/app/components/ui/actions";
+import { Input, SelectInput } from "../../../../app/components/ui/forms";
+import { Modal } from "../../../../app/components/ui/overlays";
 import styles from "./CreateClosetItem.module.scss";
 import { useRef, useState } from "react";
 import { useCreateClosetItemMutation } from "../../hooks/useCreateClosetItemMutation";

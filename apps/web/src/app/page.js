@@ -1,36 +1,15 @@
-"use client";
-
-import { useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import Button from "./components/ui/Button/Button";
-import { getToken } from "../lib/auth";
-import { useCurrentUser } from "../features/auth/hooks/useCurrentUser";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { Button } from "./components/ui/actions";
+import { isTokenExpired, TOKEN_COOKIE_KEY } from "../lib/auth";
 
-export default function HomePage() {
-  const router = useRouter();
-  const token = getToken();
-  const { data: user, isLoading, isFetched } = useCurrentUser();
+export default async function HomePage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(TOKEN_COOKIE_KEY)?.value;
 
-  useEffect(() => {
-    if (token && user) {
-      router.replace("/dashboard");
-    }
-  }, [router, token, user]);
-
-  if (token && (!isFetched || isLoading)) {
-    return (
-      <main
-        className="flex min-h-screen w-full items-center justify-center p-6"
-        style={{ padding: 24 }}
-      >
-        <p>Checking your session...</p>
-      </main>
-    );
-  }
-
-  if (token && user) {
-    return null;
+  if (token && !isTokenExpired(token)) {
+    redirect("/dashboard");
   }
 
   return (

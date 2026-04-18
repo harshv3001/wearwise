@@ -1,6 +1,6 @@
 "use client";
 
-import Skeleton from "@/app/components/ui/Skeleton/Skeleton";
+import { Skeleton } from "@/app/components/ui/feedback";
 import styles from "../page.module.scss";
 import skeletonStyles from "./OutfitBuilderWorkspaceSkeleton.module.scss";
 

@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Modal from "../../../components/ui/Modal/Modal.jsx";
-import Button from "../../../components/ui/Button/Button.jsx";
-import Input from "../../../components/ui/Input/Input.jsx";
-import SelectInput from "../../../components/ui/SelectInput/SelectInput.jsx";
-import ImageWithFallback from "../../../components/ui/ImageWithFallback/ImageWithFallback.jsx";
-import Skeleton from "../../../components/ui/Skeleton/Skeleton.jsx";
+import { Button } from "../../../components/ui/actions";
+import { ImageWithFallback } from "../../../components/ui/display";
+import { Skeleton } from "../../../components/ui/feedback";
+import { Input, SelectInput } from "../../../components/ui/forms";
+import { Modal } from "../../../components/ui/overlays";
 import { SEASON_OPTIONS } from "../../../../lib/static-data.js";
 import { formatCapitalizedValue } from "../../../../lib/helperFunctions.js";
 import { showErrorToast } from "../../../../lib/toast.js";
