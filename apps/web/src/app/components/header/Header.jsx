@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "./Header.module.scss";
-import BrandLogo from "../ui/BrandLogo/BrandLogo";
+import { BrandLogo } from "@/app/components/ui/display";
 import HeaderNav from "./HeaderNav";
 import HeaderUser from "./HeaderUser";
 import MobileSidebar from "./MobileSidebar";

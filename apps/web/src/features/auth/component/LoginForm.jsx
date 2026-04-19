@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Input from "../../../app/components/ui/Input/Input";
-import Button from "../../../app/components/ui/Button";
-import EyeToggleButton from "@/app/components/ui/EyeToggleButton/EyeToggleButton";
+import { Button } from "../../../app/components/ui/actions";
+import { Input } from "../../../app/components/ui/forms";
+import { EyeToggleButton } from "@/app/components/ui/forms";
 import {
   hasValidationErrors,
   validateEmail,

@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./Header.module.scss";
-import Drawer from "../ui/Drawer/Drawer.jsx";
+import { Drawer } from "@/app/components/ui/overlays";
 
 export default function MobileSidebar({ open, onClose, children }) {
   return (

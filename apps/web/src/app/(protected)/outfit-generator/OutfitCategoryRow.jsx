@@ -1,7 +1,7 @@
 "use client";
 
-import Carousel from "../../../features/carousel/component/Carousel.jsx";
-import SaveToggle from "../../components/ui/SaveToggle/SaveToggle.jsx";
+import Carousel from "../../../features/carousel/component/Carousel/Carousel.jsx";
+import { SaveToggle } from "../../components/ui/actions";
 import { formatCapitalizedValue } from "../../../lib/helperFunctions.js";
 import { memo, useCallback, useState } from "react";
 

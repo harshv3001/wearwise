@@ -12,7 +12,7 @@ import {
 } from "../../../features/auth/api/authApi";
 import { setToken } from "../../../lib/auth";
 import { getApiErrorMessage } from "../../../lib/apiError";
-import Button from "@/app/components/ui/Button";
+import { Button } from "@/app/components/ui/actions";
 import {
   showErrorToast,
   showSuccessToast,
@@ -69,7 +69,9 @@ export default function RegisterPage() {
       }
       window.location.assign(data.authorization_url);
     } catch (err) {
-      showErrorToast(getApiErrorMessage(err, `Could not start ${provider} signup`));
+      showErrorToast(
+        getApiErrorMessage(err, `Could not start ${provider} signup`)
+      );
     }
   };
 

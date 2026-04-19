@@ -1,5 +1,4 @@
-import AuthCard from "../components/ui/AuthCard/AuthCard";
-import BrandLogo from "../components/ui/BrandLogo/BrandLogo";
+import { AuthCard, BrandLogo } from "../components/ui/display";
 
 export default function AuthLayout({ children }) {
   return (

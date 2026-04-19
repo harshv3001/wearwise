@@ -1,7 +1,7 @@
 "use client";
 
-import Card from "../../../app/components/ui/Card/Card";
-import Button from "../../../app/components/ui/Button";
+import { Button } from "../../../app/components/ui/actions";
+import { Card } from "../../../app/components/ui/display";
 import styles from "./CategorySummaryCard.module.scss";
 import Link from "next/link";
 

@@ -1,0 +1,47 @@
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  // width: calc(100% - 32px);
+  max-height: calc(100vh - 32px);
+  // max-width: 420px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+  padding: 20px;
+}
+
+.header {
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0 auto;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.closeButton {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.closeIcon {
+  font-size: 20px;
+  line-height: 20px;
+  color: #6b7280;
+}
+
+.body {
+  width: 100%;
+}

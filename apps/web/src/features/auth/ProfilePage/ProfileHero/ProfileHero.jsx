@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useRef } from "react";
-import Button from "../../../../app/components/ui/Button";
-import ImageWithFallback from "../../../../app/components/ui/ImageWithFallback/ImageWithFallback";
+import { Button } from "../../../../app/components/ui/actions";
+import { ImageWithFallback } from "../../../../app/components/ui/display";
 import { getUserFullName, getUserInitials } from "../profileHelpers";
 import styles from "./ProfileHero.module.scss";
 import { useUploadProfileImageMutation } from "../../hooks/useUploadProfileImageMutation";

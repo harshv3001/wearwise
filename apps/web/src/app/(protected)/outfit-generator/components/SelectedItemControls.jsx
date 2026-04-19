@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/app/components/ui/Button.jsx";
+import { Button } from "@/app/components/ui/actions";
 import styles from "./SelectedItemControls.module.scss";
 
 export default function SelectedItemControls({
@@ -12,8 +12,8 @@ export default function SelectedItemControls({
   if (!selectedItem) {
     return (
       <div className={styles.empty}>
-        Click an item on the canvas to resize it, rotate it, or adjust its
-        layer order.
+        Click an item on the canvas to resize it, rotate it, or adjust its layer
+        order.
       </div>
     );
   }
@@ -25,7 +25,12 @@ export default function SelectedItemControls({
         <div className={styles.name}>{selectedItem.name}</div>
       </div>
 
-      <Button type="button" variant="default" size="sm" onClick={onMoveBackward}>
+      <Button
+        type="button"
+        variant="default"
+        size="sm"
+        onClick={onMoveBackward}
+      >
         Send Back
       </Button>
       <Button type="button" variant="default" size="sm" onClick={onMoveForward}>

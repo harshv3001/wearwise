@@ -1,0 +1,1 @@
+"""Closet items feature package."""

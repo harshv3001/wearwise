@@ -1,7 +1,7 @@
 "use client";
 
-import Skeleton from "../../../app/components/ui/Skeleton/Skeleton";
-import styles from "./WeatherCard.module.scss";
+import { Skeleton } from "../../../app/components/ui/feedback";
+import styles from "./WeatherCard/WeatherCard.module.scss";
 
 export default function WeatherCardSkeleton() {
   return (

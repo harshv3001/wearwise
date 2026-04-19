@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/app/components/ui/Button.jsx";
+import { Button } from "@/app/components/ui/actions";
 import styles from "./OutfitActionsBar.module.scss";
 
 export default function OutfitActionsBar({

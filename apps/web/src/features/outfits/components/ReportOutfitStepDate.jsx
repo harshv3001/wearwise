@@ -1,7 +1,7 @@
 "use client";
 
-import YesNoSwitch from "../../../app/components/ui/YesNoSwitch";
-import styles from "./ReportOutfitModal.module.scss";
+import { YesNoSwitch } from "../../../app/components/ui/forms";
+import styles from "./ReportOutfitModal/ReportOutfitModal.module.scss";
 import { useEffect, useState } from "react";
 
 function FormRow({ label, children }) {

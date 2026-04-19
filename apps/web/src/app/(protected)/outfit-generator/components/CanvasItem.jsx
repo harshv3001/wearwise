@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import ImageWithFallback from "@/app/components/ui/ImageWithFallback/ImageWithFallback.jsx";
+import { ImageWithFallback } from "@/app/components/ui/display";
 import { clamp } from "../utils/outfitCanvasUtils.js";
 import styles from "./CanvasItem.module.scss";
 

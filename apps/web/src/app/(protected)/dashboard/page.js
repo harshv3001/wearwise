@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { categorySummaryData } from "../../../lib/static-data";
-import Button from "../../components/ui/Button";
+import { Button } from "../../components/ui/actions";
 import CategorySummaryCard from "../../../features/category-summary/component/CategorySummaryCard";
-import ReportOutfitModal from "../../../features/outfits/components/ReportOutfitModal";
-import CreateClosetItem from "../../../features/closet/component/CreateClosetItem.jsx";
+import ReportOutfitModal from "../../../features/outfits/components/ReportOutfitModal/ReportOutfitModal";
+import CreateClosetItem from "../../../features/closet/component/CreateClosetItem/CreateClosetItem.jsx";
 import { useCurrentUser } from "../../../features/auth/hooks/useCurrentUser";
 import { useWeather } from "../../../features/weather/hooks/useWeather";
-import WeatherCard from "../../../features/weather/components/WeatherCard";
+import WeatherCard from "../../../features/weather/components/WeatherCard/WeatherCard";
 
 export default function DashboardPage() {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();

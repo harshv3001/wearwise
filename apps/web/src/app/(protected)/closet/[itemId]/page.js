@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useClosetSingleItemQuery } from "../../../../features/closet/hooks/useClosetItemsQuery";
-import ClosetDetails from "@/features/closet/component/ClosetDetails";
+import ClosetDetails from "@/features/closet/component/ClosetDetails/ClosetDetails";
 
 const ClosetDetailsPage = () => {
   const params = useParams();

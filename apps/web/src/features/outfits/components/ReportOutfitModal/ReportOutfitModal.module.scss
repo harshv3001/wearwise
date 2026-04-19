@@ -1,0 +1,298 @@
+.modalBase {
+  transition: max-width 220ms ease, width 220ms ease, padding 220ms ease;
+}
+
+.modalSmall {
+  max-width: 360px;
+}
+
+.modalLarge {
+  width: 1000px;
+  height: 800px;
+}
+
+.container {
+  width: 100%;
+}
+
+.title {
+  margin-bottom: 6px;
+  text-align: center;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #d5d5d5;
+}
+
+.dotActive {
+  background: #7a7a7a;
+}
+
+.content {
+  margin-top: 28px;
+  margin-bottom: 28px;
+}
+
+.sectionLabel {
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #d7d7d7;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 14px;
+  line-height: 20px;
+  color: #1f1f1f;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+
+  &::placeholder {
+    color: #b8b8b8;
+  }
+
+  &:focus {
+    border-color: #bcbcbc;
+  }
+}
+
+.optionButton {
+  min-width: 140px;
+  height: 42px;
+  padding: 0 16px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #f3f3f3;
+  font-size: 13px;
+  line-height: 18px;
+  color: #333333;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: background 160ms ease, transform 160ms ease,
+    border-color 160ms ease;
+
+  &:hover {
+    background: #ececec;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.optionButtonActive {
+  background: #e9e9e9;
+  border-color: #cfcfcf;
+}
+
+.outfitsContainer {
+  height: 530px;
+  padding: 20px;
+  border: 1px solid var(--ww-color-black);
+  background: var(--ww-color-white);
+  margin: 0 60px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  .outfitRow {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+
+    &.selectedOutfit {
+      border: 2px solid var(--ww-color-accent);
+    }
+
+    @media screen and (max-width: 769px) {
+      flex-direction: column;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .outfitPreviewCard {
+      width: 190px;
+      padding: 10px;
+      border: 1px solid #dcdcdc;
+      background: #f8f8f8;
+      flex-shrink: 0;
+      transition: transform 180ms ease;
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+
+      &:hover {
+        transform: scale(1.04);
+      }
+
+      .outfitPreviewImageFrame {
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        min-height: 0;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #e5cec7;
+        background: var(--ww-color-white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .outfitPreviewImage {
+        width: 100%;
+        height: 100%;
+        background: var(--ww-color-white);
+        object-fit: contain;
+      }
+    }
+
+    .outfitPreviewDetails {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--ww-gray-dark);
+      background: var(--ww-color-white);
+      padding: 10px;
+
+      &.selectedOutfit {
+        border: 1px solid var(--ww-color-accent);
+      }
+
+      .itemsCarouselRow {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+
+        .carouselArrow {
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          padding: 32px 4px 0;
+          color: #2b4666;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+
+          &:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+          }
+        }
+
+        .embla {
+          flex: 1;
+          min-width: 0;
+
+          .emblaViewport {
+            overflow: hidden;
+            width: 100%;
+            padding: 10px 0;
+          }
+
+          .emblaContainer {
+            display: flex;
+            align-items: flex-start;
+            margin-left: -6px;
+            margin-right: -6px;
+            padding: 0 3px;
+          }
+
+          .emblaSlide {
+            flex: 0 0 25%;
+            min-width: 0;
+            padding: 0 6px;
+
+            @media (max-width: 900px) {
+              flex: 0 0 33.3333%;
+            }
+
+            @media (max-width: 640px) {
+              flex: 0 0 50%;
+            }
+          }
+        }
+
+        .outfitItemCard {
+          width: 100%;
+          background: transparent;
+          border: none;
+          padding: 0;
+          transition: transform 180ms ease;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+
+          &:hover {
+            transform: scale(1.04);
+          }
+
+          &:active {
+            transform: scale(0.98);
+          }
+
+          .outfitItemBox {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border: 1px solid #aaaaaa;
+            background-color: pink;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          }
+
+          .outfitItemName {
+            margin-top: 8px;
+            text-align: center;
+            font-size: 13px;
+            line-height: 16px;
+            color: var(--ww-text-secondary);
+            word-break: break-word;
+            font-weight: 500;
+          }
+
+          .outfitItemSub {
+            margin-top: 2px;
+            text-align: center;
+            font-size: 10px;
+            line-height: 14px;
+            // text-transform: capitalize;
+            color: #666666;
+          }
+        }
+      }
+
+      .detailList {
+        margin-top: 14px;
+        padding-left: 18px;
+        list-style: disc;
+
+        .detailText {
+          font-size: 14px;
+          line-height: 22px;
+          color: #1f1f1f;
+
+          span {
+            color: var(--ww-text-tertiary);
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+}

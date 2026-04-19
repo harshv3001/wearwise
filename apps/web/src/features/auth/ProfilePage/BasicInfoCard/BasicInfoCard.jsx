@@ -1,7 +1,6 @@
 "use client";
 
-import Input from "../../../../app/components/ui/Input/Input";
-import RadioGroup from "../../../../app/components/ui/RadioGroup/RadioGroup";
+import { Input, RadioGroup } from "../../../../app/components/ui/forms";
 import { GENDER_OPTIONS } from "../../../../lib/static-data";
 import { getPlaceholderValue } from "../profileHelpers";
 import FieldDisplay from "../FieldDisplay/FieldDisplay";

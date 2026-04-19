@@ -1,6 +1,6 @@
 "use client";
 
-import Chip from "../../../app/components/ui/Chip/Chip";
+import { Chip } from "../../../app/components/ui/display";
 import { COLOR_OPTIONS, STYLE_OPTIONS } from "../../../lib/static-data";
 
 /**

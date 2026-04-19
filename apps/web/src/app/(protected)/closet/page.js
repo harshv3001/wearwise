@@ -1,11 +1,11 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useClosetItemsQuery } from "@/features/closet/hooks/useClosetItemsQuery";
-import Button from "../../components/ui/Button.jsx";
-import CreateClosetItem from "../../../features/closet/component/CreateClosetItem.jsx";
+import { Button } from "../../components/ui/actions";
+import CreateClosetItem from "../../../features/closet/component/CreateClosetItem/CreateClosetItem.jsx";
 import ClosetAccordion from "@/app/components/closet/ClosetAccordion.jsx";
 import { groupClosetItemsByCategory } from "@/app/components/closet/closetCategoryUtils.js";
-import ClosetPageSkeleton from "@/features/closet/component/ClosetPageSkeleton.jsx";
+import ClosetPageSkeleton from "@/features/closet/component/ClosetPageSkeleton/ClosetPageSkeleton.jsx";
 
 export default function ClosetPage() {
   const [openItemModal, setOpenItemModal] = useState(false);
