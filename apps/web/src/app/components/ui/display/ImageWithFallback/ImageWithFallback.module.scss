@@ -26,7 +26,9 @@
 
 .fallbackBox {
   box-sizing: border-box;
-  background-color: pink;
+  background: linear-gradient(180deg, #fffdfa 0%, #fff2e7 100%);
+  border: 1px solid rgba(56, 53, 59, 0.08);
+  color: var(--ww-text-secondary);
   text-align: center;
   height: 100%;
   display: flex;

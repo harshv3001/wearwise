@@ -1,0 +1,143 @@
+.card {
+  min-height: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+}
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.9rem;
+}
+
+.inputLike {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.85rem;
+  border: 1px solid var(--ww-border-primary);
+  border-radius: 0.85rem;
+  background: #fffdfa;
+  font-weight: 500;
+}
+
+.selectWrap {
+  min-width: 0;
+}
+
+.select {
+  border-radius: 0.85rem !important;
+  min-height: 44px !important;
+  background: #fffdfa !important;
+}
+
+.weatherLine {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.9rem;
+  color: var(--ww-text-secondary);
+}
+
+.previewBox {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+  border: 1px solid rgba(56, 53, 59, 0.15);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, #fffefd 0%, #fff7f2 100%);
+  padding: 1rem 0.7rem;
+}
+
+.arrowButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--ww-text-primary);
+}
+
+.previewItems {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.previewItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.previewThumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 88px;
+  border-radius: 0.8rem;
+  background: linear-gradient(180deg, #d8d8d8 0%, #cfcfcf 100%);
+}
+
+.previewName {
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.previewCategory {
+  font-size: 0.76rem;
+  color: var(--ww-text-secondary);
+}
+
+.noteList {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--ww-text-primary);
+  line-height: 1.65;
+}
+
+.actions {
+  display: flex;
+  gap: 0.9rem;
+  margin-top: auto;
+}
+
+.actions :global(button) {
+  flex: 1;
+}
+
+@media (max-width: 900px) {
+  .previewItems {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .controls {
+    grid-template-columns: 1fr;
+  }
+
+  .previewBox {
+    grid-template-columns: 1fr;
+  }
+
+  .arrowButton {
+    display: none;
+  }
+}

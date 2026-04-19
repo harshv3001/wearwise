@@ -1,0 +1,98 @@
+.card {
+  min-height: 100%;
+}
+
+.content {
+  height: 100%;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  height: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.columnTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.usageCard,
+.emptyCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(252, 219, 144, 0.4);
+  background: linear-gradient(180deg, #fffdfa 0%, #fff6ef 100%);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.emptyCard {
+  justify-content: center;
+  text-align: center;
+  line-height: 1.55;
+  color: var(--ww-text-secondary);
+}
+
+.imageFrame {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 140px;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(56, 53, 59, 0.08);
+}
+
+.image {
+  object-fit: cover;
+}
+
+.itemName {
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.itemCategory {
+  font-size: 0.82rem;
+  color: var(--ww-text-secondary);
+  text-align: center;
+}
+
+.wornCount {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.mostUsedAccent {
+  color: #cf7a55;
+}
+
+.leastUsedAccent {
+  color: #a8745e;
+}
+
+.message {
+  margin: auto 0;
+  color: var(--ww-text-secondary);
+  line-height: 1.55;
+}
+
+@media (max-width: 560px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+}
