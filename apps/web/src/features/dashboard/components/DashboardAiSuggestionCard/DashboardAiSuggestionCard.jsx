@@ -5,48 +5,16 @@ import { Button } from "@/app/components/ui/actions";
 import { Card } from "@/app/components/ui/display";
 import { Skeleton } from "@/app/components/ui/feedback";
 import { SelectInput } from "@/app/components/ui/forms";
-import { OCCASION_OPTIONS } from "@/lib/static-data";
+import {
+  DASHBOARD_AI_SUGGESTION_ITEMS,
+  DASHBOARD_AI_SUGGESTION_NOTES,
+  OCCASION_OPTIONS,
+} from "@/lib/static-data";
+import {
+  formatDashboardDateTime,
+  formatDashboardWeatherSummary,
+} from "@/features/dashboard/dashboardHelper";
 import styles from "./DashboardAiSuggestionCard.module.scss";
-
-const STATIC_SUGGESTION_ITEMS = [
-  { name: "T-shirt", category: "Top" },
-  { name: "Raincoat", category: "Outerwear" },
-  { name: "Jeans", category: "Bottom" },
-  { name: "Boots", category: "Shoes" },
-];
-
-const STATIC_NOTES = [
-  "Cold weather makes layering a safer pick.",
-  "A rain-ready outer layer keeps this outfit practical.",
-  "Your low-rotation boots could use a wear soon.",
-];
-
-function formatDateTime(value) {
-  return new Intl.DateTimeFormat("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(value);
-}
-
-function formatWeatherSummary(weather) {
-  if (!weather) {
-    return "Weather details will help guide smarter outfit suggestions.";
-  }
-
-  const temperature =
-    typeof weather.temperature === "number"
-      ? `${Math.round(weather.temperature)}°C`
-      : "N/A";
-  const feelsLike =
-    typeof weather.feels_like === "number"
-      ? `${Math.round(weather.feels_like)}°C`
-      : "N/A";
-
-  return `${temperature} • ${weather.weather_label || "Current conditions"} • Feels like ${feelsLike}`;
-}
 
 export default function DashboardAiSuggestionCard({
   weather,
@@ -69,7 +37,7 @@ export default function DashboardAiSuggestionCard({
       return "Weather is unavailable right now, but AI suggestions are still coming soon.";
     }
 
-    return formatWeatherSummary(weather);
+    return formatDashboardWeatherSummary(weather);
   }, [isWeatherError, weather]);
 
   return (
@@ -87,7 +55,7 @@ export default function DashboardAiSuggestionCard({
       <div className={styles.controls}>
         <div className={styles.inputLike}>
           <span className="material-symbols-outlined">calendar_month</span>
-          <span>{formatDateTime(now)}</span>
+          <span>{formatDashboardDateTime(now)}</span>
         </div>
 
         <SelectInput
@@ -116,7 +84,7 @@ export default function DashboardAiSuggestionCard({
         </button>
 
         <div className={styles.previewItems}>
-          {STATIC_SUGGESTION_ITEMS.map((item) => (
+          {DASHBOARD_AI_SUGGESTION_ITEMS.map((item) => (
             <div key={item.name} className={styles.previewItem}>
               <div className={styles.previewThumb} />
               <div className={styles.previewName}>{item.name}</div>
@@ -131,7 +99,7 @@ export default function DashboardAiSuggestionCard({
       </div>
 
       <ul className={styles.noteList}>
-        {STATIC_NOTES.map((note) => (
+        {DASHBOARD_AI_SUGGESTION_NOTES.map((note) => (
           <li key={note}>{note}</li>
         ))}
       </ul>

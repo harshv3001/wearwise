@@ -1,0 +1,34 @@
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.columnTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.emptyCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(252, 219, 144, 0.4);
+  background: linear-gradient(180deg, #fffdfa 0%, #fff6ef 100%);
+  border-radius: 1rem;
+  padding: 1rem;
+  text-align: center;
+  line-height: 1.55;
+  color: var(--ww-text-secondary);
+}

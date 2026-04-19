@@ -3,32 +3,9 @@
 import Link from "next/link";
 import { Button } from "@/app/components/ui/actions";
 import { Card } from "@/app/components/ui/display";
-import { Skeleton } from "@/app/components/ui/feedback";
+import { chunkDashboardItems } from "@/features/dashboard/dashboardHelper";
+import CategorySkeletonColumn from "./CategorySkeletonColumn";
 import styles from "./DashboardCategoryCard.module.scss";
-
-function chunkCategories(items = []) {
-  const midpoint = Math.ceil(items.length / 2);
-
-  return [items.slice(0, midpoint), items.slice(midpoint)];
-}
-
-function CategorySkeletonColumn() {
-  return (
-    <div className={styles.column}>
-      <div className={styles.headerRow}>
-        <Skeleton variant="text" width={58} height={18} />
-        <Skeleton variant="text" width={26} height={18} />
-      </div>
-
-      {Array.from({ length: 4 }).map((_, index) => (
-        <div key={`category-skeleton-${index}`} className={styles.itemRow}>
-          <Skeleton variant="text" width="70%" height={28} />
-          <Skeleton variant="text" width={24} height={28} />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export default function DashboardCategoryCard({
   categoryCounts = [],
@@ -40,7 +17,7 @@ export default function DashboardCategoryCard({
     name: item.category,
     qty: item.count,
   }));
-  const [leftColumn, rightColumn] = chunkCategories(normalizedItems);
+  const [leftColumn, rightColumn] = chunkDashboardItems(normalizedItems);
 
   return (
     <Card
@@ -57,7 +34,7 @@ export default function DashboardCategoryCard({
           </div>
 
           <div className={styles.footer}>
-            <Skeleton variant="rounded" width={160} height={42} />
+            <div className={styles.buttonSkeleton} />
           </div>
         </>
       ) : isError ? (

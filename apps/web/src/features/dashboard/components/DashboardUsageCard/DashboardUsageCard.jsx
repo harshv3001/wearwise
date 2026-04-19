@@ -1,57 +1,13 @@
 "use client";
 
-import { Card, ImageWithFallback } from "@/app/components/ui/display";
-import { Skeleton } from "@/app/components/ui/feedback";
-import { formatCapitalizedValue } from "@/lib/helperFunctions";
+import { Card } from "@/app/components/ui/display";
+import UsageColumn from "./UsageColumn/UsageColumn";
+import UsageSkeletonColumn from "./UsageSkeletonColumn";
 import styles from "./DashboardUsageCard.module.scss";
 
-function UsageItem({ title, item, accentClassName, emptyText }) {
-  return (
-    <div className={styles.column}>
-      <h4 className={styles.columnTitle}>{title}</h4>
-
-      {item ? (
-        <div className={styles.usageCard}>
-          <ImageWithFallback
-            imageUrl={item.image_url}
-            alt={item.name}
-            fallbackText={item.name}
-            className={styles.imageFrame}
-            imgClassName={styles.image}
-          />
-
-          <div className={styles.itemName}>{item.name}</div>
-          <div className={styles.itemCategory}>
-            {formatCapitalizedValue(item.category)}
-          </div>
-          <div className={`${styles.wornCount} ${accentClassName}`}>
-            Worn {item.times_worn}x
-          </div>
-        </div>
-      ) : (
-        <div className={styles.emptyCard}>{emptyText}</div>
-      )}
-    </div>
-  );
-}
-
-function UsageSkeletonColumn({ title }) {
-  return (
-    <div className={styles.column}>
-      <h4 className={styles.columnTitle}>{title}</h4>
-      <div className={styles.usageCard}>
-        <Skeleton className={styles.imageFrame} height={124} width="100%" />
-        <Skeleton variant="text" width="80%" height={28} />
-        <Skeleton variant="text" width="54%" height={20} />
-        <Skeleton variant="text" width="44%" height={22} />
-      </div>
-    </div>
-  );
-}
-
 export default function DashboardUsageCard({
-  mostUsedItem,
-  leastUsedItem,
+  mostUsedItems = [],
+  leastUsedItems = [],
   isLoading = false,
   isError = false,
 }) {
@@ -72,17 +28,17 @@ export default function DashboardUsageCard({
         </p>
       ) : (
         <div className={styles.columns}>
-          <UsageItem
+          <UsageColumn
             title="Most Used"
-            item={mostUsedItem}
+            items={mostUsedItems}
             accentClassName={styles.mostUsedAccent}
-            emptyText="Wear a few closet items to unlock your most-used highlight."
+            emptyText="Wear a few closet items to unlock your most-used highlights."
           />
-          <UsageItem
+          <UsageColumn
             title="Least Used"
-            item={leastUsedItem}
+            items={leastUsedItems}
             accentClassName={styles.leastUsedAccent}
-            emptyText="Once you start rotating items, your least-used pick will show here."
+            emptyText="Once you start rotating items, your least-used picks will show here."
           />
         </div>
       )}

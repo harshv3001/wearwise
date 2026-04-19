@@ -47,8 +47,8 @@ class DashboardRecentActivity(BaseModel):
 class DashboardSummaryOut(BaseModel):
     stats: DashboardStats
     category_counts: list[DashboardCategoryCount]
-    most_used_item: Optional[DashboardClosetItemUsage] = None
-    least_used_item: Optional[DashboardClosetItemUsage] = None
+    most_used_items: list[DashboardClosetItemUsage] = Field(default_factory=list)
+    least_used_items: list[DashboardClosetItemUsage] = Field(default_factory=list)
     today_logged_outfit: Optional[DashboardTodayOutfit] = None
     closet_health: DashboardClosetHealth
     recent_activity: DashboardRecentActivity

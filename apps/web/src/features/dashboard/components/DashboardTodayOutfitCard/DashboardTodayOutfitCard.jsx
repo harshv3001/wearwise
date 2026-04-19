@@ -2,21 +2,9 @@
 
 import { Button } from "@/app/components/ui/actions";
 import { Card, ImageWithFallback } from "@/app/components/ui/display";
-import { Skeleton } from "@/app/components/ui/feedback";
 import { formatDate, formatCapitalizedValue } from "@/lib/helperFunctions";
+import TodayOutfitSkeleton from "./TodayOutfitSkeleton";
 import styles from "./DashboardTodayOutfitCard.module.scss";
-
-function TodayOutfitSkeleton() {
-  return (
-    <div className={styles.skeletonWrap}>
-      <Skeleton className={styles.imageFrame} height={180} width="100%" />
-      <Skeleton variant="text" width="74%" height={32} />
-      <Skeleton variant="text" width="46%" height={22} />
-      <Skeleton variant="rounded" width={118} height={32} />
-      <Skeleton variant="text" width="68%" height={20} />
-    </div>
-  );
-}
 
 export default function DashboardTodayOutfitCard({
   todayOutfit,

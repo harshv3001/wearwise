@@ -1,12 +1,19 @@
 from datetime import date, timedelta
 from uuid import UUID
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.functions import count
 
 from src.closet_items.models import ClosetItem
 from src.outfits.models import Outfit
 from src.wear.models import WearLog
+
+
+def get_normalized_category_expression():
+    trimmed_category = func.trim(ClosetItem.category)
+    collapsed_category = func.regexp_replace(trimmed_category, r"\s+", " ", "g")
+    return func.initcap(func.lower(collapsed_category))
 
 
 def count_closet_items_by_user(db: Session, *, user_id: UUID) -> int:
@@ -37,19 +44,28 @@ def count_logged_on_date(db: Session, *, user_id: UUID, target_date: date) -> in
 
 
 def list_category_counts(db: Session, *, user_id: UUID):
+    normalized_category = get_normalized_category_expression()
+    trimmed_category = func.trim(ClosetItem.category)
+
     return (
         db.query(
-            ClosetItem.category.label("category"),
+            normalized_category.label("category"),
             count(ClosetItem.id).label("count"),
         )
-        .filter(ClosetItem.user_id == user_id)
-        .group_by(ClosetItem.category)
-        .order_by(count(ClosetItem.id).desc(), ClosetItem.category.asc())
+        .filter(
+            ClosetItem.user_id == user_id,
+            ClosetItem.category.isnot(None),
+            trimmed_category != "",
+        )
+        .group_by(normalized_category)
+        .order_by(count(ClosetItem.id).desc(), normalized_category.asc())
         .all()
     )
 
 
-def get_most_used_item(db: Session, *, user_id: UUID) -> ClosetItem | None:
+def get_most_used_items(
+    db: Session, *, user_id: UUID, limit: int = 3
+) -> list[ClosetItem]:
     return (
         db.query(ClosetItem)
         .filter(ClosetItem.user_id == user_id)
@@ -58,11 +74,14 @@ def get_most_used_item(db: Session, *, user_id: UUID) -> ClosetItem | None:
             ClosetItem.created_at.asc(),
             ClosetItem.name.asc(),
         )
-        .first()
+        .limit(limit)
+        .all()
     )
 
 
-def get_least_used_item(db: Session, *, user_id: UUID) -> ClosetItem | None:
+def get_least_used_items(
+    db: Session, *, user_id: UUID, limit: int = 3
+) -> list[ClosetItem]:
     return (
         db.query(ClosetItem)
         .filter(ClosetItem.user_id == user_id)
@@ -71,7 +90,8 @@ def get_least_used_item(db: Session, *, user_id: UUID) -> ClosetItem | None:
             ClosetItem.created_at.asc(),
             ClosetItem.name.asc(),
         )
-        .first()
+        .limit(limit)
+        .all()
     )
 
 

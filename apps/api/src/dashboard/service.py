@@ -32,6 +32,16 @@ def serialize_dashboard_item_usage(item) -> DashboardClosetItemUsage | None:
     )
 
 
+def serialize_dashboard_item_usages(items) -> list[DashboardClosetItemUsage]:
+    return [
+        serialized_item
+        for serialized_item in (
+            serialize_dashboard_item_usage(item) for item in (items or [])
+        )
+        if serialized_item is not None
+    ]
+
+
 def get_dashboard_summary(*, db: Session, current_user: User) -> DashboardSummaryOut:
     today = date_type.today()
     week_start = dashboard_queries.get_week_start(today)
@@ -47,8 +57,12 @@ def get_dashboard_summary(*, db: Session, current_user: User) -> DashboardSummar
     )
 
     category_rows = dashboard_queries.list_category_counts(db, user_id=current_user.id)
-    most_used_item = dashboard_queries.get_most_used_item(db, user_id=current_user.id)
-    least_used_item = dashboard_queries.get_least_used_item(db, user_id=current_user.id)
+    most_used_items = dashboard_queries.get_most_used_items(
+        db, user_id=current_user.id
+    )
+    least_used_items = dashboard_queries.get_least_used_items(
+        db, user_id=current_user.id
+    )
     today_outfit_row = dashboard_queries.get_today_logged_outfit(
         db, user_id=current_user.id, target_date=today
     )
@@ -91,8 +105,8 @@ def get_dashboard_summary(*, db: Session, current_user: User) -> DashboardSummar
             )
             for row in category_rows
         ],
-        most_used_item=serialize_dashboard_item_usage(most_used_item),
-        least_used_item=serialize_dashboard_item_usage(least_used_item),
+        most_used_items=serialize_dashboard_item_usages(most_used_items),
+        least_used_items=serialize_dashboard_item_usages(least_used_items),
         today_logged_outfit=today_logged_outfit,
         closet_health=DashboardClosetHealth(
             never_worn_count=never_worn_count,

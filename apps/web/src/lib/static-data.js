@@ -128,3 +128,16 @@ export const STATIC_STATS = {
   closetItems: 52,
   outfitsLogged: 14,
 };
+
+export const DASHBOARD_AI_SUGGESTION_ITEMS = [
+  { name: "T-shirt", category: "Top" },
+  { name: "Raincoat", category: "Outerwear" },
+  { name: "Jeans", category: "Bottom" },
+  { name: "Boots", category: "Shoes" },
+];
+
+export const DASHBOARD_AI_SUGGESTION_NOTES = [
+  "Cold weather makes layering a safer pick.",
+  "A rain-ready outer layer keeps this outfit practical.",
+  "Your low-rotation boots could use a wear soon.",
+];

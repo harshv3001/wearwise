@@ -2,65 +2,24 @@
 
 import { useMemo, useState } from "react";
 import { Button } from "../../components/ui/actions";
-import { Skeleton } from "../../components/ui/feedback";
 import ReportOutfitModal from "../../../features/outfits/components/ReportOutfitModal/ReportOutfitModal";
 import CreateClosetItem from "../../../features/closet/component/CreateClosetItem/CreateClosetItem.jsx";
 import { useCurrentUser } from "../../../features/auth/hooks/useCurrentUser";
 import { useWeather } from "../../../features/weather/hooks/useWeather";
 import { useDashboardSummaryQuery } from "../../../features/dashboard/hooks/useDashboardSummaryQuery";
+import {
+  getDisplayName,
+  getGreetingLabel,
+  getSummaryLine,
+} from "../../../features/dashboard/dashboardHelper";
 import DashboardCategoryCard from "../../../features/dashboard/components/DashboardCategoryCard/DashboardCategoryCard";
 import DashboardUsageCard from "../../../features/dashboard/components/DashboardUsageCard/DashboardUsageCard";
 import DashboardAiSuggestionCard from "../../../features/dashboard/components/DashboardAiSuggestionCard/DashboardAiSuggestionCard";
 import DashboardTodayOutfitCard from "../../../features/dashboard/components/DashboardTodayOutfitCard/DashboardTodayOutfitCard";
 import DashboardClosetHealthCard from "../../../features/dashboard/components/DashboardClosetHealthCard/DashboardClosetHealthCard";
 import DashboardRecentActivityCard from "../../../features/dashboard/components/DashboardRecentActivityCard/DashboardRecentActivityCard";
-
-function getGreetingLabel(date = new Date()) {
-  const hour = date.getHours();
-
-  if (hour < 12) {
-    return "Good morning";
-  }
-
-  if (hour < 17) {
-    return "Good afternoon";
-  }
-
-  return "Good evening";
-}
-
-function getDisplayName(user) {
-  return (
-    user?.first_name?.trim() ||
-    user?.username?.trim() ||
-    user?.email?.split("@")[0] ||
-    "there"
-  );
-}
-
-function SummaryChipSkeleton() {
-  return <Skeleton variant="rounded" width={124} height={34} />;
-}
-
-function SummaryChip({ label, value, tone = "default" }) {
-  const toneClassName =
-    tone === "accent"
-      ? "bg-[rgba(255,151,140,0.15)] text-[#9a5f4e]"
-      : tone === "highlight"
-      ? "bg-[rgba(252,219,144,0.28)] text-[#8a6839]"
-      : "bg-white text-[var(--ww-text-secondary)]";
-
-  return (
-    <div
-      className={`inline-flex items-center gap-2 rounded-full border border-[rgba(56,53,59,0.08)] px-4 py-2 text-sm font-medium shadow-sm ${toneClassName}`}
-    >
-      <span className="text-[0.75rem] uppercase tracking-[0.08em] opacity-75">
-        {label}
-      </span>
-      <strong className="text-[var(--ww-text-primary)]">{value}</strong>
-    </div>
-  );
-}
+import DashboardSummaryChip from "../../../features/dashboard/components/DashboardSummaryChip/DashboardSummaryChip";
+import DashboardSummaryChipSkeleton from "../../../features/dashboard/components/DashboardSummaryChipSkeleton/DashboardSummaryChipSkeleton";
 
 export default function DashboardPage() {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
@@ -90,24 +49,30 @@ export default function DashboardPage() {
               </div>
 
               {isUserLoading ? (
-                <>
-                  <Skeleton variant="text" width={320} height={52} />
-                  <Skeleton variant="text" width="78%" height={24} />
-                </>
+                <div className="space-y-3">
+                  <div className="h-[52px] w-[320px] animate-pulse rounded-2xl bg-[rgba(255,255,255,0.75)]" />
+                  <div className="h-6 w-[78%] animate-pulse rounded-2xl bg-[rgba(255,255,255,0.65)]" />
+                </div>
               ) : (
                 <>
                   <h1 className="m-0 text-[2rem] font-extrabold leading-tight text-[var(--ww-text-primary)] md:text-[2.6rem]">
                     {greetingLabel}, {displayName}
                   </h1>
+                  <p className="mt-2 max-w-3xl text-[1rem] leading-7 text-[var(--ww-text-secondary)]">
+                    {getSummaryLine(
+                      summaryStats,
+                      dashboardSummaryQuery.isError && !summaryStats
+                    )}
+                  </p>
                 </>
               )}
 
               <div className="mt-4 flex flex-wrap gap-3">
                 {dashboardSummaryQuery.isLoading ? (
                   <>
-                    <SummaryChipSkeleton />
-                    <SummaryChipSkeleton />
-                    <SummaryChipSkeleton />
+                    <DashboardSummaryChipSkeleton />
+                    <DashboardSummaryChipSkeleton />
+                    <DashboardSummaryChipSkeleton />
                   </>
                 ) : dashboardSummaryQuery.isError && !summaryStats ? (
                   <div className="rounded-full border border-[rgba(56,53,59,0.08)] bg-white px-4 py-2 text-sm text-[var(--ww-text-secondary)] shadow-sm">
@@ -115,17 +80,17 @@ export default function DashboardPage() {
                   </div>
                 ) : (
                   <>
-                    <SummaryChip
+                    <DashboardSummaryChip
                       label="Logged today"
                       value={summaryStats?.logged_today_count ?? 0}
                       tone="accent"
                     />
-                    <SummaryChip
+                    <DashboardSummaryChip
                       label="Saved outfits"
                       value={summaryStats?.saved_outfits_count ?? 0}
                       tone="highlight"
                     />
-                    <SummaryChip
+                    <DashboardSummaryChip
                       label="Closet items"
                       value={summaryStats?.total_closet_items ?? 0}
                     />
@@ -162,8 +127,8 @@ export default function DashboardPage() {
           />
 
           <DashboardUsageCard
-            mostUsedItem={dashboardSummaryQuery.data?.most_used_item}
-            leastUsedItem={dashboardSummaryQuery.data?.least_used_item}
+            mostUsedItems={dashboardSummaryQuery.data?.most_used_items}
+            leastUsedItems={dashboardSummaryQuery.data?.least_used_items}
             isLoading={dashboardSummaryQuery.isLoading}
             isError={dashboardSummaryQuery.isError}
           />

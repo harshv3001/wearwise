@@ -1,0 +1,13 @@
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.headerRow,
+.itemRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: start;
+}

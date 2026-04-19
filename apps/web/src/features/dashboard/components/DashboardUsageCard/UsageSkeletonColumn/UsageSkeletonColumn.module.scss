@@ -1,0 +1,29 @@
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.columnTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.usageCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(252, 219, 144, 0.4);
+  background: linear-gradient(180deg, #fffdfa 0%, #fff6ef 100%);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.imageFrame {
+  max-width: 120px;
+  aspect-ratio: 1 / 1;
+  border-radius: 1rem;
+}

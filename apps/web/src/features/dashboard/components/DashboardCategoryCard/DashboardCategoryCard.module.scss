@@ -54,10 +54,29 @@
   padding-top: 0.5rem;
 }
 
+.buttonSkeleton {
+  width: 160px;
+  height: 42px;
+  border-radius: 0.8rem;
+  background: linear-gradient(90deg, #f5ede3 0%, #fcf6ee 50%, #f5ede3 100%);
+  animation: shimmer 1.6s infinite linear;
+  background-size: 200% 100%;
+}
+
 .message {
   margin: auto 0;
   color: var(--ww-text-secondary);
   line-height: 1.55;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
 }
 
 @media (max-width: 560px) {
