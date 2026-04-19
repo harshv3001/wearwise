@@ -218,6 +218,8 @@ export default function OutfitBuilderWorkspace({
             ? "Outfit updated successfully."
             : "Outfit saved successfully."
         );
+
+        return { id: savedOutfitId };
       } catch (error) {
         throw new Error(
           error?.response?.data?.detail ||

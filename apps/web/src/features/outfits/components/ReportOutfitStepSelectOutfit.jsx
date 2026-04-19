@@ -7,13 +7,9 @@ import OutfitItemsCarousel from "./OutfitItemsCarousel";
 import Link from "next/link";
 import { ImageWithFallback } from "@/app/components/ui/display";
 import { useOutfitsQuery } from "../hooks/useOutfitsQuery";
-import { useCreateReportMutation } from "../../report/hooks/useCreateReportMutation";
 import ReportOutfitSelectionSkeleton from "./ReportOutfitSelectionSkeleton/ReportOutfitSelectionSkeleton";
-import {
-  showErrorToast,
-  showSuccessToast,
-  showWarningToast,
-} from "../../../lib/toast";
+import { useSubmitWearLog } from "../../report/hooks/useSubmitWearLog";
+import { showErrorToast, showWarningToast } from "../../../lib/toast";
 
 export default function ReportOutfitStepSelectOutfit({
   selectedDate,
@@ -21,7 +17,7 @@ export default function ReportOutfitStepSelectOutfit({
   onPendingChange,
 }) {
   const [selectedOutfitId, setSelectedOutfitId] = useState(null);
-  const createReportMutation = useCreateReportMutation();
+  const { submitWearLog, isPending } = useSubmitWearLog();
   const { data: outfits, isLoading, error } = useOutfitsQuery();
 
   const previewOutfits = useMemo(() => {
@@ -36,12 +32,12 @@ export default function ReportOutfitStepSelectOutfit({
   }, [outfits]);
 
   useEffect(() => {
-    onPendingChange?.(createReportMutation.isPending);
+    onPendingChange?.(isPending);
 
     return () => {
       onPendingChange?.(false);
     };
-  }, [createReportMutation.isPending, onPendingChange]);
+  }, [isPending, onPendingChange]);
 
   const handleViewOutfitDetails = (outfitId) => {
     return `/outfit-details/${outfitId}`;
@@ -62,24 +58,18 @@ export default function ReportOutfitStepSelectOutfit({
       return;
     }
 
-    const payload = {
-      date_worn: selectedDate,
-      outfit_id: selectedOutfit.id,
-    };
-
     try {
-      const result = await createReportMutation.mutateAsync(payload);
+      const result = await submitWearLog({
+        outfitId: selectedOutfit.id,
+        selectedDate,
+      });
 
       if (result.wear_log_id) {
-        showSuccessToast("Outfit reported successfully.");
         onSuccess?.();
       }
-    } catch (submitError) {
-      showErrorToast(
-        submitError?.response?.data?.detail ||
-          submitError?.message ||
-          "Could not report this outfit."
-      );
+    } catch (error) {
+      // Error toasts are handled inside useSubmitWearLog.
+      void error;
     }
   };
 
