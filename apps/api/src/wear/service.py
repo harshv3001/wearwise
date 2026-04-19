@@ -10,6 +10,7 @@ from src.outfits.service import validate_closet_items_belong_to_user
 from src.users.models import User
 from src.wear import queries as wear_queries
 from src.wear.exceptions import (
+    InvalidWearDateRangeError,
     OutfitMustContainClosetItemsError,
     OutfitSelectionConflictError,
     OutfitSelectionRequiredError,
@@ -17,7 +18,7 @@ from src.wear.exceptions import (
     WearOperationFailedError,
 )
 from src.wear.log_schemas import WearLogOut, WearLogUpdate
-from src.wear.schemas import WearCreate, WearOut
+from src.wear.schemas import WearCreate, WearLogListOut, WearOut
 from src.wear.utils import serialize_wear_log_summary
 
 
@@ -92,7 +93,10 @@ def list_wear_logs(
     date_to: Optional[date_type],
     limit: int,
     offset: int,
-) -> dict:
+) -> WearLogListOut:
+    if date_from and date_to and date_from > date_to:
+        raise InvalidWearDateRangeError()
+
     total, wear_logs = wear_queries.list_wear_logs_by_user(
         db,
         user_id=current_user.id,
@@ -101,12 +105,12 @@ def list_wear_logs(
         limit=limit,
         offset=offset,
     )
-    return {
-        "items": [serialize_wear_log_summary(wear_log) for wear_log in wear_logs],
-        "limit": limit,
-        "offset": offset,
-        "total": total,
-    }
+    return WearLogListOut(
+        items=[serialize_wear_log_summary(wear_log) for wear_log in wear_logs],
+        limit=limit,
+        offset=offset,
+        total=total,
+    )
 
 
 def update_wear_log(*, db: Session, wear_log, payload: WearLogUpdate) -> WearLogOut:

@@ -44,3 +44,11 @@ class WearDeleteFailedError(HTTPException):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to delete wear log.",
         )
+
+
+class InvalidWearDateRangeError(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="date_from must be on or before date_to.",
+        )

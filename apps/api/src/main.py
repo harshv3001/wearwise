@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 
 from src.auth.router import router as auth_router
 from src.closet_items.router import router as closet_items_router
+from src.dashboard.router import router as dashboard_router
 from src.locations.router import router as locations_router
 from src.media.router import router as media_router
 from src.outfits.router import router as outfits_router
@@ -43,6 +44,7 @@ app.include_router(users_router)
 app.include_router(locations_router)
 app.include_router(weather_router)
 app.include_router(closet_items_router)
+app.include_router(dashboard_router)
 app.include_router(outfits_router)
 app.include_router(media_router)
 app.include_router(wear_router)

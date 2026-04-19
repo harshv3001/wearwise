@@ -10,7 +10,7 @@ from src.users.models import User
 from src.wear.dependencies import get_owned_wear_log
 from src.wear.log_schemas import WearLogOut, WearLogUpdate
 from src.wear.models import WearLog
-from src.wear.schemas import WearCreate, WearOut
+from src.wear.schemas import WearCreate, WearLogListOut, WearOut
 from src.wear.service import delete_wear_log, list_wear_logs, update_wear_log, wear_outfit
 
 router = APIRouter(prefix="/wear", tags=["Wear"])
@@ -25,7 +25,7 @@ def wear_outfit_route(
     return wear_outfit(db=db, current_user=current_user, payload=payload)
 
 
-@router.get("/", response_model=dict)
+@router.get("/", response_model=WearLogListOut)
 def list_wear_logs_route(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_authenticated_user),
