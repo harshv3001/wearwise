@@ -16,6 +16,7 @@ export default function DashboardUsageCard({
       className={styles.card}
       contentClassName={styles.content}
       fullHeight
+      compact
     >
       {isLoading ? (
         <div className={styles.columns}>

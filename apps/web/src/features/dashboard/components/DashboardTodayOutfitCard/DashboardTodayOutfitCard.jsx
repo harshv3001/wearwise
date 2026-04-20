@@ -18,6 +18,7 @@ export default function DashboardTodayOutfitCard({
       className={styles.card}
       contentClassName={styles.content}
       fullHeight
+      compact
     >
       {isLoading ? (
         <TodayOutfitSkeleton />

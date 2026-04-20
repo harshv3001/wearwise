@@ -51,6 +51,7 @@ export default function DashboardAiSuggestionCard({
       className={styles.card}
       contentClassName={styles.content}
       fullHeight
+      compact
     >
       <div className={styles.controls}>
         <div className={styles.inputLike}>

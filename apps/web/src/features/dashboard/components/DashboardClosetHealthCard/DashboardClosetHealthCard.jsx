@@ -31,6 +31,7 @@ export default function DashboardClosetHealthCard({
       className={styles.card}
       contentClassName={styles.content}
       fullHeight
+      compact
     >
       {isLoading ? (
         <>

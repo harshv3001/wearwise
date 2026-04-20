@@ -39,26 +39,26 @@ export default function DashboardPage() {
     Number.isFinite(user.longitude);
 
   return (
-    <main className="p-4 md:p-6">
-      <section className="mx-auto flex w-full max-w-7xl flex-col gap-8">
-        <div className="rounded-[28px] border border-[rgba(56,53,59,0.12)] bg-[linear-gradient(135deg,rgba(255,151,140,0.20)_0%,rgba(255,255,255,0.92)_38%,rgba(252,219,144,0.16)_100%)] px-5 py-6 shadow-[0_16px_38px_rgba(67,45,41,0.08)] md:px-7 md:py-7">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+    <main className="p-3 md:p-4">
+      <section className="mx-auto flex w-full max-w-[1500px] flex-col gap-4">
+        <div className="rounded-[24px] border border-[rgba(56,53,59,0.12)] bg-[linear-gradient(135deg,rgba(255,151,140,0.18)_0%,rgba(255,255,255,0.94)_36%,rgba(252,219,144,0.15)_100%)] px-4 py-4 shadow-[0_12px_28px_rgba(67,45,41,0.07)] md:px-5 md:py-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="min-w-0 flex-1">
-              <div className="mb-2 text-[0.82rem] font-semibold uppercase tracking-[0.16em] text-[var(--ww-text-secondary)]">
+              <div className="mb-1 text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-[var(--ww-text-secondary)]">
                 Dashboard
               </div>
 
               {isUserLoading ? (
-                <div className="space-y-3">
-                  <div className="h-[52px] w-[320px] animate-pulse rounded-2xl bg-[rgba(255,255,255,0.75)]" />
-                  <div className="h-6 w-[78%] animate-pulse rounded-2xl bg-[rgba(255,255,255,0.65)]" />
+                <div className="space-y-2">
+                  <div className="h-[44px] w-[280px] animate-pulse rounded-2xl bg-[rgba(255,255,255,0.75)]" />
+                  <div className="h-5 w-[70%] animate-pulse rounded-2xl bg-[rgba(255,255,255,0.65)]" />
                 </div>
               ) : (
                 <>
-                  <h1 className="m-0 text-[2rem] font-extrabold leading-tight text-[var(--ww-text-primary)] md:text-[2.6rem]">
+                  <h1 className="m-0 text-[1.85rem] font-extrabold leading-tight text-[var(--ww-text-primary)] md:text-[2.3rem]">
                     {greetingLabel}, {displayName}
                   </h1>
-                  <p className="mt-2 max-w-3xl text-[1rem] leading-7 text-[var(--ww-text-secondary)]">
+                  <p className="mt-1.5 max-w-3xl text-[0.94rem] leading-6 text-[var(--ww-text-secondary)]">
                     {getSummaryLine(
                       summaryStats,
                       dashboardSummaryQuery.isError && !summaryStats
@@ -67,7 +67,7 @@ export default function DashboardPage() {
                 </>
               )}
 
-              <div className="mt-4 flex flex-wrap gap-3">
+              <div className="mt-3 flex flex-wrap gap-2.5">
                 {dashboardSummaryQuery.isLoading ? (
                   <>
                     <DashboardSummaryChipSkeleton />
@@ -99,10 +99,10 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
+            <div className="flex flex-col gap-2.5 sm:flex-row lg:justify-end">
               <Button
                 variant="primary"
-                size="lg"
+                size="md"
                 className="font-bold"
                 onClick={() => setOpenReportModal(true)}
               >
@@ -110,7 +110,7 @@ export default function DashboardPage() {
               </Button>
               <Button
                 variant="tertiary"
-                size="lg"
+                size="md"
                 onClick={() => setOpenItemModal(true)}
               >
                 Add clothing item
@@ -119,7 +119,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <section className="grid grid-cols-1 gap-5 xl:grid-cols-[1.05fr_0.9fr_1.35fr]">
+        <section className="grid grid-cols-1 gap-4 xl:grid-cols-[0.95fr_0.95fr_1.2fr]">
           <DashboardCategoryCard
             categoryCounts={dashboardSummaryQuery.data?.category_counts}
             isLoading={dashboardSummaryQuery.isLoading}
@@ -142,7 +142,7 @@ export default function DashboardPage() {
           />
         </section>
 
-        <section className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <section className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <DashboardTodayOutfitCard
             todayOutfit={dashboardSummaryQuery.data?.today_logged_outfit}
             isLoading={dashboardSummaryQuery.isLoading}

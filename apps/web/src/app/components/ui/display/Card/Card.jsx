@@ -8,6 +8,7 @@ export default function Card({
   className = "",
   contentClassName = "",
   fullHeight = false,
+  compact = false,
 }) {
   const cardClassName = [
     "flex flex-col",
@@ -21,11 +22,17 @@ export default function Card({
   const bodyClassName = [styles.content, contentClassName]
     .filter(Boolean)
     .join(" ");
+  const titleClassName = [styles.title, compact ? styles.titleCompact : ""]
+    .filter(Boolean)
+    .join(" ");
+  const compactBodyClassName = [bodyClassName, compact ? styles.contentCompact : ""]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <section className={cardClassName}>
-      {title ? <h3 className={styles.title}>{title}</h3> : null}
-      <div className={bodyClassName}>{children}</div>
+      {title ? <h3 className={titleClassName}>{title}</h3> : null}
+      <div className={compactBodyClassName}>{children}</div>
     </section>
   );
 }

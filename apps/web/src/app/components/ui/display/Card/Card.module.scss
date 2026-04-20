@@ -10,6 +10,10 @@
   padding: 1rem;
 }
 
+.contentCompact {
+  padding: 0.8rem;
+}
+
 .title {
   padding: 1rem 1rem 0;
   margin: 0;
@@ -17,6 +21,11 @@
   font-weight: 600;
   line-height: 1.2;
   color: var(--ww-text-primary);
+}
+
+.titleCompact {
+  padding: 0.8rem 0.8rem 0;
+  font-size: 0.95rem;
 }
 
 .fullHeight {

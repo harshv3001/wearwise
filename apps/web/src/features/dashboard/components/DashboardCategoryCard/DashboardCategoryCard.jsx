@@ -25,6 +25,7 @@ export default function DashboardCategoryCard({
       className={styles.card}
       contentClassName={styles.content}
       fullHeight
+      compact
     >
       {isLoading ? (
         <>
