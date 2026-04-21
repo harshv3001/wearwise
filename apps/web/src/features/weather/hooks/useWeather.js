@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getCurrentWeatherApi } from "../api/weatherApi";
 
-export function useWeather(latitude, longitude) {
+export function useWeather(latitude, longitude, options = {}) {
   const hasCoordinates =
     typeof latitude === "number" && Number.isFinite(latitude) &&
     typeof longitude === "number" && Number.isFinite(longitude);
@@ -17,7 +17,7 @@ export function useWeather(latitude, longitude) {
         longitude,
         signal,
       }),
-    enabled: hasCoordinates,
+    enabled: hasCoordinates && (options.enabled ?? true),
     staleTime: 1000 * 60 * 10,
     retry: 1,
   });

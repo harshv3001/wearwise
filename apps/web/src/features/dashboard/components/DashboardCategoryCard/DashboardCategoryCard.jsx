@@ -1,10 +1,12 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/app/components/ui/actions";
 import { Card } from "@/app/components/ui/display";
 import { chunkDashboardItems } from "@/features/dashboard/dashboardHelper";
 import CategorySkeletonColumn from "./CategorySkeletonColumn";
+import CategoryMoreToggle from "./CategoryMoreToggle/CategoryMoreToggle";
 import styles from "./DashboardCategoryCard.module.scss";
 
 export default function DashboardCategoryCard({
@@ -12,17 +14,26 @@ export default function DashboardCategoryCard({
   isLoading = false,
   isError = false,
 }) {
-  const normalizedItems = categoryCounts.map((item, index) => ({
-    id: `${item.category}-${index}`,
-    name: item.category,
-    qty: item.count,
-  }));
-  const [leftColumn, rightColumn] = chunkDashboardItems(normalizedItems);
+  const [expanded, setExpanded] = useState(false);
+  const normalizedItems = useMemo(
+    () =>
+      categoryCounts.map((item, index) => ({
+        id: `${item.category}-${index}`,
+        name: item.category,
+        qty: item.count,
+      })),
+    [categoryCounts]
+  );
+
+  const [hasMoreThanInitialRows, visibleLeftColumn, visibleRightColumn] =
+    useMemo(
+      () => chunkDashboardItems(normalizedItems, expanded),
+      [normalizedItems, expanded]
+    );
 
   return (
     <Card
       title="Category Count"
-      className={styles.card}
       contentClassName={styles.content}
       fullHeight
       compact
@@ -49,25 +60,36 @@ export default function DashboardCategoryCard({
       ) : (
         <>
           <div className={styles.columns}>
-            {[leftColumn, rightColumn].map((column, columnIndex) => (
-              <div
-                key={`category-column-${columnIndex}`}
-                className={styles.column}
-              >
-                <div className={styles.headerRow}>
-                  <span>Category</span>
-                  <span>Qty</span>
-                </div>
-
-                {column.map((item) => (
-                  <div key={item.id} className={styles.itemRow}>
-                    <span className={styles.itemName}>{item.name}</span>
-                    <span className={styles.itemQty}>{item.qty}</span>
+            {[visibleLeftColumn, visibleRightColumn].map(
+              (column, columnIndex) => (
+                <div
+                  key={`category-column-${columnIndex}`}
+                  className={styles.column}
+                >
+                  <div className={styles.headerRow}>
+                    <span>Category</span>
+                    <span>Qty</span>
                   </div>
-                ))}
-              </div>
-            ))}
+
+                  {column.map((item) => (
+                    <div key={item.id} className={styles.itemRow}>
+                      <span className={styles.itemName}>{item.name}</span>
+                      <span className={styles.itemQty}>{item.qty}</span>
+                    </div>
+                  ))}
+                </div>
+              )
+            )}
           </div>
+
+          {hasMoreThanInitialRows ? (
+            <div className={styles.moreWrap}>
+              <CategoryMoreToggle
+                expanded={expanded}
+                onToggle={() => setExpanded((current) => !current)}
+              />
+            </div>
+          ) : null}
 
           <div className={styles.footer}>
             <Link href="/closet">

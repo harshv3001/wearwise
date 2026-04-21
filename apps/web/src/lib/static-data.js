@@ -130,10 +130,34 @@ export const STATIC_STATS = {
 };
 
 export const DASHBOARD_AI_SUGGESTION_ITEMS = [
-  { name: "T-shirt", category: "Top" },
-  { name: "Raincoat", category: "Outerwear" },
-  { name: "Jeans", category: "Bottom" },
-  { name: "Boots", category: "Shoes" },
+  {
+    id: "dashboard-ai-top",
+    name: "T-shirt",
+    category: "Top",
+    image_url:
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' rx='18' fill='%23d6d6d6'/%3E%3C/svg%3E",
+  },
+  {
+    id: "dashboard-ai-outerwear",
+    name: "Raincoat",
+    category: "Outerwear",
+    image_url:
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' rx='18' fill='%23d6d6d6'/%3E%3C/svg%3E",
+  },
+  {
+    id: "dashboard-ai-bottom",
+    name: "Jeans",
+    category: "Bottom",
+    image_url:
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' rx='18' fill='%23d6d6d6'/%3E%3C/svg%3E",
+  },
+  {
+    id: "dashboard-ai-shoes",
+    name: "Boots",
+    category: "Shoes",
+    image_url:
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' rx='18' fill='%23d6d6d6'/%3E%3C/svg%3E",
+  },
 ];
 
 export const DASHBOARD_AI_SUGGESTION_NOTES = [

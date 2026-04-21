@@ -51,58 +51,54 @@
   color: var(--ww-text-secondary);
 }
 
-.previewBox {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 0.5rem;
-  align-items: center;
+.carouselWrap {
   border: 1px solid rgba(56, 53, 59, 0.15);
   border-radius: 1rem;
   background: linear-gradient(180deg, #fffefd 0%, #fff7f2 100%);
-  padding: 0.75rem 0.55rem;
+  padding: 0.35rem 0.1rem;
 }
 
-.arrowButton {
-  display: inline-flex;
+.carouselRoot {
   align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border: none;
-  background: transparent;
-  color: var(--ww-text-primary);
+  gap: 0.45rem;
 }
 
-.previewItems {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.65rem;
+.carouselArrow {
+  padding: 18px 2px 0 !important;
+  color: #5d5551 !important;
 }
 
-.previewItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  text-align: center;
+.carouselViewport {
+  padding: 4px 0 !important;
 }
 
-.previewThumb {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  max-width: 68px;
-  border-radius: 0.8rem;
-  background: linear-gradient(180deg, #d8d8d8 0%, #cfcfcf 100%);
+.carouselSlide {
+  flex: 0 0 25% !important;
 }
 
-.previewName {
-  font-size: 0.86rem;
-  font-weight: 700;
+.carouselCard {
+  gap: 0.2rem !important;
 }
 
-.previewCategory {
-  font-size: 0.7rem;
-  color: var(--ww-text-secondary);
+.carouselImage {
+  border-radius: 0.75rem !important;
+  border-color: rgba(56, 53, 59, 0.18) !important;
+  background: linear-gradient(180deg, #d8d8d8 0%, #cfcfcf 100%) !important;
+}
+
+.carouselName {
+  margin-top: 6px !important;
+  font-size: 0.82rem !important;
+  line-height: 1.15 !important;
+  color: var(--ww-text-primary) !important;
+  font-weight: 600 !important;
+}
+
+.carouselSub {
+  margin-top: 0 !important;
+  font-size: 0.68rem !important;
+  line-height: 1.1 !important;
+  color: var(--ww-text-secondary) !important;
 }
 
 .noteList {
@@ -124,8 +120,8 @@
 }
 
 @media (max-width: 900px) {
-  .previewItems {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .carouselSlide {
+    flex: 0 0 33.3333% !important;
   }
 }
 
@@ -134,11 +130,7 @@
     grid-template-columns: 1fr;
   }
 
-  .previewBox {
-    grid-template-columns: 1fr;
-  }
-
-  .arrowButton {
-    display: none;
+  .carouselSlide {
+    flex: 0 0 50% !important;
   }
 }

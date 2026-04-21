@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./ReportOutfitModal/ReportOutfitModal.module.scss";
 import { Button } from "../../../app/components/ui/actions";
-import OutfitItemsCarousel from "./OutfitItemsCarousel";
+import OutfitItemsCarousel from "../../OutfitItemsCarousel/OutfitItemsCarousel";
 import Link from "next/link";
 import { ImageWithFallback } from "@/app/components/ui/display";
 import { useOutfitsQuery } from "../hooks/useOutfitsQuery";

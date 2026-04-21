@@ -2,10 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import styles from "./ReportOutfitModal/ReportOutfitModal.module.scss";
+import styles from "./OutfitItemsCarousel.module.scss";
 import { ImageWithFallback } from "@/app/components/ui/display";
 
-export default function OutfitItemsCarousel({ items = [] }) {
+function joinClasses(...classNames) {
+  return classNames.filter(Boolean).join(" ");
+}
+
+export default function OutfitItemsCarousel({ items = [], classNames = {} }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     slidesToScroll: 1,
@@ -48,10 +52,10 @@ export default function OutfitItemsCarousel({ items = [] }) {
   }, [emblaApi, updateButtons]);
 
   return (
-    <div className={styles.itemsCarouselRow}>
+    <div className={joinClasses(styles.itemsCarouselRow, classNames.root)}>
       <button
         type="button"
-        className={styles.carouselArrow}
+        className={joinClasses(styles.carouselArrow, classNames.arrow)}
         onClick={scrollPrev}
         disabled={!canScrollPrev}
         aria-label="Previous items"
@@ -59,23 +63,50 @@ export default function OutfitItemsCarousel({ items = [] }) {
         <span className="material-symbols-outlined">arrow_back_ios</span>
       </button>
 
-      <div className={styles.embla}>
-        <div className={styles.emblaViewport} ref={emblaRef}>
-          <div className={styles.emblaContainer}>
+      <div className={joinClasses(styles.embla, classNames.embla)}>
+        <div
+          className={joinClasses(styles.emblaViewport, classNames.viewport)}
+          ref={emblaRef}
+        >
+          <div
+            className={joinClasses(styles.emblaContainer, classNames.container)}
+          >
             {items.map((item, itemIndex) => (
               <div
                 key={`item-${itemIndex}-${item?.id}`}
-                className={styles.emblaSlide}
+                className={joinClasses(styles.emblaSlide, classNames.slide)}
               >
-                <div className={styles.outfitItemCard}>
+                <div
+                  className={joinClasses(
+                    styles.outfitItemCard,
+                    classNames.card
+                  )}
+                >
                   <ImageWithFallback
                     imageUrl={item?.image_url}
                     alt={item?.name}
                     fallbackText={item?.name}
-                    imgClassName={styles.outfitItemBox}
+                    imgClassName={joinClasses(
+                      styles.outfitItemBox,
+                      classNames.image
+                    )}
                   />
-                  <div className={styles.outfitItemName}>{item?.name}</div>
-                  <div className={styles.outfitItemSub}>{item?.category}</div>
+                  <div
+                    className={joinClasses(
+                      styles.outfitItemName,
+                      classNames.name
+                    )}
+                  >
+                    {item?.name}
+                  </div>
+                  <div
+                    className={joinClasses(
+                      styles.outfitItemSub,
+                      classNames.sub
+                    )}
+                  >
+                    {item?.category}
+                  </div>
                 </div>
               </div>
             ))}
@@ -85,7 +116,7 @@ export default function OutfitItemsCarousel({ items = [] }) {
 
       <button
         type="button"
-        className={styles.carouselArrow}
+        className={joinClasses(styles.carouselArrow, classNames.arrow)}
         onClick={scrollNext}
         disabled={!canScrollNext}
         aria-label="Next items"

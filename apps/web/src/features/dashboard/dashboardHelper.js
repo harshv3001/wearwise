@@ -42,11 +42,23 @@ export function getSummaryLine(stats, hasError = false) {
   return `${loggedLabel}. ${savedOutfitsCount} saved outfits and ${closetItemsCount} closet items ready to work with.`;
 }
 
-export function chunkDashboardItems(items = [], columns = 2) {
+export function chunkDashboardItems(items = [], expanded, columns = 2) {
   const safeColumns = Math.max(columns, 1);
   const midpoint = Math.ceil(items.length / safeColumns);
 
-  return [items.slice(0, midpoint), items.slice(midpoint)];
+  const allLeftColumn = items.slice(0, midpoint);
+  const allRightColumn = items.slice(midpoint);
+
+  const hasMoreThanInitialRows =
+    Math.max(allLeftColumn.length, allRightColumn.length) > 4;
+  const visibleLeftColumn = expanded
+    ? allLeftColumn
+    : allLeftColumn.slice(0, 4);
+  const visibleRightColumn = expanded
+    ? allRightColumn
+    : allRightColumn.slice(0, 4);
+
+  return [hasMoreThanInitialRows, visibleLeftColumn, visibleRightColumn];
 }
 
 export function formatDashboardDateTime(value) {
@@ -73,5 +85,7 @@ export function formatDashboardWeatherSummary(weather) {
       ? `${Math.round(weather.feels_like)}°C`
       : "N/A";
 
-  return `${temperature} • ${weather.weather_label || "Current conditions"} • Feels like ${feelsLike}`;
+  return `${temperature} • ${
+    weather.weather_label || "Current conditions"
+  } • Feels like ${feelsLike}`;
 }

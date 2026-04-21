@@ -28,7 +28,6 @@ export default function DashboardClosetHealthCard({
   return (
     <Card
       title="Closet Health"
-      className={styles.card}
       contentClassName={styles.content}
       fullHeight
       compact

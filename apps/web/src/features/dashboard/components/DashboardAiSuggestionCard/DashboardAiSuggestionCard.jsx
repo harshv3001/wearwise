@@ -5,6 +5,7 @@ import { Button } from "@/app/components/ui/actions";
 import { Card } from "@/app/components/ui/display";
 import { Skeleton } from "@/app/components/ui/feedback";
 import { SelectInput } from "@/app/components/ui/forms";
+import OutfitItemsCarousel from "@/features/OutfitItemsCarousel/OutfitItemsCarousel";
 import {
   DASHBOARD_AI_SUGGESTION_ITEMS,
   DASHBOARD_AI_SUGGESTION_NOTES,
@@ -79,24 +80,22 @@ export default function DashboardAiSuggestionCard({
         )}
       </div>
 
-      <div className={styles.previewBox}>
-        <button type="button" className={styles.arrowButton} disabled>
-          <span className="material-symbols-outlined">chevron_left</span>
-        </button>
-
-        <div className={styles.previewItems}>
-          {DASHBOARD_AI_SUGGESTION_ITEMS.map((item) => (
-            <div key={item.name} className={styles.previewItem}>
-              <div className={styles.previewThumb} />
-              <div className={styles.previewName}>{item.name}</div>
-              <div className={styles.previewCategory}>{item.category}</div>
-            </div>
-          ))}
+      <div className={styles.carouselWrap}>
+        <div className={styles.carouselSurface}>
+          <OutfitItemsCarousel
+            items={DASHBOARD_AI_SUGGESTION_ITEMS}
+            classNames={{
+              root: styles.carouselRoot,
+              arrow: styles.carouselArrow,
+              viewport: styles.carouselViewport,
+              slide: styles.carouselSlide,
+              card: styles.carouselCard,
+              image: styles.carouselImage,
+              name: styles.carouselName,
+              sub: styles.carouselSub,
+            }}
+          />
         </div>
-
-        <button type="button" className={styles.arrowButton} disabled>
-          <span className="material-symbols-outlined">chevron_right</span>
-        </button>
       </div>
 
       <ul className={styles.noteList}>
