@@ -1,10 +1,13 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Annotated, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 from src.closet_items.schemas import ClosetItemOut, ClosetItemSummaryOut
+
+OccasionValue = Annotated[str, Field(min_length=1, max_length=30)]
+SeasonValue = Annotated[str, Field(min_length=1, max_length=30)]
 
 
 class OutfitCanvasLayoutBase(BaseModel):
@@ -44,8 +47,8 @@ class OutfitItemOut(OutfitItemBase):
 
 class OutfitBase(BaseModel):
     name: str = Field(min_length=1, max_length=100)
-    occasion: Optional[str] = Field(default=None, max_length=30)
-    season: Optional[str] = Field(default=None, max_length=30)
+    occasion: List[OccasionValue] = Field(default_factory=list)
+    season: List[SeasonValue] = Field(default_factory=list)
     is_favorite: bool = False
     notes: Optional[str] = Field(default=None, max_length=500)
 
@@ -71,8 +74,8 @@ class OutfitCreate(OutfitBase):
 
 class OutfitUpdate(BaseModel):
     name: Optional[str] = Field(default=None, min_length=1, max_length=100)
-    occasion: Optional[str] = Field(default=None, max_length=30)
-    season: Optional[str] = Field(default=None, max_length=30)
+    occasion: Optional[List[OccasionValue]] = None
+    season: Optional[List[SeasonValue]] = None
     is_favorite: Optional[bool] = None
     notes: Optional[str] = Field(default=None, max_length=500)
     items: Optional[List[OutfitItemCreate]] = None

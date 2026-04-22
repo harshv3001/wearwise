@@ -1,7 +1,7 @@
 import uuid
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, text
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Index, Integer, String, text
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import relationship
 
 from src.database import Base
@@ -9,6 +9,10 @@ from src.database import Base
 
 class Outfit(Base):
     __tablename__ = "outfits"
+    __table_args__ = (
+        Index("ix_outfits_occasion", "occasion", postgresql_using="gin"),
+        Index("ix_outfits_season", "season", postgresql_using="gin"),
+    )
 
     id = Column(
         UUID(as_uuid=True),
@@ -24,8 +28,8 @@ class Outfit(Base):
         index=True,
     )
     name = Column(String, nullable=False)
-    occasion = Column(String, nullable=True, index=True)
-    season = Column(String, nullable=True, index=True)
+    occasion = Column(ARRAY(String), nullable=True, default=list)
+    season = Column(ARRAY(String), nullable=True, default=list)
     is_favorite = Column(Boolean, nullable=False, server_default=text("false"))
     notes = Column(String, nullable=True)
     image_path = Column(String, nullable=True)

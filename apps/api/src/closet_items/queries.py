@@ -38,7 +38,7 @@ def list_closet_items_by_user(
     if color:
         query = query.filter(ClosetItem.color == color)
     if season:
-        query = query.filter(ClosetItem.season == season)
+        query = query.filter(ClosetItem.season.any(season))
     if price is not None:
         query = query.filter(ClosetItem.price == price)
     if store:

@@ -1,15 +1,19 @@
 from datetime import date, datetime
-from typing import Optional
+from typing import Annotated, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+
+ColorValue = Annotated[str, Field(min_length=1, max_length=50)]
+SeasonValue = Annotated[str, Field(min_length=1, max_length=50)]
 
 
 class ClosetItemBase(BaseModel):
     name: str = Field(min_length=1, max_length=100)
     category: str = Field(min_length=1, max_length=50)
     color: Optional[str] = Field(default=None, max_length=50)
-    season: Optional[str] = Field(default=None, max_length=50)
+    secondary_colors: list[ColorValue] = Field(default_factory=list)
+    season: list[SeasonValue] = Field(default_factory=list)
     brand: Optional[str] = Field(default=None, max_length=80)
     price: Optional[float] = Field(default=None, ge=0)
     notes: Optional[str] = Field(default=None, max_length=500)
@@ -26,7 +30,8 @@ class ClosetItemUpdate(BaseModel):
     name: Optional[str] = Field(default=None, min_length=1, max_length=100)
     category: Optional[str] = Field(default=None, min_length=1, max_length=50)
     color: Optional[str] = Field(default=None, max_length=50)
-    season: Optional[str] = Field(default=None, max_length=50)
+    secondary_colors: Optional[list[ColorValue]] = None
+    season: Optional[list[SeasonValue]] = None
     brand: Optional[str] = Field(default=None, max_length=80)
     price: Optional[float] = Field(default=None, ge=0)
     notes: Optional[str] = Field(default=None, max_length=500)

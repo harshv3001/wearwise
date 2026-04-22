@@ -86,7 +86,7 @@ def get_dashboard_summary(*, db: Session, current_user: User) -> DashboardSummar
             wear_log_id=today_outfit_row.wear_log_id,
             outfit_id=today_outfit_row.outfit_id,
             name=today_outfit_row.name,
-            occasion=today_outfit_row.occasion,
+            occasion=today_outfit_row.occasion or [],
             image_url=build_image_url(today_outfit_row.image_path),
             date_worn=today_outfit_row.date_worn,
             created_at=today_outfit_row.created_at,

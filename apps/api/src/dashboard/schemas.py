@@ -28,7 +28,7 @@ class DashboardTodayOutfit(BaseModel):
     wear_log_id: UUID
     outfit_id: UUID
     name: str
-    occasion: Optional[str] = None
+    occasion: list[str] = Field(default_factory=list)
     image_url: Optional[str] = None
     date_worn: date
     created_at: datetime

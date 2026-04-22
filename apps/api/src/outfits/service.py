@@ -108,8 +108,8 @@ def list_outfits(
         {
             "id": outfit.id,
             "name": outfit.name,
-            "occasion": outfit.occasion,
-            "season": outfit.season,
+            "occasion": outfit.occasion or [],
+            "season": outfit.season or [],
             "is_favorite": outfit.is_favorite,
             "image_url": build_image_url(outfit.image_path),
             "canvas_layout": outfit.canvas_layout or [],

@@ -84,9 +84,9 @@ def list_outfits_by_user(
 ) -> tuple[int, list[Outfit]]:
     query = db.query(Outfit).filter(Outfit.user_id == user_id)
     if occasion:
-        query = query.filter(Outfit.occasion == occasion)
+        query = query.filter(Outfit.occasion.any(occasion))
     if season:
-        query = query.filter(Outfit.season == season)
+        query = query.filter(Outfit.season.any(season))
     if favorite is not None:
         query = query.filter(Outfit.is_favorite == favorite)
 
