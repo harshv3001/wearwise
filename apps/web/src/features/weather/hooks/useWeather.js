@@ -6,7 +6,8 @@ import { getCurrentWeatherApi } from "../api/weatherApi";
 
 export function useWeather(latitude, longitude, options = {}) {
   const hasCoordinates =
-    typeof latitude === "number" && Number.isFinite(latitude) &&
+    typeof latitude === "number" &&
+    Number.isFinite(latitude) &&
     typeof longitude === "number" && Number.isFinite(longitude);
 
   return useQuery({
@@ -18,7 +19,9 @@ export function useWeather(latitude, longitude, options = {}) {
         signal,
       }),
     enabled: hasCoordinates && (options.enabled ?? true),
-    staleTime: 1000 * 60 * 10,
+    staleTime: options.staleTime ?? Infinity,
+    refetchOnMount: options.refetchOnMount ?? false,
+    refetchOnWindowFocus: options.refetchOnWindowFocus ?? false,
     retry: 1,
   });
 }

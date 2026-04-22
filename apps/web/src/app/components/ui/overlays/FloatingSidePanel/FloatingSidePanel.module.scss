@@ -1,6 +1,6 @@
 .root {
   position: fixed;
-  right: 22px;
+  right: 0px;
   top: 52%;
   transform: translateY(-50%);
   z-index: 1050;
@@ -17,6 +17,7 @@
   max-height: min(78vh, 820px);
   opacity: 0;
   pointer-events: none;
+  overflow: visible;
   transform: translateY(-50%) translateX(16px) scale(0.98);
   transition: opacity 180ms ease, transform 180ms ease;
 }
@@ -53,8 +54,8 @@
 .trigger {
   position: relative;
   min-height: 44px;
-  width: 22px;
-  padding: 0;
+  width: 48px;
+  padding: 0 10px 0 8px;
   border: none;
   background: linear-gradient(180deg, #f8cbc6 0%, #f3b8b0 100%);
   color: #4d3531;
@@ -63,11 +64,9 @@
   box-shadow: 0 10px 24px rgba(67, 45, 41, 0.12);
   cursor: pointer;
   overflow: visible;
-  transition:
-    width 180ms ease,
-    padding 180ms ease,
-    transform 180ms ease,
+  transition: width 180ms ease, padding 180ms ease, transform 180ms ease,
     box-shadow 180ms ease;
+  opacity: 60%;
 
   &::before {
     content: "";
@@ -77,6 +76,7 @@
     width: 24px;
     height: 44px;
     background: inherit;
+
     clip-path: polygon(100% 0, 100% 100%, 0 50%);
     transform: translateY(-50%);
   }
@@ -84,20 +84,20 @@
   &:hover {
     transform: translateX(-2px);
     box-shadow: 0 14px 28px rgba(67, 45, 41, 0.16);
+    opacity: 100%;
   }
 }
 
 .triggerText {
   position: relative;
   z-index: 1;
-  white-space: nowrap;
   display: inline-block;
-  max-width: 0;
-  opacity: 0;
+  width: 2.1ch;
+  white-space: nowrap;
   overflow: hidden;
-  transition:
-    max-width 180ms ease,
-    opacity 160ms ease;
+  text-align: left;
+  letter-spacing: 0.02em;
+  transition: width 180ms ease;
 }
 
 .root:hover .trigger,
@@ -105,18 +105,18 @@
 .rootOpen .trigger {
   width: 156px;
   padding: 0 18px 0 14px;
+  opacity: 100%;
 }
 
 .root:hover .triggerText,
 .trigger:focus-visible .triggerText,
 .rootOpen .triggerText {
-  max-width: 150px;
-  opacity: 1;
+  width: 10.5ch;
 }
 
 @media (max-width: 1024px) {
   .root {
-    right: 14px;
+    right: 0px;
     top: auto;
     bottom: 24px;
     transform: none;
@@ -138,17 +138,46 @@
 @media (max-width: 640px) {
   .root {
     right: 10px;
-    left: 10px;
-    justify-content: flex-end;
+    top: auto;
+    bottom: 112px;
+    transform: none;
   }
 
   .panel {
-    width: min(100%, 360px);
+    position: fixed;
+    right: auto;
+    left: 50%;
+    top: 50%;
+    bottom: auto;
+    width: min(380px, calc(100vw - 28px));
+    max-height: min(74vh, 700px);
+    transform-origin: calc(100% - 34px) calc(100% + 26px);
+    transform: translate(-50%, -50%) scale(0.96);
+    box-shadow: 0 18px 38px rgba(67, 45, 41, 0.18);
+
+    &::after {
+      content: "";
+      position: absolute;
+      right: 34px;
+      bottom: -11px;
+      width: 22px;
+      height: 22px;
+      background: #fffaf7;
+      border-right: 1px solid rgba(56, 53, 59, 0.08);
+      border-bottom: 1px solid rgba(56, 53, 59, 0.08);
+      transform: rotate(45deg);
+      box-shadow: 8px 10px 18px rgba(67, 45, 41, 0.08);
+    }
+  }
+
+  .panelOpen {
+    transform: translate(-50%, -50%) scale(1);
   }
 
   .trigger {
     min-height: 40px;
-    width: 20px;
+    width: 44px;
+    padding: 0 8px 0 6px;
     font-size: 0.88rem;
 
     &::before {

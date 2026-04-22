@@ -27,6 +27,7 @@ import {
 } from "@/features/auth/api/authApi";
 import { useQuery } from "@tanstack/react-query";
 import { showErrorToast, showSuccessToast } from "../../../lib/toast";
+import { useDashboardSummaryQuery } from "@/features/dashboard/hooks/useDashboardSummaryQuery";
 
 export default function ProfilePage() {
   const { data: user, isLoading } = useCurrentUser();
@@ -36,6 +37,7 @@ export default function ProfilePage() {
   const [errors, setErrors] = useState({});
   const [saveError, setSaveError] = useState("");
   const updateProfileMutation = useUpdateProfileMutation();
+  const dashboardSummaryQuery = useDashboardSummaryQuery();
 
   useEffect(() => {
     if (!user || isEditing) return;
@@ -221,7 +223,7 @@ export default function ProfilePage() {
               formData={formData}
               onLocationUpdate={handleLocationUpdate}
             />
-            <StatsCard />
+            <StatsCard dashboardSummaryQuery={dashboardSummaryQuery} />
             <PreferencesCard
               user={user}
               isEditing={isEditing}

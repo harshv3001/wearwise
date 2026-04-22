@@ -21,6 +21,8 @@ export default function DashboardAiSuggestionCard({
   weather,
   isWeatherLoading = false,
   isWeatherError = false,
+  onRefresh,
+  isRefreshing = false,
 }) {
   const [occasion, setOccasion] = useState("");
   const [now, setNow] = useState(() => new Date());
@@ -108,7 +110,15 @@ export default function DashboardAiSuggestionCard({
         <Button type="button" variant="tertiary" size="sm" disabled>
           Use This Outfit
         </Button>
-        <Button type="button" variant="tertiary" size="sm" disabled>
+        <Button
+          type="button"
+          variant="tertiary"
+          size="sm"
+          onClick={onRefresh}
+          loading={isRefreshing}
+          loadingText="Refreshing"
+          disabled={!onRefresh}
+        >
           Refresh
         </Button>
       </div>

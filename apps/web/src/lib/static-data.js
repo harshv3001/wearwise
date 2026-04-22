@@ -124,11 +124,6 @@ export const STATIC_AI_SETTINGS = {
   prioritizeUnused: true,
 };
 
-export const STATIC_STATS = {
-  closetItems: 52,
-  outfitsLogged: 14,
-};
-
 export const DASHBOARD_AI_SUGGESTION_ITEMS = [
   {
     id: "dashboard-ai-top",
