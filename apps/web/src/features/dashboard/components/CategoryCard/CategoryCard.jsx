@@ -7,9 +7,9 @@ import { Card } from "@/app/components/ui/display";
 import { chunkDashboardItems } from "@/features/dashboard/dashboardHelper";
 import CategorySkeletonColumn from "./CategorySkeletonColumn";
 import CategoryMoreToggle from "./CategoryMoreToggle/CategoryMoreToggle";
-import styles from "./DashboardCategoryCard.module.scss";
+import styles from "./CategoryCard.module.scss";
 
-export default function DashboardCategoryCard({
+export default function CategoryCard({
   categoryCounts = [],
   isLoading = false,
   isError = false,

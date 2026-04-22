@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { FloatingSidePanel } from "@/app/components/ui/overlays";
 import { useWeather } from "@/features/weather/hooks/useWeather";
-import DashboardAiSuggestionCard from "@/features/dashboard/components/DashboardAiSuggestionCard/DashboardAiSuggestionCard";
+import AISuggestionCard from "./AISuggestionCard";
 
-export default function DashboardAiSuggestionPanel({
+export default function AISuggestionPanel({
   latitude,
   longitude,
   isUserLoading = false,
@@ -42,7 +42,7 @@ export default function DashboardAiSuggestionPanel({
       onClose={() => setIsOpen(false)}
       triggerLabel="AI Suggestions"
     >
-      <DashboardAiSuggestionCard
+      <AISuggestionCard
         weather={weatherQuery.data}
         isWeatherLoading={
           isOpen &&

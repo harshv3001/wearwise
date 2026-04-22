@@ -98,6 +98,7 @@
   text-align: left;
   letter-spacing: 0.02em;
   transition: width 180ms ease;
+  margin-top: 8px;
 }
 
 .root:hover .trigger,
@@ -111,7 +112,7 @@
 .root:hover .triggerText,
 .trigger:focus-visible .triggerText,
 .rootOpen .triggerText {
-  width: 10.5ch;
+  width: 120px;
 }
 
 @media (max-width: 1024px) {

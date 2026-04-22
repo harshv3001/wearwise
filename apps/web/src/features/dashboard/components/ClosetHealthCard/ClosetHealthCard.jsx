@@ -2,7 +2,7 @@
 
 import { Card } from "@/app/components/ui/display";
 import { Skeleton } from "@/app/components/ui/feedback";
-import styles from "./DashboardClosetHealthCard.module.scss";
+import styles from "./ClosetHealthCard.module.scss";
 
 function HealthMetric({ label, value, toneClassName }) {
   return (
@@ -13,7 +13,7 @@ function HealthMetric({ label, value, toneClassName }) {
   );
 }
 
-export default function DashboardClosetHealthCard({
+export default function ClosetHealthCard({
   closetHealth,
   isLoading = false,
   isError = false,

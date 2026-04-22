@@ -4,9 +4,9 @@ import { Button } from "@/app/components/ui/actions";
 import { Card, ImageWithFallback } from "@/app/components/ui/display";
 import { formatDate, formatCapitalizedValue } from "@/lib/helperFunctions";
 import TodayOutfitSkeleton from "./TodayOutfitSkeleton";
-import styles from "./DashboardTodayOutfitCard.module.scss";
+import styles from "./TodayOutfitCard.module.scss";
 
-export default function DashboardTodayOutfitCard({
+export default function TodayOutfitCard({
   todayOutfit,
   isLoading = false,
   isError = false,

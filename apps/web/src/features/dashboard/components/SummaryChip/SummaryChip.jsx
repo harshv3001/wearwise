@@ -1,8 +1,8 @@
 "use client";
 
-import styles from "./DashboardSummaryChip.module.scss";
+import styles from "./SummaryChip.module.scss";
 
-export default function DashboardSummaryChip({
+export default function SummaryChip({
   label,
   value,
   tone = "default",

@@ -3,7 +3,7 @@
 import { Card } from "@/app/components/ui/display";
 import { Skeleton } from "@/app/components/ui/feedback";
 import { formatDate } from "@/lib/helperFunctions";
-import styles from "./DashboardRecentActivityCard.module.scss";
+import styles from "./RecentActivityCard.module.scss";
 
 function ActivityMetric({ label, value }) {
   return (
@@ -14,7 +14,7 @@ function ActivityMetric({ label, value }) {
   );
 }
 
-export default function DashboardRecentActivityCard({
+export default function RecentActivityCard({
   recentActivity,
   stats,
   isLoading = false,

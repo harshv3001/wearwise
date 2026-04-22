@@ -1,9 +1,9 @@
 "use client";
 
 import { Skeleton } from "@/app/components/ui/feedback";
-import styles from "./DashboardSummaryChipSkeleton.module.scss";
+import styles from "./SummaryChipSkeleton.module.scss";
 
-export default function DashboardSummaryChipSkeleton() {
+export default function SummaryChipSkeleton() {
   return (
     <Skeleton
       variant="rounded"

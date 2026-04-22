@@ -3,9 +3,9 @@
 import { Card } from "@/app/components/ui/display";
 import UsageColumn from "./UsageColumn/UsageColumn";
 import UsageSkeletonColumn from "./UsageSkeletonColumn";
-import styles from "./DashboardUsageCard.module.scss";
+import styles from "./UsageCard.module.scss";
 
-export default function DashboardUsageCard({
+export default function UsageCard({
   mostUsedItems = [],
   leastUsedItems = [],
   isLoading = false,

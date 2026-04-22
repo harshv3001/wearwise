@@ -6,12 +6,12 @@ import CreateClosetItem from "../../../features/closet/component/CreateClosetIte
 import { useCurrentUser } from "../../../features/auth/hooks/useCurrentUser";
 import { useDashboardSummaryQuery } from "../../../features/dashboard/hooks/useDashboardSummaryQuery";
 
-import DashboardCategoryCard from "../../../features/dashboard/components/DashboardCategoryCard/DashboardCategoryCard";
-import DashboardUsageCard from "../../../features/dashboard/components/DashboardUsageCard/DashboardUsageCard";
-import DashboardAiSuggestionPanel from "../../../features/dashboard/components/DashboardAiSuggestionPanel/DashboardAiSuggestionPanel";
-import DashboardTodayOutfitCard from "../../../features/dashboard/components/DashboardTodayOutfitCard/DashboardTodayOutfitCard";
-import DashboardClosetHealthCard from "../../../features/dashboard/components/DashboardClosetHealthCard/DashboardClosetHealthCard";
-import DashboardHeroCard from "@/features/dashboard/components/DashboardHeroCard/DashboardHeroCard";
+import CategoryCard from "../../../features/dashboard/components/CategoryCard/CategoryCard";
+import UsageCard from "../../../features/dashboard/components/UsageCard/UsageCard";
+import AISuggestionPanel from "../../../features/AISuggestion/AISuggestionPanel";
+import TodayOutfitCard from "../../../features/dashboard/components/TodayOutfitCard/TodayOutfitCard";
+import ClosetHealthCard from "../../../features/dashboard/components/ClosetHealthCard/ClosetHealthCard";
+import HeroCard from "@/features/dashboard/components/HeroCard/HeroCard";
 
 export default function DashboardPage() {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
@@ -23,7 +23,7 @@ export default function DashboardPage() {
   return (
     <main className="p-3 md:p-4">
       <section className="mx-auto flex w-full max-w-[1500px] flex-col gap-4">
-        <DashboardHeroCard
+        <HeroCard
           setOpenReportModal={setOpenReportModal}
           setOpenItemModal={setOpenItemModal}
           user={user}
@@ -32,20 +32,20 @@ export default function DashboardPage() {
         />
         <section className="grid grid-cols-1 gap-4 lg:grid-cols-[0.9fr_1.15fr_0.95fr]">
           <div className="flex flex-col gap-4">
-            <DashboardCategoryCard
+            <CategoryCard
               categoryCounts={dashboardSummaryQuery.data?.category_counts}
               isLoading={dashboardSummaryQuery.isLoading}
               isError={dashboardSummaryQuery.isError}
             />
 
-            <DashboardClosetHealthCard
+            <ClosetHealthCard
               closetHealth={dashboardSummaryQuery.data?.closet_health}
               isLoading={dashboardSummaryQuery.isLoading}
               isError={dashboardSummaryQuery.isError}
             />
           </div>
 
-          <DashboardUsageCard
+          <UsageCard
             mostUsedItems={dashboardSummaryQuery.data?.most_used_items}
             leastUsedItems={dashboardSummaryQuery.data?.least_used_items}
             isLoading={dashboardSummaryQuery.isLoading}
@@ -53,14 +53,14 @@ export default function DashboardPage() {
           />
 
           <div className="flex flex-col gap-4">
-            <DashboardTodayOutfitCard
+            <TodayOutfitCard
               todayOutfit={dashboardSummaryQuery.data?.today_logged_outfit}
               isLoading={dashboardSummaryQuery.isLoading}
               isError={dashboardSummaryQuery.isError}
               onReportOutfit={() => setOpenReportModal(true)}
             />
 
-            {/* <DashboardRecentActivityCard
+            {/* <RecentActivityCard
               recentActivity={dashboardSummaryQuery.data?.recent_activity}
               stats={dashboardSummaryQuery.data?.stats}
               isLoading={dashboardSummaryQuery.isLoading}
@@ -70,7 +70,7 @@ export default function DashboardPage() {
         </section>
       </section>
 
-      <DashboardAiSuggestionPanel
+      <AISuggestionPanel
         latitude={user?.latitude}
         longitude={user?.longitude}
         isUserLoading={isUserLoading}

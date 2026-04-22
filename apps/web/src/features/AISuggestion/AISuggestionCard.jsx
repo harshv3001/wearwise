@@ -15,9 +15,9 @@ import {
   formatDashboardDateTime,
   formatDashboardWeatherSummary,
 } from "@/features/dashboard/dashboardHelper";
-import styles from "./DashboardAiSuggestionCard.module.scss";
+import styles from "./AISuggestionCard.module.scss";
 
-export default function DashboardAiSuggestionCard({
+export default function AISuggestionCard({
   weather,
   isWeatherLoading = false,
   isWeatherError = false,

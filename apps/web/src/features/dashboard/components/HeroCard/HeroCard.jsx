@@ -2,11 +2,11 @@
 
 import { useMemo } from "react";
 import { getDisplayName, getGreetingLabel } from "../../dashboardHelper";
-import DashboardSummaryChip from "../DashboardSummaryChip/DashboardSummaryChip";
-import DashboardSummaryChipSkeleton from "../DashboardSummaryChipSkeleton/DashboardSummaryChipSkeleton";
+import SummaryChip from "../SummaryChip/SummaryChip";
+import SummaryChipSkeleton from "../SummaryChip/SummaryChipSkeleton/SummaryChipSkeleton";
 import { Button } from "@/app/components/ui/actions";
 
-export default function DashboardHeroCard({
+export default function HeroCard({
   setOpenItemModal,
   setOpenReportModal,
   dashboardSummaryQuery,
@@ -37,9 +37,9 @@ export default function DashboardHeroCard({
           <div className="mt-3 flex flex-wrap gap-2.5">
             {dashboardSummaryQuery.isLoading ? (
               <>
-                <DashboardSummaryChipSkeleton />
-                <DashboardSummaryChipSkeleton />
-                <DashboardSummaryChipSkeleton />
+                <SummaryChipSkeleton />
+                <SummaryChipSkeleton />
+                <SummaryChipSkeleton />
               </>
             ) : dashboardSummaryQuery.isError && !summaryStats ? (
               <div className="rounded-full border border-[rgba(56,53,59,0.08)] bg-white px-4 py-2 text-sm text-[var(--ww-text-secondary)] shadow-sm">
@@ -47,17 +47,17 @@ export default function DashboardHeroCard({
               </div>
             ) : (
               <>
-                <DashboardSummaryChip
+                <SummaryChip
                   label="Logged today"
                   value={summaryStats?.logged_today_count ?? 0}
                   tone="accent"
                 />
-                <DashboardSummaryChip
+                <SummaryChip
                   label="Saved outfits"
                   value={summaryStats?.saved_outfits_count ?? 0}
                   tone="highlight"
                 />
-                <DashboardSummaryChip
+                <SummaryChip
                   label="Closet items"
                   value={summaryStats?.total_closet_items ?? 0}
                 />
